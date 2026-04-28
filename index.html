@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Family Dojo">
+<title>Family Dojo ⚔️</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+  /* ── FLUID TYPE SCALE ── */
+  html { font-size: clamp(15px, 1.8vw, 20px); }
+
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0f0e1a;--bg2:#1a1830;--bg3:#241f3a;--bg4:#2e2850;
+  --card:#1e1c32;--card2:#262340;
+  --border:#3d3860;--border2:#4e48a0;
+  --gold:#f5c842;--gold2:#e8a020;--gold-glow:rgba(245,200,66,0.25);
+  --green:#22c97a;--green2:#18a862;--green-glow:rgba(34,201,122,0.2);
+  --purple:#7c6ff7;--purple2:#5a50d4;--purple-glow:rgba(124,111,247,0.25);
+  --pink:#f060a0;--pink-glow:rgba(240,96,160,0.2);
+  --red:#f04060;
+  --text:#e8e4ff;--text2:#a09cc0;--text3:#6a6490;
+  --radius:14px;--radius-sm:10px;
+  --shadow:0 4px 20px rgba(0,0,0,0.4);--shadow-lg:0 8px 32px rgba(0,0,0,0.6);
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+h1,h2,.display{font-family:'Fredoka One',cursive;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+.sc{display:none;width:100%;}.sc.on{display:block;}
+.hdr{background:linear-gradient(135deg,#1a1640 0%,#0f0e1a 100%);border-bottom:2px solid var(--border2);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:relative;}
+.hdr::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--pink),var(--gold));opacity:0.8;}
+.hdr-logo{font-family:'Fredoka One',cursive;font-size:22px;background:linear-gradient(135deg,var(--gold),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hdr-date{font-size:11px;color:var(--text3);font-weight:600;margin-top:2px;}
+.btn-parents{background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;color:#1a1400;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:12px;font-family:'Nunito',sans-serif;font-weight:800;letter-spacing:0.3px;box-shadow:0 2px 12px var(--gold-glow);transition:all 0.15s;}
+.btn-parents:hover{transform:translateY(-1px);box-shadow:0 4px 18px var(--gold-glow);filter:brightness(1.08);}
+.verse-card{margin:12px 14px;border-radius:var(--radius);border:2px solid var(--gold2);background:linear-gradient(135deg,#1e1a10 0%,#2a2218 60%,#1e1a10 100%);padding:14px 16px;position:relative;overflow:hidden;box-shadow:0 4px 24px var(--gold-glow),inset 0 1px 0 rgba(245,200,66,0.15);}
+.verse-card::before{content:'✝';position:absolute;right:-8px;top:-8px;font-size:64px;opacity:0.06;color:var(--gold);}
+.verse-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.verse-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(245,200,66,0.15);border:1px solid rgba(245,200,66,0.3);border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;color:var(--gold);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;}
+.verse-text{color:#f0e8c8;font-size:13px;line-height:1.6;font-style:italic;font-weight:600;margin-bottom:6px;}
+.verse-ref{color:var(--gold2);font-size:11px;font-weight:700;}
+.verse-aud{background:var(--gold);border:none;color:#1a1400;border-radius:12px;padding:5px 14px;font-size:12px;font-weight:800;cursor:pointer;margin-top:8px;font-family:'Nunito',sans-serif;transition:all 0.15s;display:inline-flex;align-items:center;gap:4px;}
+.verse-aud:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.goal-card{margin:0 14px 12px;border-radius:var(--radius);border:2px solid var(--border2);background:var(--card);padding:14px 16px;box-shadow:var(--shadow);}
+.goal-tag{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;}
+.reward-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+.reward-chip{display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1.5px solid var(--purple);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;color:var(--text);}
+.days-row{display:flex;gap:4px;margin:10px 0;}
+.day-dot{flex:1;text-align:center;}
+.dl{font-size:9px;color:var(--text3);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px;font-weight:700;}
+.dc{width:30px;height:30px;border-radius:8px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;border:2px solid var(--border);color:var(--text3);background:var(--bg3);}
+.day-dot.filled .dc{background:linear-gradient(135deg,var(--purple2),var(--green2));border-color:var(--green);color:#fff;box-shadow:0 2px 8px var(--green-glow);}
+.day-dot.today .dc{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,0.08);}
+.goal-bar-wrap{position:relative;background:var(--bg3);border-radius:99px;height:12px;overflow:hidden;border:1px solid var(--border);}
+.goal-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--purple2),var(--green));transition:width 0.6s ease;position:relative;}
+.goal-bar-fill::after{content:'';position:absolute;top:2px;left:4px;right:4px;height:3px;background:rgba(255,255,255,0.3);border-radius:99px;}
+.goal-meta{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:var(--text3);font-weight:700;}
+.unlocked-banner{background:linear-gradient(135deg,rgba(34,201,122,0.1),rgba(245,200,66,0.1));border:1.5px solid var(--green);border-radius:var(--radius-sm);padding:10px 14px;margin-top:10px;display:flex;align-items:center;gap:10px;}
+.sec-lbl{font-size:11px;font-weight:800;color:#8a86b8;text-transform:uppercase;letter-spacing:0.8px;margin:0 14px 8px;display:flex;align-items:center;gap:6px;}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+.kids-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 14px 12px;}
+.kc{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:12px 8px;text-align:center;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;}
+.kc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--pink));}
+.kc:hover{border-color:var(--purple);transform:translateY(-2px);box-shadow:0 6px 20px var(--purple-glow);}
+.kc-av{width:50px;height:50px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:24px;border:2.5px solid var(--border2);background:var(--bg3);}
+.kc-name{font-family:'Fredoka One',cursive;font-size:15px;color:var(--text);margin-bottom:2px;}
+.kc-age{font-size:10px;color:#9a96c8;font-weight:700;margin-bottom:6px;}
+.kc-stars{display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:3px;}
+.star-icon{color:var(--gold);font-size:12px;}
+.star-count{font-size:12px;font-weight:800;color:var(--gold);}
+.kc-prog{font-size:10px;color:#9a96c8;font-weight:700;}
+.kc-xp{width:100%;height:4px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-top:5px;}
+.kc-xp-fill{height:100%;border-radius:99px;transition:width 0.4s;}
+.wpp{margin:0 14px 12px;background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:12px 14px;}
+.wpp-title{font-size:10px;font-weight:800;color:#9a96c8;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;}
+.wpr{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.wpr-name{font-size:12px;font-weight:800;width:70px;flex-shrink:0;}
+.wpr-track{flex:1;background:var(--bg3);border-radius:99px;height:8px;overflow:hidden;border:1px solid var(--border);}
+.wpr-fill{height:100%;border-radius:99px;}
+.wpr-stars{font-size:11px;color:var(--gold);font-weight:800;width:36px;text-align:right;}
+.wpr-hint{font-size:10px;color:#8a86b8;margin-left:78px;margin-top:-4px;margin-bottom:4px;font-weight:600;}
+.activity-card{margin:0 14px 16px;background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:12px 14px;}
+.ar{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.ar:last-child{border-bottom:none;}
+.ar-name{font-weight:800;width:72px;flex-shrink:0;}
+.ar-task{flex:1;color:#c8c4e8;}
+.ar-check{color:var(--green);font-size:14px;}
+.ar-time{font-size:10px;color:var(--text3);font-weight:600;}
+.qhdr{padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--border);background:var(--bg2);}
+.btn-back{background:var(--bg4);border:2px solid var(--border2);color:var(--text);border-radius:20px;padding:7px 14px;cursor:pointer;font-size:12px;font-family:'Nunito',sans-serif;font-weight:800;transition:all 0.15s;}
+.btn-back:hover{background:var(--purple2);border-color:var(--purple);color:#fff;}
+.qhdr-title{font-family:'Fredoka One',cursive;font-size:18px;color:var(--text);}
+.qhdr-sub{font-size:11px;color:var(--text3);font-weight:600;margin-top:1px;}
+.quest-list{padding:12px;display:flex;flex-direction:column;gap:10px;}
+.quest-list.young{--qi-emoji:42px;--qi-ew:54px;--qi-name:18px;--qi-desc:13px;--qi-pts:12px;--qi-check:56px;--qi-check-f:26px;--qi-check-b:3px;--qi-aud:40px;--qi-aud-f:16px;--qi-pad:16px 14px;--qi-gap:14px;}
+.quest-list.standard{--qi-emoji:26px;--qi-ew:38px;--qi-name:14px;--qi-desc:11px;--qi-pts:11px;--qi-check:36px;--qi-check-f:16px;--qi-check-b:2px;--qi-aud:34px;--qi-aud-f:14px;--qi-pad:13px 14px;--qi-gap:10px;}
+.qi{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:var(--qi-pad);display:flex;align-items:center;gap:var(--qi-gap);position:relative;overflow:hidden;transition:border-color 0.15s;}
+.qi::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--purple),var(--pink));}
+.qi:hover{border-color:var(--purple);}
+.qi.done{opacity:0.45;}
+.qi.done .qi-name{text-decoration:line-through;color:var(--text3);}
+.qi.done::before{background:var(--green);}
+.qi.flash{animation:qflash 0.5s ease;}
+@keyframes qflash{0%{background:var(--card);}40%{background:rgba(34,201,122,0.12);}100%{background:var(--card);}}
+.qi-emoji{font-size:var(--qi-emoji);width:var(--qi-ew);text-align:center;flex-shrink:0;line-height:1;}
+.qi-body{flex:1;min-width:0;}
+.qi-name{font-size:var(--qi-name);font-weight:800;color:#ffffff;line-height:1.3;}
+.qi-desc{font-size:var(--qi-desc);color:#d8d4f8;margin-top:3px;line-height:1.4;}
+.qi-pts{font-size:var(--qi-pts);color:var(--gold);font-weight:800;margin-top:4px;letter-spacing:0.2px;}
+.qi-audio{width:var(--qi-aud);height:var(--qi-aud);border-radius:50%;border:none;background:linear-gradient(135deg,#1a8a60,var(--green));cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:var(--qi-aud-f);flex-shrink:0;transition:all 0.15s;box-shadow:0 2px 10px var(--green-glow);}
+.qi-audio:hover{filter:brightness(1.15);transform:scale(1.08);}
+.qi-audio:active{transform:scale(0.95);}
+.qi-check{width:var(--qi-check);height:var(--qi-check);border-radius:50%;border:var(--qi-check-b) solid var(--border2);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;font-size:var(--qi-check-f);color:transparent;}
+.qi-check:hover{border-color:var(--green);box-shadow:0 0 12px var(--green-glow);}
+.qi-check.on{background:linear-gradient(135deg,var(--green2),var(--green));border-color:var(--green);color:#fff;box-shadow:0 2px 12px var(--green-glow);}
+.qi-check:active{transform:scale(0.93);}
+.pin-screen{max-width:290px;margin:50px auto;text-align:center;padding:0 16px;}
+.pin-screen h2{font-family:'Fredoka One',cursive;font-size:22px;color:var(--text);margin-bottom:5px;}
+.pin-screen p{font-size:12px;color:var(--text3);margin-bottom:20px;font-weight:600;}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin-bottom:20px;}
+.pd{width:14px;height:14px;border-radius:50%;background:var(--bg3);border:2px solid var(--border);}
+.pd.on{background:var(--purple);border-color:var(--purple);box-shadow:0 0 8px var(--purple-glow);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:210px;margin:0 auto;}
+.ppb{background:var(--card);border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-size:18px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Fredoka One',cursive;transition:all 0.12s;}
+.ppb:hover{border-color:var(--purple);background:var(--card2);color:var(--purple);}
+.pin-err{color:var(--red);font-size:12px;margin-top:7px;min-height:15px;font-weight:700;}
+.p-layout{display:flex;height:calc(100vh - 0px);min-height:590px;}
+.p-nav{width:165px;flex-shrink:0;background:var(--bg2);border-right:2px solid var(--border);padding:14px 0;position:relative;}
+.pni{padding:9px 16px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);transition:all 0.12s;}
+.pni:hover{background:var(--bg3);color:var(--text);}
+.pni.on{background:var(--bg3);color:var(--purple);border-right:3px solid var(--purple);}
+.p-content{flex:1;overflow-y:auto;padding:18px;background:var(--bg);}
+.ps{display:none;}.ps.on{display:block;}
+.ptitle{font-family:'Fredoka One',cursive;font-size:20px;color:var(--text);margin-bottom:3px;}
+.psub{font-size:12px;color:var(--text3);margin-bottom:16px;font-weight:600;}
+.fi{width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--card);font-size:13px;color:var(--text);font-family:'Nunito',sans-serif;font-weight:600;transition:border-color 0.15s;}
+.fi:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-glow);}
+.fs{width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--card);font-size:13px;color:var(--text);font-family:'Nunito',sans-serif;font-weight:600;}
+.fl{font-size:11px;font-weight:800;color:var(--text3);margin-bottom:4px;display:block;text-transform:uppercase;letter-spacing:0.4px;}
+.bp{background:linear-gradient(135deg,var(--purple2),var(--purple));color:#fff;border:none;padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:800;font-family:'Nunito',sans-serif;transition:all 0.15s;box-shadow:0 2px 10px var(--purple-glow);}
+.bp:hover{transform:translateY(-1px);box-shadow:0 4px 14px var(--purple-glow);}
+.bd{background:transparent;color:var(--red);border:1.5px solid var(--red);padding:5px 10px;border-radius:var(--radius-sm);cursor:pointer;font-size:11px;font-weight:700;font-family:'Nunito',sans-serif;transition:all 0.15s;}
+.bd:hover{background:rgba(240,64,96,0.1);}
+.af{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
+.li{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:7px;}
+.ep{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.eo{width:32px;height:32px;border-radius:8px;border:2px solid var(--border);background:var(--bg3);cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:all 0.12s;}
+.eo:hover{border-color:var(--purple);}
+.eo.on{border:2px solid var(--purple);background:var(--purple-glow);}
+.co{width:24px;height:24px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.12s;}
+.co.on{border-color:#fff;box-shadow:0 0 8px rgba(255,255,255,0.3);}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.stc{background:var(--card);border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center;}
+.stn{font-family:'Fredoka One',cursive;font-size:22px;color:var(--text);}
+.stl{font-size:11px;color:var(--text3);font-weight:700;margin-top:2px;}
+.rcat{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 6px;}
+.rsug{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:5px;cursor:pointer;transition:all 0.12s;}
+.rsug:hover{border-color:var(--purple);background:var(--card2);}
+.word-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.wchip{padding:5px 14px;border-radius:20px;border:2px solid var(--border);background:var(--bg3);font-size:12px;font-weight:700;cursor:pointer;color:var(--text2);transition:all 0.12s;}
+.wchip.on{background:var(--purple2);border-color:var(--purple);color:#fff;}
+.ql-age{margin-bottom:14px;}
+.ql-ah{font-family:'Fredoka One',cursive;font-size:13px;color:var(--purple);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+.ql-row{display:flex;align-items:flex-start;gap:7px;padding:9px 12px;background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:5px;transition:all 0.12s;}
+.ql-row:hover{border-color:var(--border2);}
+.ql-row.expanded{border-color:var(--purple);background:var(--card2);}
+.ql-em{font-size:17px;width:24px;text-align:center;flex-shrink:0;margin-top:1px;}
+.ql-body{flex:1;}
+.ql-name{font-size:12px;font-weight:800;color:var(--text);}
+.ql-desc{font-size:10px;color:var(--text3);margin-top:1px;}
+.ql-pts{font-size:11px;color:var(--gold);font-weight:800;width:22px;margin-top:1px;flex-shrink:0;}
+.ql-addbtn{font-size:11px;color:#fff;font-weight:800;cursor:pointer;padding:4px 10px;border:none;border-radius:6px;background:var(--purple2);white-space:nowrap;flex-shrink:0;font-family:'Nunito',sans-serif;transition:all 0.12s;}
+.ql-addbtn:hover{background:var(--purple);}
+.ql-addbtn.cancel{background:var(--bg3);color:var(--text3);border:1.5px solid var(--border);}
+.assign-panel{margin-top:8px;padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);}
+.assign-label{font-size:11px;font-weight:800;color:var(--purple);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.4px;}
+.assign-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:8px;}
+.assign-btn{padding:7px 4px;border-radius:8px;border:2px solid var(--border);background:var(--bg2);cursor:pointer;text-align:center;transition:all 0.12s;}
+.assign-btn:hover{border-color:var(--purple);}
+.assign-btn.sel{border-color:var(--purple);background:var(--purple-glow);}
+.assign-btn .ab-em{font-size:18px;}
+.assign-btn .ab-name{font-size:10px;font-weight:800;margin-top:2px;}
+.assign-confirm{display:flex;gap:7px;align-items:center;}
+.ql-fb{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
+.ql-fb button{padding:4px 12px;border-radius:20px;border:2px solid var(--border);background:var(--bg3);font-size:11px;font-weight:700;cursor:pointer;color:var(--text2);font-family:'Nunito',sans-serif;transition:all 0.12s;}
+.ql-fb button.on{background:var(--purple2);border-color:var(--purple);color:#fff;}
+.reward-slot{background:var(--card);border:2px dashed var(--border);border-radius:var(--radius);padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.15s;}
+.reward-slot.filled{border-style:solid;border-color:var(--purple);}
+.reward-slot:hover{border-color:var(--purple);}
+.rs-num{width:22px;height:22px;border-radius:50%;background:var(--purple-glow);border:1.5px solid var(--purple);color:var(--purple);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rs-clear{font-size:11px;color:var(--red);cursor:pointer;padding:3px 8px;border-radius:6px;border:1.5px solid var(--red);background:rgba(240,64,96,0.08);flex-shrink:0;font-family:'Nunito',sans-serif;font-weight:700;}
+.rsug-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.rsug-sheet{background:var(--bg2);border:2px solid var(--border2);border-radius:var(--radius);padding:18px;width:90%;max-width:420px;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+.rsug-title{font-family:'Fredoka One',cursive;font-size:18px;color:var(--text);margin-bottom:12px;}
+.vov{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:flex-end;backdrop-filter:blur(4px);}
+.vsh{background:var(--bg2);border:2px solid var(--border2);border-radius:16px 16px 0 0;padding:18px;width:100%;max-height:65vh;overflow-y:auto;}
+.vopt{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;margin-bottom:4px;border:1.5px solid transparent;transition:all 0.12s;}
+.vopt:hover{background:var(--bg3);}
+.vopt.on{background:var(--purple-glow);border-color:var(--purple);}
+.bday{margin:0 14px 10px;background:linear-gradient(135deg,rgba(240,96,160,0.1),rgba(245,200,66,0.1));border:2px solid var(--pink);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 16px var(--pink-glow);}
+.cb{position:fixed;pointer-events:none;z-index:9999;font-size:26px;animation:cba 1s forwards;}
+@keyframes cba{0%{opacity:1;transform:scale(0.3) translateY(0) rotate(0deg);}100%{opacity:0;transform:scale(1.8) translateY(-100px) rotate(180deg);}}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--green2),var(--green));color:#fff;padding:9px 20px;border-radius:20px;font-size:13px;font-weight:800;z-index:9999;box-shadow:0 4px 20px var(--green-glow);font-family:'Nunito',sans-serif;}
+</style>
+</head>
+<body>
+<div id="app">
+<!-- HOME -->
+<div id="sc-home" class="sc on">
+  <div class="hdr">
+    <div><div class="hdr-logo">⚔️ Family Dojo</div><div class="hdr-date" id="hdr-date"></div></div>
+    <button class="btn-parents" onclick="showPin()">⚙ Parent Settings</button>
+  </div>
+  <div id="bday-area"></div>
+  <div class="verse-card">
+    <div class="verse-tag">✝ Verse of the Day</div>
+    <div class="verse-text" id="verse-text"></div>
+    <div class="verse-ref" id="verse-ref"></div>
+    <button class="verse-aud" onclick="speakVerse()">🔊 Read aloud</button>
+  </div>
+  <!-- THREE-TIER GOAL SYSTEM -->
+  <div class="goal-card" id="weekly-goal-card">
+    <div class="goal-tag">⚡ Weekly Goal · Mon – Fri</div>
+    <div class="reward-chips" id="goal-rewards-display"></div>
+    <div class="days-row" id="days-row"></div>
+    <div class="goal-bar-wrap"><div class="goal-bar-fill" id="goal-fill" style="width:0%"></div></div>
+    <div class="goal-meta"><span id="goal-done">0 of 0 done</span><span id="goal-pct">need 80%</span></div>
+    <div id="goal-unlocked" style="display:none;" class="unlocked-banner">
+      <span style="font-size:22px;">🎉</span>
+      <div><div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--green);">Weekly goal reached — enjoy your reward!</div><div id="goal-unlock-list" style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap;"></div></div>
+    </div>
+  </div>
+
+  <!-- Monthly Goal -->
+  <div class="goal-card" style="border-color:#6a8aff;box-shadow:0 4px 20px rgba(106,138,255,0.2);" id="monthly-goal-card">
+    <div class="goal-tag" style="color:#8aacff;">🌙 Monthly Goal</div>
+    <div class="reward-chips" id="monthly-rewards-display"></div>
+    <div style="margin:8px 0;">
+      <div class="goal-bar-wrap" style="height:10px;"><div class="goal-bar-fill" id="monthly-fill" style="width:0%;background:linear-gradient(90deg,#4a6adf,#8aacff);"></div></div>
+      <div class="goal-meta"><span id="monthly-stars">0 stars this month</span><span id="monthly-target" style="color:#8aacff;"></span></div>
+    </div>
+    <div id="monthly-unlocked" style="display:none;" class="unlocked-banner" style="border-color:#6a8aff;">
+      <span style="font-size:22px;">🌟</span>
+      <div><div style="font-family:'Fredoka One',cursive;font-size:14px;color:#8aacff;">Monthly goal reached — amazing work!</div><div id="monthly-unlock-list" style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap;"></div></div>
+    </div>
+  </div>
+
+  <!-- Grand Goal -->
+  <div class="goal-card" style="border-color:var(--gold);box-shadow:0 4px 24px var(--gold-glow);" id="grand-goal-card">
+    <div class="goal-tag" style="color:var(--gold);">👑 Grand Goal</div>
+    <div class="reward-chips" id="grand-rewards-display"></div>
+    <div style="margin:8px 0;">
+      <div class="goal-bar-wrap" style="height:14px;"><div class="goal-bar-fill" id="grand-fill" style="width:0%;background:linear-gradient(90deg,var(--gold2),var(--gold));"></div></div>
+      <div class="goal-meta"><span id="grand-stars">0 stars total</span><span id="grand-target" style="color:var(--gold);"></span></div>
+    </div>
+    <div id="grand-unlocked" style="display:none;" class="unlocked-banner" style="border-color:var(--gold);">
+      <span style="font-size:22px;">👑</span>
+      <div><div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--gold);">GRAND GOAL REACHED — YOU DID IT!</div><div id="grand-unlock-list" style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap;"></div></div>
+    </div>
+  </div>
+  <div class="sec-lbl" id="kids-lbl">Tap your name</div>
+  <div class="kids-grid" id="kids-grid"></div>
+  <div class="wpp"><div class="wpp-title">⭐ Personal Stars This Week</div><div id="wpp-list"></div></div>
+  <div class="sec-lbl">Recent Activity</div>
+  <div class="activity-card" id="activity-card"><div style="font-size:12px;color:var(--text3);font-weight:600;padding:4px 0;">No activity yet today.</div></div>
+</div>
+
+<!-- QUEST VIEW -->
+<div id="sc-quests" class="sc">
+  <div class="qhdr">
+    <button class="btn-back" onclick="show('home')">← Back</button>
+    <div><div class="qhdr-title" id="q-title">Quests</div><div class="qhdr-sub" id="q-sub">Tap 🔊 to hear, then tap the circle when done!</div></div>
+  </div>
+  <div class="quest-list" id="quest-list"></div>
+</div>
+
+<!-- VOICE OVERLAY -->
+<div class="vov" id="vov" style="display:none;">
+  <div class="vsh">
+    <div style="font-family:'Fredoka One',cursive;font-size:18px;color:var(--text);margin-bottom:4px;">Voice for Christian & Constance</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:12px;font-weight:600;">Tap Preview to hear, then tap the name to select.</div>
+    <div id="vlist"></div>
+    <button class="bp" style="margin-top:12px;width:100%;" onclick="closeVov()">Done</button>
+  </div>
+</div>
+
+<!-- REWARD OVERLAY -->
+<div class="rsug-overlay" id="rsug-overlay" style="display:none;">
+  <div class="rsug-sheet">
+    <div class="rsug-title" id="rsug-title">Choose a reward</div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;">
+      <input class="fi" id="rsug-custom-t" placeholder="Type your own reward..." style="flex:1;">
+      <input class="fi" id="rsug-custom-e" placeholder="emoji" style="width:52px;text-align:center;">
+      <button class="bp" onclick="pickCustomR()">Add</button>
+    </div>
+    <div class="rcat">Screen time</div><div id="rs-screen"></div>
+    <div class="rcat">Family experiences</div><div id="rs-family"></div>
+    <div class="rcat">Outings</div><div id="rs-outings"></div>
+    <div class="rcat">Privileges</div><div id="rs-privs"></div>
+    <div class="rcat">Treats</div><div id="rs-treats"></div>
+    <button onclick="closeRsug()" style="margin-top:12px;width:100%;padding:9px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--bg3);cursor:pointer;font-size:13px;font-weight:700;color:var(--text2);font-family:'Nunito',sans-serif;">Cancel</button>
+  </div>
+</div>
+
+<!-- PIN -->
+<div id="sc-pin" class="sc" style="padding:18px;">
+  <button class="btn-back" onclick="show('home')" style="margin-bottom:16px;">← Back</button>
+  <div class="pin-screen">
+    <h2>🔐 Parent Zone</h2>
+    <p>Enter your 4-digit PIN</p>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
+      <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="ppb" onclick="pp('1')">1</button><button class="ppb" onclick="pp('2')">2</button><button class="ppb" onclick="pp('3')">3</button>
+      <button class="ppb" onclick="pp('4')">4</button><button class="ppb" onclick="pp('5')">5</button><button class="ppb" onclick="pp('6')">6</button>
+      <button class="ppb" onclick="pp('7')">7</button><button class="ppb" onclick="pp('8')">8</button><button class="ppb" onclick="pp('9')">9</button>
+      <button class="ppb" onclick="pp('c')" style="font-size:11px;">Clear</button><button class="ppb" onclick="pp('0')">0</button><button class="ppb" onclick="pp('d')" style="font-size:11px;">Del</button>
+    </div>
+    <div class="pin-err" id="pin-err"></div>
+  </div>
+</div>
+
+<!-- PARENT BACKEND -->
+<div id="sc-parent" class="sc">
+  <div class="p-layout">
+    <div class="p-nav">
+      <div style="padding:10px 16px 14px;font-family:'Fredoka One',cursive;font-size:15px;color:var(--purple);">Parent Zone</div>
+      <div class="pni on" onclick="showPS('week')" id="pn-week">📋 This Week</div>
+      <div class="pni" onclick="showPS('rewards')" id="pn-rewards">🏆 Rewards</div>
+      <div class="pni" onclick="showPS('settings')" id="pn-settings">⚙ Settings</div>
+      <div style="position:absolute;bottom:12px;left:0;right:0;padding:0 10px;">
+        <button onclick="show('home')" style="width:100%;padding:8px;font-size:11px;border-radius:var(--radius-sm);border:2px solid var(--border2);background:var(--bg3);cursor:pointer;color:var(--text2);font-family:'Nunito',sans-serif;font-weight:700;">Exit to family view</button>
+      </div>
+    </div>
+    <div class="p-content">
+      <div id="ps-week" class="ps on">
+        <div class="ptitle">This Week</div>
+        <div class="psub">Add quests, browse the library, review activity</div>
+        <div class="sgrid" id="stat-grid"></div>
+        <div class="af">
+          <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin-bottom:10px;">Add a quest manually</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div><label class="fl">Quest name</label><input class="fi" id="nc-name" placeholder="e.g. Vacuum"></div>
+            <div><label class="fl">Assign to</label><select class="fs" id="nc-who"></select></div>
+          </div>
+          <div style="margin:8px 0;"><label class="fl">Description</label><input class="fi" id="nc-desc" placeholder="What exactly to do"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+            <div><label class="fl">Stars</label><select class="fs" id="nc-pts"><option value="1">1 ★ easy</option><option value="2" selected>2 ★ normal</option><option value="3">3 ★ hard</option></select></div>
+            <div><label class="fl">Icon</label><div class="ep" id="chore-ep"></div></div>
+          </div>
+          <button class="bp" onclick="addQuest()">+ Add Quest</button>
+        </div>
+        <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin-bottom:6px;">Quest Library <span style="font-size:11px;font-family:'Nunito',sans-serif;font-weight:600;color:var(--text3);">— tap + Add then choose who</span></div>
+        <div class="ql-fb" id="ql-fb"></div>
+        <div id="ql-content"></div>
+        <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin:14px 0 6px;">Assigned Today</div>
+        <div id="today-list"></div>
+        <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin:14px 0 6px;">Activity Log</div>
+        <div id="hist-list"></div>
+      </div>
+      <div id="ps-rewards" class="ps">
+        <div class="ptitle">Rewards & Goals</div>
+        <div class="psub">Set up to 3 rewards per goal tier. Tap a slot to choose.</div>
+
+        <!-- GOAL TABS -->
+        <div style="display:flex;gap:6px;margin-bottom:14px;">
+          <button id="rtab-weekly" onclick="switchRTab('weekly')" style="flex:1;padding:8px;border-radius:var(--radius-sm);border:2px solid var(--purple);background:var(--purple2);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;cursor:pointer;">⚡ Weekly</button>
+          <button id="rtab-monthly" onclick="switchRTab('monthly')" style="flex:1;padding:8px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--bg3);color:var(--text2);font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;cursor:pointer;">🌙 Monthly</button>
+          <button id="rtab-grand" onclick="switchRTab('grand')" style="flex:1;padding:8px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--bg3);color:var(--text2);font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;cursor:pointer;">👑 Grand</button>
+        </div>
+
+        <!-- WEEKLY PANEL -->
+        <div id="rpanel-weekly">
+          <div style="font-size:12px;color:var(--text3);font-weight:600;margin-bottom:10px;">Unlocked by completing 80%+ of daily quests Mon–Fri. Enjoy at the weekend!</div>
+          <div id="reward-slots"></div>
+        </div><!-- end weekly panel -->
+
+        <!-- MONTHLY PANEL -->
+        <div id="rpanel-monthly" style="display:none;">
+          <div style="font-size:12px;color:#8aacff;font-weight:700;margin-bottom:4px;">🌙 Monthly Goal</div>
+          <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:10px;">Accumulates all stars earned across the whole month. A bigger challenge, a bigger reward.</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:12px;font-weight:700;color:var(--text3);">
+            <label>Target stars:</label>
+            <input type="number" id="monthly-target-input" class="fi" style="width:90px;" placeholder="e.g. 120" oninput="updMonthlyTarget(this.value)">
+            <span style="font-size:11px;color:#8aacff;" id="monthly-suggestion"></span>
+          </div>
+          <div id="monthly-reward-slots"></div>
+        </div>
+
+        <!-- GRAND PANEL -->
+        <div id="rpanel-grand" style="display:none;">
+          <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:4px;">👑 Grand Goal</div>
+          <div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:10px;">Your family's big dream. Accumulates stars across weeks and months — the bigger the dream, the longer the journey!</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:12px;font-weight:700;color:var(--text3);">
+            <label>Target stars:</label>
+            <input type="number" id="grand-target-input" class="fi" style="width:90px;" placeholder="e.g. 400" oninput="updGrandTarget(this.value)">
+            <span style="font-size:11px;color:var(--gold);" id="grand-suggestion"></span>
+          </div>
+          <div id="grand-reward-slots"></div>
+        </div>
+
+        <!-- WEEKLY THRESHOLD (only shown in weekly tab) -->
+        <div id="thresh-row" style="display:flex;align-items:center;gap:8px;margin:12px 0;font-size:12px;font-weight:700;color:var(--text3);">
+          <label>Unlock when</label>
+          <input type="range" min="50" max="100" value="80" step="5" id="thresh" oninput="updThresh(this.value)" style="flex:1;accent-color:var(--purple);">
+          <span style="font-weight:800;min-width:32px;color:var(--purple);" id="thresh-val">80%</span>
+          <label>of quests done</label>
+        </div>
+        <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin:16px 0 6px;">Personal Milestones</div>
+        <div id="pr-list"></div>
+        <div class="af" style="margin-top:8px;">
+          <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin-bottom:10px;">Add a personal milestone</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+            <div><label class="fl">Reward</label><input class="fi" id="pr-t" placeholder="e.g. Extra anime"></div>
+            <div><label class="fl">Stars needed</label><input class="fi" id="pr-s" type="number" placeholder="e.g. 20"></div>
+          </div>
+          <div><label class="fl">For</label><select class="fs" id="pr-m"></select></div>
+          <button class="bp" style="margin-top:10px;" onclick="addPR()">+ Add Milestone</button>
+        </div>
+      </div>
+      <div id="ps-settings" class="ps">
+        <div class="ptitle">Settings</div>
+        <div class="psub">Family · voice · sound · PIN</div>
+        <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin-bottom:8px;">Family Members</div>
+        <div id="fam-list"></div>
+        <div class="af" style="margin-top:8px;">
+          <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin-bottom:10px;">Add a member</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+            <div><label class="fl">Name</label><input class="fi" id="nm-n" placeholder="e.g. Sophie"></div>
+            <div><label class="fl">Age</label><input class="fi" id="nm-a" type="number" placeholder="e.g. 8"></div>
+          </div>
+          <div><label class="fl">Avatar</label><div class="ep" id="mem-ep"></div></div>
+          <div style="margin-top:8px;"><label class="fl">Colour</label><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;" id="col-pick"></div></div>
+          <button class="bp" style="margin-top:10px;" onclick="addMem()">+ Add Member</button>
+        </div>
+        <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin:14px 0 5px;">Call tasks…</div>
+        <div class="word-chips" id="word-chips"></div>
+        <div class="af" style="margin-top:14px;">
+          <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin-bottom:4px;">Voice for young children</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-weight:600;">Used for Christian & Constance (age 6 and under)</div>
+          <button class="bp" onclick="openVov()">🎙 Choose Voice</button>
+          <div id="cur-voice" style="font-size:11px;color:var(--text3);margin-top:7px;font-weight:600;"></div>
+        </div>
+        <div class="af">
+          <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin-bottom:6px;">Completion Chime</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;cursor:pointer;color:var(--text2);">
+              <input type="checkbox" id="snd-tog" onchange="togSnd(this.checked)" style="width:16px;height:16px;accent-color:var(--purple);">
+              Enable chime when a quest is completed
+            </label>
+            <button style="font-size:11px;padding:5px 12px;border-radius:8px;border:2px solid var(--border2);background:var(--bg3);cursor:pointer;font-weight:700;color:var(--text);font-family:'Nunito',sans-serif;" onclick="playChime()">Preview 🔔</button>
+          </div>
+        </div>
+        <div class="af">
+          <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin-bottom:8px;">Change PIN</div>
+          <div style="display:flex;gap:8px;">
+            <input class="fi" type="password" id="np1" placeholder="New PIN" maxlength="4" style="width:130px;">
+            <input class="fi" type="password" id="np2" placeholder="Confirm" maxlength="4" style="width:130px;">
+            <button class="bp" onclick="chgPin()">Save</button>
+          </div>
+          <div id="pin-msg" style="font-size:11px;margin-top:6px;min-height:15px;font-weight:700;"></div>
+        </div>
+        <div class="af">
+          <div style="font-family:'Fredoka One',cursive;font-size:14px;color:var(--text);margin-bottom:4px;">Reset Today's Quests</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:600;">Clear all completions to start a fresh day</div>
+          <button class="bd" onclick="resetDay()">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- EDIT MEMBER MODAL -->
+<div id="edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+  <div style="background:var(--bg2);border:2px solid var(--border2);border-radius:var(--radius);padding:20px;width:88%;max-width:380px;box-shadow:var(--shadow-lg);">
+    <div style="font-family:'Fredoka One',cursive;font-size:18px;color:var(--text);margin-bottom:4px;">✏ Edit Member</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:14px;font-weight:600;">Change avatar, colour, or name</div>
+
+    <!-- Preview -->
+    <div style="text-align:center;margin-bottom:14px;">
+      <div id="edit-preview" style="width:64px;height:64px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--purple);background:var(--bg3);"></div>
+      <div id="edit-preview-name" style="font-family:'Fredoka One',cursive;font-size:16px;color:var(--text);margin-top:6px;"></div>
+    </div>
+
+    <label class="fl">Name</label>
+    <input class="fi" id="edit-name" style="margin-bottom:10px;">
+
+    <label class="fl">Avatar emoji — tap to pick</label>
+    <div id="edit-emoji-picker" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;margin-top:5px;"></div>
+
+    <!-- Extra emoji options for more variety -->
+    <label class="fl">More avatars</label>
+    <div id="edit-emoji-picker2" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;margin-top:5px;"></div>
+
+    <label class="fl">Colour</label>
+    <div id="edit-col-picker" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;margin-bottom:14px;"></div>
+
+    <div style="display:flex;gap:8px;">
+      <button class="bp" style="flex:1;" onclick="saveEditMem()">Save changes</button>
+      <button onclick="closeEditModal()" style="flex:1;padding:8px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--bg3);cursor:pointer;font-size:13px;font-weight:700;color:var(--text2);font-family:'Nunito',sans-serif;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+const V=[
+{d:1,r:"John 13:34",t:"Love one another as I have loved you."},
+{d:2,r:"1 Corinthians 13:4",t:"Love is patient, love is kind."},
+{d:3,r:"Romans 12:10",t:"Be devoted to one another in love."},
+{d:4,r:"Ephesians 4:32",t:"Be kind and compassionate to one another."},
+{d:5,r:"Proverbs 17:17",t:"A friend loves at all times, and a brother is born for a time of need."},
+{d:6,r:"1 John 4:7",t:"Dear friends, let us love one another, for love comes from God."},
+{d:7,r:"Colossians 3:14",t:"Put on love, which binds everything together in perfect harmony."},
+{d:8,r:"1 Peter 4:8",t:"Above all, love each other deeply, because love covers a multitude of sins."},
+{d:9,r:"Psalm 133:1",t:"How good and pleasant it is when God's people live together in unity."},
+{d:10,r:"Romans 13:8",t:"The only debt you owe is to love one another."},
+{d:11,r:"1 John 3:18",t:"Let us not love with words or speech but with actions and in truth."},
+{d:12,r:"John 15:12",t:"Love each other as I have loved you."},
+{d:13,r:"1 Corinthians 16:14",t:"Do everything in love."},
+{d:14,r:"Galatians 5:13",t:"Serve one another humbly in love."},
+{d:15,r:"Ephesians 5:2",t:"Walk in the way of love, just as Christ loved us."},
+{d:16,r:"1 John 4:19",t:"We love because he first loved us."},
+{d:17,r:"Matthew 22:39",t:"Love your neighbour as yourself."},
+{d:18,r:"John 3:16",t:"God so loved the world that he gave his one and only Son."},
+{d:19,r:"Romans 5:8",t:"While we were still sinners, Christ died for us."},
+{d:20,r:"1 Corinthians 13:13",t:"Faith, hope and love — but the greatest of these is love."},
+{d:21,r:"Luke 6:38",t:"Give, and it will be given to you."},
+{d:22,r:"2 Corinthians 9:7",t:"God loves a cheerful giver."},
+{d:23,r:"Luke 6:31",t:"Do to others as you would have them do to you."},
+{d:24,r:"Hebrews 13:16",t:"Do not forget to do good and to share with others."},
+{d:25,r:"Matthew 5:7",t:"Blessed are the merciful, for they will be shown mercy."},
+{d:26,r:"Colossians 3:12",t:"Clothe yourselves with compassion, kindness, humility, gentleness and patience."},
+{d:27,r:"Micah 6:8",t:"Act justly, love mercy and walk humbly with your God."},
+{d:28,r:"Acts 20:35",t:"It is more blessed to give than to receive."},
+{d:29,r:"Galatians 6:2",t:"Carry each other's burdens, and in this way fulfil the law of Christ."},
+{d:30,r:"James 2:17",t:"Faith by itself, if not accompanied by action, is dead."},
+{d:31,r:"Colossians 3:23",t:"Whatever you do, work at it with all your heart, as working for the Lord."},
+{d:32,r:"Ecclesiastes 9:10",t:"Whatever your hand finds to do, do it with all your might."},
+{d:33,r:"Proverbs 14:23",t:"All hard work brings a profit, but mere talk leads only to poverty."},
+{d:34,r:"Ephesians 6:7",t:"Serve wholeheartedly, as if you were serving the Lord, not people."},
+{d:35,r:"Galatians 6:9",t:"Let us not become weary in doing good."},
+{d:36,r:"Matthew 25:23",t:"Well done, good and faithful servant!"},
+{d:37,r:"Philippians 4:13",t:"I can do all this through him who gives me strength."},
+{d:38,r:"Isaiah 40:31",t:"Those who hope in the Lord will renew their strength. They will soar on wings like eagles."},
+{d:39,r:"2 Chronicles 15:7",t:"Be strong and do not give up, for your work will be rewarded."},
+{d:40,r:"James 1:4",t:"Let perseverance finish its work so that you may be mature and complete."},
+{d:41,r:"1 Thessalonians 5:18",t:"Give thanks in all circumstances; for this is God's will for you."},
+{d:42,r:"Psalm 118:24",t:"This is the day the Lord has made; let us rejoice and be glad in it."},
+{d:43,r:"Philippians 4:4",t:"Rejoice in the Lord always. I will say it again: Rejoice!"},
+{d:44,r:"Psalm 107:1",t:"Give thanks to the Lord, for he is good; his love endures for ever."},
+{d:45,r:"James 1:17",t:"Every good and perfect gift is from above."},
+{d:46,r:"Nehemiah 8:10",t:"The joy of the Lord is your strength."},
+{d:47,r:"Proverbs 17:22",t:"A cheerful heart is good medicine."},
+{d:48,r:"John 15:11",t:"I have told you this so that my joy may be in you and that your joy may be complete."},
+{d:49,r:"Galatians 5:22",t:"The fruit of the Spirit is love, joy, peace, forbearance, kindness."},
+{d:50,r:"Psalm 30:5",t:"Weeping may stay for the night, but rejoicing comes in the morning."},
+{d:51,r:"Joshua 24:15",t:"As for me and my household, we will serve the Lord."},
+{d:52,r:"Psalm 127:1",t:"Unless the Lord builds the house, its builders labour in vain."},
+{d:53,r:"Ephesians 6:1",t:"Children, obey your parents in the Lord, for this is right."},
+{d:54,r:"Proverbs 22:6",t:"Start children off on the way they should go, and even when they are old they will not turn from it."},
+{d:55,r:"Psalm 127:3",t:"Children are a heritage from the Lord, offspring a reward from him."},
+{d:56,r:"Proverbs 1:8",t:"Listen, my son, to your father's instruction and do not forsake your mother's teaching."},
+{d:57,r:"Deuteronomy 6:6-7",t:"These commandments are to be on your hearts. Impress them on your children."},
+{d:58,r:"3 John 1:4",t:"I have no greater joy than to hear that my children are walking in the truth."},
+{d:59,r:"Isaiah 54:13",t:"All your children will be taught by the Lord, and great will be their peace."},
+{d:60,r:"Matthew 19:14",t:"Let the little children come to me, for the kingdom of heaven belongs to such as these."},
+{d:61,r:"Mark 10:45",t:"The Son of Man did not come to be served, but to serve."},
+{d:62,r:"Philippians 2:3",t:"In humility value others above yourselves."},
+{d:63,r:"Matthew 20:26",t:"Whoever wants to become great among you must be your servant."},
+{d:64,r:"James 4:10",t:"Humble yourselves before the Lord, and he will lift you up."},
+{d:65,r:"Micah 6:8",t:"What does the Lord require? To act justly, love mercy, and walk humbly."},
+{d:66,r:"Matthew 5:5",t:"Blessed are the meek, for they will inherit the earth."},
+{d:67,r:"Ephesians 4:2",t:"Be completely humble and gentle; be patient, bearing with one another in love."},
+{d:68,r:"Luke 14:11",t:"Those who humble themselves will be exalted."},
+{d:69,r:"1 Samuel 16:7",t:"The Lord does not look at the things people look at. The Lord looks at the heart."},
+{d:70,r:"Joshua 1:9",t:"Be strong and courageous. The Lord your God is with you wherever you go."},
+{d:71,r:"Psalm 27:1",t:"The Lord is my light and my salvation — whom shall I fear?"},
+{d:72,r:"Isaiah 41:10",t:"Do not fear, for I am with you; do not be dismayed, for I am your God."},
+{d:73,r:"2 Timothy 1:7",t:"God has not given us a spirit of fear, but of power and of love and of a sound mind."},
+{d:74,r:"Matthew 14:27",t:"Take courage! It is I. Don't be afraid."},
+{d:75,r:"Psalm 46:1",t:"God is our refuge and strength, an ever-present help in trouble."},
+{d:76,r:"Romans 8:31",t:"If God is for us, who can be against us?"},
+{d:77,r:"Psalm 56:3",t:"When I am afraid, I put my trust in you."},
+{d:78,r:"Mark 5:36",t:"Don't be afraid; just believe."},
+{d:79,r:"Matthew 17:20",t:"If you have faith as small as a mustard seed, nothing will be impossible for you."},
+{d:80,r:"Proverbs 3:5",t:"Trust in the Lord with all your heart and lean not on your own understanding."},
+{d:81,r:"John 16:33",t:"Take heart! I have overcome the world."},
+{d:82,r:"Luke 1:37",t:"For nothing will be impossible with God."},
+{d:83,r:"John 14:27",t:"Peace I leave with you; my peace I give you. Do not let your hearts be troubled."},
+{d:84,r:"Matthew 11:28",t:"Come to me, all you who are weary and burdened, and I will give you rest."},
+{d:85,r:"Psalm 23:1",t:"The Lord is my shepherd, I lack nothing."},
+{d:86,r:"Philippians 4:7",t:"The peace of God, which transcends all understanding, will guard your hearts and minds."},
+{d:87,r:"Isaiah 26:3",t:"You will keep in perfect peace those whose minds are steadfast, because they trust in you."},
+{d:88,r:"Numbers 6:24-26",t:"The Lord bless you and keep you; the Lord make his face shine on you."},
+{d:89,r:"Colossians 3:15",t:"Let the peace of Christ rule in your hearts."},
+{d:90,r:"Matthew 5:9",t:"Blessed are the peacemakers, for they will be called children of God."},
+{d:91,r:"Psalm 46:10",t:"Be still, and know that I am God."},
+{d:92,r:"Isaiah 40:29",t:"He gives strength to the weary and increases the power of the weak."},
+{d:93,r:"Psalm 55:22",t:"Cast your cares on the Lord and he will sustain you."},
+{d:94,r:"Psalm 62:1",t:"Truly my soul finds rest in God; my salvation comes from him."},
+{d:95,r:"Exodus 33:14",t:"My Presence will go with you, and I will give you rest."},
+{d:96,r:"Proverbs 1:7",t:"The fear of the Lord is the beginning of wisdom."},
+{d:97,r:"James 1:5",t:"If any of you lacks wisdom, you should ask God, who gives generously to all."},
+{d:98,r:"Proverbs 2:6",t:"The Lord gives wisdom; from his mouth come knowledge and understanding."},
+{d:99,r:"Colossians 2:3",t:"In Christ are hidden all the treasures of wisdom and knowledge."},
+{d:100,r:"Psalm 119:105",t:"Your word is a lamp for my feet, a light on my path."},
+{d:101,r:"Proverbs 8:11",t:"Wisdom is more precious than rubies."},
+{d:102,r:"James 3:17",t:"The wisdom that comes from heaven is first of all pure; then peace-loving, considerate."},
+{d:103,r:"John 8:32",t:"The truth will set you free."},
+{d:104,r:"Ephesians 4:15",t:"Speaking the truth in love, we will grow."},
+{d:105,r:"Proverbs 11:3",t:"The integrity of the upright guides them."},
+{d:106,r:"Luke 16:10",t:"Whoever can be trusted with very little can also be trusted with much."},
+{d:107,r:"Proverbs 10:9",t:"Whoever walks in integrity walks securely."},
+{d:108,r:"Matthew 5:37",t:"All you need to say is simply yes or no."},
+{d:109,r:"Philippians 4:8",t:"Whatever is true, whatever is noble, whatever is right — think about such things."},
+{d:110,r:"Matthew 5:8",t:"Blessed are the pure in heart, for they will see God."},
+{d:111,r:"Romans 12:2",t:"Be transformed by the renewing of your mind."},
+{d:112,r:"Psalm 51:10",t:"Create in me a pure heart, O God."},
+{d:113,r:"1 John 1:9",t:"If we confess our sins, he is faithful and just and will forgive us."},
+{d:114,r:"Matthew 5:16",t:"Let your light shine before others, that they may see your good deeds."},
+{d:115,r:"1 Timothy 6:6",t:"Godliness with contentment is great gain."},
+{d:116,r:"Hebrews 13:5",t:"Be content with what you have."},
+{d:117,r:"Philippians 4:11",t:"I have learned to be content whatever the circumstances."},
+{d:118,r:"Psalm 34:10",t:"Those who seek the Lord lack no good thing."},
+{d:119,r:"Philippians 4:19",t:"My God will meet all your needs according to his riches in glory."},
+{d:120,r:"Matthew 7:11",t:"How much more will your Father in heaven give good gifts to those who ask him!"},
+{d:121,r:"Isaiah 9:6",t:"For to us a child is born, to us a son is given."},
+{d:122,r:"Luke 2:11",t:"Today a Saviour has been born to you; he is the Messiah, the Lord."},
+{d:123,r:"John 1:14",t:"The Word became flesh and made his dwelling among us."},
+{d:124,r:"Jeremiah 29:11",t:"I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you."},
+{d:125,r:"Lamentations 3:25",t:"The Lord is good to those whose hope is in him."},
+{d:126,r:"Romans 5:5",t:"Hope does not put us to shame, because God's love has been poured out into our hearts."},
+{d:127,r:"Hebrews 10:23",t:"Let us hold unswervingly to the hope we profess, for he who promised is faithful."},
+{d:128,r:"1 Peter 1:3",t:"He has given us new birth into a living hope through the resurrection of Jesus Christ."},
+{d:129,r:"Revelation 21:5",t:"I am making everything new!"},
+{d:130,r:"2 Corinthians 5:17",t:"If anyone is in Christ, the new creation has come: the old has gone, the new is here!"},
+{d:131,r:"John 10:10",t:"I have come that they may have life, and have it to the full."},
+{d:132,r:"Ephesians 3:20",t:"Now to him who is able to do immeasurably more than all we ask or imagine."},
+{d:133,r:"Psalm 23:6",t:"Surely your goodness and love will follow me all the days of my life."},
+{d:134,r:"John 3:16",t:"For God so loved the world that he gave his one and only Son."},
+{d:135,r:"Lamentations 3:22-23",t:"His mercies are new every morning; great is his faithfulness."},
+{d:136,r:"Numbers 6:24-26",t:"The Lord bless you and keep you; the Lord make his face shine on you and be gracious to you."},
+{d:137,r:"Romans 12:10",t:"Be devoted to one another in love. Honour one another above yourselves."},
+{d:138,r:"1 Peter 3:8",t:"Be like-minded, be sympathetic, love one another, be compassionate and humble."},
+{d:139,r:"Proverbs 11:25",t:"A generous person will prosper; whoever refreshes others will be refreshed."},
+{d:140,r:"Colossians 3:17",t:"Whatever you do, do it all in the name of the Lord Jesus, giving thanks."},
+{d:141,r:"1 Thessalonians 5:11",t:"Encourage one another and build each other up."},
+{d:142,r:"Hebrews 10:24",t:"Let us consider how we may spur one another on toward love and good deeds."},
+{d:143,r:"Matthew 5:14",t:"You are the light of the world. A town built on a hill cannot be hidden."},
+{d:144,r:"Psalm 139:14",t:"I praise you because I am fearfully and wonderfully made."},
+{d:145,r:"Isaiah 43:1",t:"Do not fear, for I have redeemed you; I have summoned you by name; you are mine."},
+{d:146,r:"Zephaniah 3:17",t:"The Lord your God is with you; he will rejoice over you with singing."},
+{d:147,r:"Matthew 6:33",t:"Seek first his kingdom and his righteousness, and all these things will be given to you."},
+{d:148,r:"Philippians 2:14",t:"Do everything without grumbling or arguing."},
+{d:149,r:"James 1:19",t:"Everyone should be quick to listen, slow to speak and slow to become angry."},
+{d:150,r:"Proverbs 15:1",t:"A gentle answer turns away wrath, but a harsh word stirs up anger."},
+{d:151,r:"Romans 12:18",t:"If it is possible, as far as it depends on you, live at peace with everyone."},
+{d:152,r:"Colossians 4:6",t:"Let your conversation be always full of grace, seasoned with salt."},
+{d:153,r:"Proverbs 16:24",t:"Gracious words are a honeycomb, sweet to the soul and healing to the bones."},
+{d:154,r:"Ephesians 4:29",t:"Only what is helpful for building others up should come out of your mouths."},
+{d:155,r:"Romans 8:37",t:"In all these things we are more than conquerors through him who loved us."},
+{d:156,r:"2 Corinthians 12:9",t:"My grace is sufficient for you, for my power is made perfect in weakness."},
+{d:157,r:"Matthew 7:7",t:"Ask and it will be given to you; seek and you will find; knock and the door will be opened."},
+{d:158,r:"James 5:16",t:"The prayer of a righteous person is powerful and effective."},
+{d:159,r:"Philippians 4:6",t:"Do not be anxious about anything, but in every situation present your requests to God."},
+{d:160,r:"1 Thessalonians 5:17",t:"Pray continually."},
+{d:161,r:"Romans 12:21",t:"Do not be overcome by evil, but overcome evil with good."},
+{d:162,r:"Galatians 5:22-23",t:"The fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness and self-control."},
+{d:163,r:"Ephesians 2:10",t:"We are God's handiwork, created in Christ Jesus to do good works."},
+{d:164,r:"Colossians 3:13",t:"Bear with each other and forgive one another. Forgive as the Lord forgave you."},
+{d:165,r:"Hebrews 13:1",t:"Keep on loving one another as brothers and sisters."},
+{d:166,r:"James 1:22",t:"Do not merely listen to the word, and so deceive yourselves. Do what it says."},
+{d:167,r:"1 Peter 4:10",t:"Each of you should use whatever gift you have received to serve others."},
+{d:168,r:"Proverbs 10:12",t:"Love covers all wrongs."},
+{d:169,r:"Proverbs 16:32",t:"Better a patient person than a warrior."},
+{d:170,r:"Proverbs 20:11",t:"Even small children are known by their actions."},
+{d:171,r:"Proverbs 21:21",t:"Whoever pursues righteousness and love finds life, prosperity and honour."},
+{d:172,r:"Proverbs 24:16",t:"Though the righteous fall seven times, they rise again."},
+{d:173,r:"Psalm 25:1",t:"In you, Lord my God, I put my trust."},
+{d:174,r:"Psalm 33:4",t:"The word of the Lord is right and true; he is faithful in all he does."},
+{d:175,r:"Psalm 34:14",t:"Turn from evil and do good; seek peace and pursue it."},
+{d:176,r:"Psalm 40:8",t:"I desire to do your will, my God; your law is within my heart."},
+{d:177,r:"Psalm 42:1",t:"As the deer pants for streams of water, so my soul pants for you, my God."},
+{d:178,r:"Psalm 73:26",t:"God is the strength of my heart and my portion for ever."},
+{d:179,r:"Psalm 86:11",t:"Teach me your way, Lord, that I may rely on your faithfulness."},
+{d:180,r:"Psalm 90:12",t:"Teach us to number our days, that we may gain a heart of wisdom."},
+{d:181,r:"Psalm 103:2",t:"Praise the Lord, my soul, and forget not all his benefits."},
+{d:182,r:"Psalm 116:1-2",t:"I love the Lord, for he heard my voice; he heard my cry for mercy."},
+{d:183,r:"Psalm 119:11",t:"I have hidden your word in my heart that I might not sin against you."},
+{d:184,r:"Psalm 121:7-8",t:"The Lord will keep you from all harm — he will watch over your life."},
+{d:185,r:"Psalm 139:1-2",t:"You have searched me, Lord, and you know me."},
+{d:186,r:"Psalm 145:9",t:"The Lord is good to all; he has compassion on all he has made."},
+{d:187,r:"Isaiah 12:2",t:"Surely God is my salvation; I will trust and not be afraid."},
+{d:188,r:"Isaiah 40:8",t:"The word of our God endures for ever."},
+{d:189,r:"Isaiah 55:6",t:"Seek the Lord while he may be found; call on him while he is near."},
+{d:190,r:"Isaiah 60:1",t:"Arise, shine, for your light has come, and the glory of the Lord rises upon you."},
+{d:191,r:"Jeremiah 17:7",t:"Blessed is the one who trusts in the Lord, whose confidence is in him."},
+{d:192,r:"Jeremiah 29:11",t:"I know the plans I have for you, plans to prosper you and not to harm you."},
+{d:193,r:"Lamentations 3:22",t:"Because of the Lord's great love we are not consumed, for his compassions never fail."},
+{d:194,r:"Ezekiel 36:26",t:"I will give you a new heart and put a new spirit in you."},
+{d:195,r:"Habakkuk 3:19",t:"The Sovereign Lord is my strength; he makes my feet like the feet of a deer."},
+{d:196,r:"Luke 10:27",t:"Love the Lord your God with all your heart and love your neighbour as yourself."},
+{d:197,r:"John 1:12",t:"To all who did receive him, he gave the right to become children of God."},
+{d:198,r:"John 8:12",t:"I am the light of the world. Whoever follows me will never walk in darkness."},
+{d:199,r:"John 14:6",t:"I am the way and the truth and the life."},
+{d:200,r:"John 15:13",t:"Greater love has no one than this: to lay down one's life for one's friends."},
+{d:201,r:"Romans 3:23-24",t:"All have sinned and fall short of the glory of God, and all are justified freely by his grace."},
+{d:202,r:"Romans 6:23",t:"The wages of sin is death, but the gift of God is eternal life in Christ Jesus our Lord."},
+{d:203,r:"Romans 8:1",t:"There is now no condemnation for those who are in Christ Jesus."},
+{d:204,r:"Galatians 2:20",t:"I have been crucified with Christ and I no longer live, but Christ lives in me."},
+{d:205,r:"Philippians 1:6",t:"He who began a good work in you will carry it on to completion."},
+{d:206,r:"Hebrews 4:16",t:"Let us approach God's throne of grace with confidence, so that we may receive mercy."},
+{d:207,r:"Hebrews 11:6",t:"Without faith it is impossible to please God."},
+{d:208,r:"1 Peter 5:7",t:"Cast all your anxiety on him because he cares for you."},
+{d:209,r:"Revelation 21:5",t:"I am making everything new!"},
+{d:210,r:"Matthew 28:20",t:"Surely I am with you always, to the very end of the age."},
+{d:211,r:"Proverbs 3:5-6",t:"In all your ways submit to him, and he will make your paths straight."},
+{d:212,r:"Proverbs 4:23",t:"Above all else, guard your heart, for everything you do flows from it."},
+{d:213,r:"Proverbs 13:20",t:"Walk with the wise and become wise."},
+{d:214,r:"Proverbs 18:24",t:"There is a friend who sticks closer than a brother."},
+{d:215,r:"Proverbs 22:1",t:"A good name is more desirable than great riches."},
+{d:216,r:"Matthew 5:44",t:"Love your enemies and pray for those who persecute you."},
+{d:217,r:"Matthew 6:14",t:"If you forgive other people, your heavenly Father will also forgive you."},
+{d:218,r:"Matthew 25:40",t:"Whatever you did for one of the least of these brothers and sisters of mine, you did for me."},
+{d:219,r:"John 13:35",t:"By this everyone will know that you are my disciples, if you love one another."},
+{d:220,r:"John 15:5",t:"I am the vine; you are the branches. If you remain in me you will bear much fruit."},
+{d:221,r:"Philippians 2:4",t:"Not looking to your own interests but each of you to the interests of the others."},
+{d:222,r:"2 Timothy 2:22",t:"Pursue righteousness, faith, love and peace."},
+{d:223,r:"1 Peter 2:17",t:"Show proper respect to everyone, love the family of believers."},
+{d:224,r:"1 John 2:10",t:"Anyone who loves their brother and sister lives in the light."},
+{d:225,r:"Psalm 37:5",t:"Commit your way to the Lord; trust in him and he will do this."},
+{d:226,r:"Isaiah 30:21",t:"Whether you turn to the right or to the left, your ears will hear: 'This is the way; walk in it.'"},
+{d:227,r:"John 10:27",t:"My sheep listen to my voice; I know them, and they follow me."},
+{d:228,r:"Romans 12:12",t:"Be joyful in hope, patient in affliction, faithful in prayer."},
+{d:229,r:"Psalm 145:18",t:"The Lord is near to all who call on him in truth."},
+{d:230,r:"1 John 5:14",t:"If we ask anything according to his will, he hears us."},
+{d:231,r:"Luke 18:1",t:"They should always pray and not give up."},
+{d:232,r:"Mark 11:24",t:"Whatever you ask for in prayer, believe that you have received it."},
+{d:233,r:"Psalm 91:1",t:"Whoever dwells in the shelter of the Most High will rest in the shadow of the Almighty."},
+{d:234,r:"Jeremiah 33:3",t:"Call to me and I will answer you and tell you great and unsearchable things."},
+{d:235,r:"Proverbs 15:3",t:"The eyes of the Lord are everywhere, keeping watch on the wicked and the good."},
+{d:236,r:"Psalm 37:23-24",t:"The Lord makes firm the steps of the one who delights in him."},
+{d:237,r:"Psalm 56:11",t:"In God I trust and am not afraid."},
+{d:238,r:"Isaiah 25:1",t:"Lord, you are my God; I will exalt you and praise your name."},
+{d:239,r:"Isaiah 43:19",t:"See, I am doing a new thing! Do you not perceive it?"},
+{d:240,r:"Isaiah 55:12",t:"You will go out in joy and be led forth in peace."},
+{d:241,r:"Joel 2:25",t:"I will repay you for the years the locusts have eaten."},
+{d:242,r:"Luke 4:18",t:"The Spirit of the Lord is on me, because he has anointed me to proclaim good news."},
+{d:243,r:"Luke 15:7",t:"There will be more rejoicing in heaven over one sinner who repents."},
+{d:244,r:"John 11:25",t:"I am the resurrection and the life. The one who believes in me will live."},
+{d:245,r:"Romans 8:37",t:"In all these things we are more than conquerors through him who loved us."},
+{d:246,r:"Galatians 3:26",t:"In Christ Jesus you are all children of God through faith."},
+{d:247,r:"Ephesians 1:7",t:"In him we have redemption through his blood, the forgiveness of sins."},
+{d:248,r:"Colossians 1:17",t:"He is before all things, and in him all things hold together."},
+{d:249,r:"Revelation 3:20",t:"Here I am! I stand at the door and knock."},
+{d:250,r:"Revelation 21:4",t:"He will wipe every tear from their eyes. There will be no more death or mourning."},
+{d:251,r:"Proverbs 3:11-12",t:"The Lord disciplines those he loves."},
+{d:252,r:"Proverbs 4:25",t:"Let your eyes look straight ahead; fix your gaze directly before you."},
+{d:253,r:"Proverbs 15:23",t:"A person finds joy in giving an apt reply — how good is a timely word!"},
+{d:254,r:"Proverbs 17:9",t:"Whoever would foster love covers over an offence."},
+{d:255,r:"Psalm 1:1-2",t:"Blessed is the one who delights in the law of the Lord."},
+{d:256,r:"Psalm 19:14",t:"May these words of my mouth and this meditation of my heart be pleasing in your sight, Lord."},
+{d:257,r:"Psalm 31:19",t:"How abundant are the good things you have stored up for those who fear you."},
+{d:258,r:"Psalm 46:5",t:"God is within her, she will not fall; God will help her at break of day."},
+{d:259,r:"Isaiah 1:17",t:"Learn to do right; seek justice. Defend the oppressed."},
+{d:260,r:"Isaiah 44:22",t:"I have swept away your offences like a cloud, your sins like the morning mist."},
+{d:261,r:"Isaiah 58:10",t:"If you spend yourselves on behalf of the hungry, your light will rise in the darkness."},
+{d:262,r:"Isaiah 61:1",t:"He has sent me to bind up the brokenhearted, to proclaim freedom for the captives."},
+{d:263,r:"Malachi 3:6",t:"I the Lord do not change."},
+{d:264,r:"Matthew 5:48",t:"Be perfect, therefore, as your heavenly Father is perfect."},
+{d:265,r:"Matthew 6:6",t:"When you pray, go into your room, close the door and pray to your Father, who is unseen."},
+{d:266,r:"Matthew 22:37",t:"Love the Lord your God with all your heart and with all your soul and with all your mind."},
+{d:267,r:"Mark 12:31",t:"Love your neighbour as yourself. There is no commandment greater than these."},
+{d:268,r:"Romans 1:16",t:"I am not ashamed of the gospel, because it is the power of God that brings salvation."},
+{d:269,r:"2 Corinthians 4:17",t:"Our light and momentary troubles are achieving for us an eternal glory that far outweighs them all."},
+{d:270,r:"Philippians 1:6",t:"He who began a good work in you will carry it on to completion."},
+{d:271,r:"Hebrews 12:1",t:"Let us run with perseverance the race marked out for us."},
+{d:272,r:"James 4:7",t:"Submit yourselves to God. Resist the devil, and he will flee from you."},
+{d:273,r:"1 John 4:4",t:"The one who is in you is greater than the one who is in the world."},
+{d:274,r:"Revelation 22:13",t:"I am the Alpha and the Omega, the First and the Last, the Beginning and the End."},
+{d:275,r:"Psalm 23:4",t:"Even though I walk through the darkest valley, I will fear no evil, for you are with me."},
+{d:276,r:"Psalm 27:14",t:"Wait for the Lord; be strong and take heart and wait for the Lord."},
+{d:277,r:"Proverbs 3:5",t:"Trust in the Lord with all your heart and lean not on your own understanding."},
+{d:278,r:"Isaiah 40:31",t:"Those who hope in the Lord will renew their strength."},
+{d:279,r:"Jeremiah 31:3",t:"I have loved you with an everlasting love."},
+{d:280,r:"Romans 8:38-39",t:"Neither death nor life can separate us from the love of God."},
+{d:281,r:"Philippians 4:13",t:"I can do all this through him who gives me strength."},
+{d:282,r:"Psalm 46:10",t:"Be still, and know that I am God."},
+{d:283,r:"Romans 12:2",t:"Be transformed by the renewing of your mind."},
+{d:284,r:"Galatians 5:13",t:"Serve one another humbly in love."},
+{d:285,r:"Psalm 139:14",t:"I praise you because I am fearfully and wonderfully made."},
+{d:286,r:"Hebrews 13:8",t:"Jesus Christ is the same yesterday and today and for ever."},
+{d:287,r:"1 Corinthians 13:4",t:"Love is patient, love is kind. It does not envy, it does not boast."},
+{d:288,r:"Matthew 5:16",t:"Let your light shine before others, that they may see your good deeds and glorify your Father."},
+{d:289,r:"Proverbs 27:17",t:"As iron sharpens iron, so one person sharpens another."},
+{d:290,r:"Romans 8:28",t:"In all things God works for the good of those who love him."},
+{d:291,r:"Psalm 37:4",t:"Take delight in the Lord, and he will give you the desires of your heart."},
+{d:292,r:"Nehemiah 8:10",t:"The joy of the Lord is your strength."},
+{d:293,r:"Proverbs 17:22",t:"A cheerful heart is good medicine."},
+{d:294,r:"Psalm 118:24",t:"This is the day the Lord has made; let us rejoice and be glad in it."},
+{d:295,r:"Colossians 3:23",t:"Whatever you do, work at it with all your heart, as working for the Lord."},
+{d:296,r:"Matthew 25:23",t:"Well done, good and faithful servant!"},
+{d:297,r:"Galatians 6:9",t:"Let us not become weary in doing good."},
+{d:298,r:"Isaiah 40:31",t:"Those who hope in the Lord will soar on wings like eagles."},
+{d:299,r:"Hebrews 6:10",t:"God will not forget your work and the love you have shown him."},
+{d:300,r:"Proverbs 16:3",t:"Commit to the Lord whatever you do, and he will establish your plans."},
+{d:301,r:"Psalm 100:1-2",t:"Shout for joy to the Lord, all the earth. Worship the Lord with gladness."},
+{d:302,r:"1 Chronicles 16:34",t:"Give thanks to the Lord, for he is good; his love endures for ever."},
+{d:303,r:"Psalm 107:1",t:"Give thanks to the Lord, for he is good; his love endures for ever."},
+{d:304,r:"Romans 5:8",t:"While we were still sinners, Christ died for us."},
+{d:305,r:"Romans 10:9",t:"If you declare 'Jesus is Lord,' and believe in your heart that God raised him from the dead, you will be saved."},
+{d:306,r:"1 Corinthians 1:18",t:"The message of the cross is foolishness to those who are perishing, but to us it is the power of God."},
+{d:307,r:"Galatians 2:20",t:"Christ lives in me. The life I now live, I live by faith in the Son of God."},
+{d:308,r:"Ephesians 6:10",t:"Be strong in the Lord and in his mighty power."},
+{d:309,r:"1 Timothy 2:5",t:"There is one God and one mediator between God and mankind, the man Christ Jesus."},
+{d:310,r:"1 Peter 1:3",t:"He has given us new birth into a living hope through the resurrection of Jesus Christ."},
+{d:311,r:"Romans 12:10",t:"Be devoted to one another in love. Honour one another above yourselves."},
+{d:312,r:"Isaiah 43:2",t:"When you pass through the waters, I will be with you."},
+{d:313,r:"Psalm 34:18",t:"The Lord is close to the brokenhearted and saves those who are crushed in spirit."},
+{d:314,r:"2 Corinthians 1:3-4",t:"God comforts us in all our troubles."},
+{d:315,r:"Romans 15:13",t:"May the God of hope fill you with all joy and peace as you trust in him."},
+{d:316,r:"Psalm 23:2-3",t:"He leads me beside quiet waters, he refreshes my soul."},
+{d:317,r:"Psalm 84:11",t:"The Lord bestows favour and honour; no good thing does he withhold."},
+{d:318,r:"Isaiah 26:4",t:"Trust in the Lord for ever, for the Lord is the Rock eternal."},
+{d:319,r:"Psalm 62:5",t:"Yes, my soul, find rest in God; my hope comes from him."},
+{d:320,r:"1 Thessalonians 5:16-18",t:"Rejoice always, pray continually, give thanks in all circumstances."},
+{d:321,r:"Proverbs 22:6",t:"Start children off on the way they should go, and even when they are old they will not turn from it."},
+{d:322,r:"Deuteronomy 6:6-7",t:"These commandments are to be on your hearts. Impress them on your children."},
+{d:323,r:"Psalm 127:3",t:"Children are a heritage from the Lord, offspring a reward from him."},
+{d:324,r:"Isaiah 54:13",t:"All your children will be taught by the Lord, and great will be their peace."},
+{d:325,r:"Luke 2:52",t:"Jesus grew in wisdom and stature, and in favour with God and man."},
+{d:326,r:"3 John 1:4",t:"I have no greater joy than to hear that my children are walking in the truth."},
+{d:327,r:"Exodus 20:12",t:"Honour your father and your mother."},
+{d:328,r:"Proverbs 1:8",t:"Listen, my son, to your father's instruction and do not forsake your mother's teaching."},
+{d:329,r:"Joshua 24:15",t:"As for me and my household, we will serve the Lord."},
+{d:330,r:"Psalm 78:4",t:"We will tell the next generation the praiseworthy deeds of the Lord."},
+{d:331,r:"Isaiah 9:6",t:"For to us a child is born, to us a son is given."},
+{d:332,r:"Luke 2:11",t:"Today a Saviour has been born to you; he is the Messiah, the Lord."},
+{d:333,r:"John 1:14",t:"The Word became flesh and made his dwelling among us."},
+{d:334,r:"Isaiah 7:14",t:"The virgin will conceive and give birth to a son, and will call him Immanuel."},
+{d:335,r:"Matthew 2:10",t:"When they saw the star, they were overjoyed."},
+{d:336,r:"Revelation 21:4",t:"He will wipe every tear from their eyes. There will be no more death or mourning."},
+{d:337,r:"Psalm 23:1",t:"The Lord is my shepherd, I lack nothing."},
+{d:338,r:"Philippians 4:7",t:"The peace of God, which transcends all understanding, will guard your hearts and minds."},
+{d:339,r:"Isaiah 41:10",t:"Do not fear, for I am with you; do not be dismayed, for I am your God."},
+{d:340,r:"Romans 8:31",t:"If God is for us, who can be against us?"},
+{d:341,r:"Psalm 46:1",t:"God is our refuge and strength, an ever-present help in trouble."},
+{d:342,r:"2 Timothy 1:7",t:"God has not given us a spirit of fear, but of power and of love and of a sound mind."},
+{d:343,r:"Proverbs 3:5",t:"Trust in the Lord with all your heart and lean not on your own understanding."},
+{d:344,r:"John 16:33",t:"Take heart! I have overcome the world."},
+{d:345,r:"Psalm 56:3",t:"When I am afraid, I put my trust in you."},
+{d:346,r:"Matthew 11:28",t:"Come to me, all you who are weary and burdened, and I will give you rest."},
+{d:347,r:"Psalm 55:22",t:"Cast your cares on the Lord and he will sustain you."},
+{d:348,r:"Isaiah 26:3",t:"You will keep in perfect peace those whose minds are steadfast, because they trust in you."},
+{d:349,r:"Colossians 3:15",t:"Let the peace of Christ rule in your hearts."},
+{d:350,r:"Romans 5:1",t:"We have peace with God through our Lord Jesus Christ."},
+{d:351,r:"Proverbs 1:7",t:"The fear of the Lord is the beginning of wisdom."},
+{d:352,r:"James 1:5",t:"If any of you lacks wisdom, you should ask God, who gives generously to all."},
+{d:353,r:"Colossians 2:3",t:"In Christ are hidden all the treasures of wisdom and knowledge."},
+{d:354,r:"Psalm 119:105",t:"Your word is a lamp for my feet, a light on my path."},
+{d:355,r:"Matthew 7:24",t:"Everyone who hears my words and puts them into practice is like a wise man who built his house on the rock."},
+{d:356,r:"Proverbs 8:11",t:"Wisdom is more precious than rubies."},
+{d:357,r:"John 8:32",t:"The truth will set you free."},
+{d:358,r:"Philippians 4:8",t:"Whatever is true, whatever is noble, whatever is right — think about such things."},
+{d:359,r:"Matthew 5:8",t:"Blessed are the pure in heart, for they will see God."},
+{d:360,r:"1 John 1:9",t:"If we confess our sins, he is faithful and just and will forgive us."},
+{d:361,r:"John 3:16",t:"For God so loved the world that he gave his one and only Son."},
+{d:362,r:"Romans 8:38-39",t:"Neither death nor life can separate us from the love of God."},
+{d:363,r:"Ephesians 3:20",t:"Now to him who is able to do immeasurably more than all we ask or imagine."},
+{d:364,r:"Lamentations 3:22-23",t:"His mercies are new every morning; great is his faithfulness."},
+{d:365,r:"John 3:16",t:"For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life."},
+];
+const QL=[
+  {a:"2–3",e:"🧸",n:"Put toys in the toy box",d:"Pick up all your toys and put them away",s:1},
+  {a:"2–3",e:"👕",n:"Put dirty clothes in the hamper",d:"Find your dirty clothes and put them in the basket",s:1},
+  {a:"2–3",e:"🌿",n:"Water a plant",d:"Use the small watering can to water the plant",s:1},
+  {a:"2–3",e:"👟",n:"Put your shoes away",d:"Put your shoes in the right spot by the door",s:1},
+  {a:"2–3",e:"🥄",n:"Carry items to the table",d:"Help bring napkins or plastic cups to the table",s:1},
+  {a:"4–6",e:"🛏️",n:"Make your bed",d:"Pull the covers up and straighten your pillow",s:1},
+  {a:"4–6",e:"🍽️",n:"Set the table for dinner",d:"Put a plate, fork, and napkin at each seat",s:1},
+  {a:"4–6",e:"🧹",n:"Sweep the floor",d:"Use the small broom to sweep up crumbs",s:2},
+  {a:"4–6",e:"🧺",n:"Sort laundry by colour",d:"Make a pile of light clothes and a pile of dark clothes",s:1},
+  {a:"4–6",e:"🍎",n:"Wipe down the dining table",d:"Use a damp cloth to wipe all the crumbs off the table",s:1},
+  {a:"4–6",e:"📦",n:"Tidy your bedroom",d:"Put everything back where it belongs in your room",s:2},
+  {a:"4–6",e:"🗑️",n:"Empty small rubbish bins",d:"Carry the small bins to the big bin and empty them",s:1},
+  {a:"4–6",e:"🧴",n:"Wipe bathroom sinks",d:"Use a cloth to wipe the sink and tap until they shine",s:1},
+  {a:"7–10",e:"🍽️",n:"Load the dishwasher",d:"Rinse the dishes and stack them in the dishwasher",s:2},
+  {a:"7–10",e:"🧺",n:"Fold and put away laundry",d:"Fold your clean clothes neatly and put them in your drawer",s:2},
+  {a:"7–10",e:"🍳",n:"Help prepare a meal",d:"Help chop vegetables or stir the pot with supervision",s:2},
+  {a:"7–10",e:"🧹",n:"Vacuum a room",d:"Use the vacuum cleaner to clean the whole room",s:2},
+  {a:"7–10",e:"🪟",n:"Clean the windows",d:"Spray and wipe the windows until they're streak-free",s:2},
+  {a:"7–10",e:"🌿",n:"Water all the plants",d:"Water every plant in the house that needs it",s:1},
+  {a:"7–10",e:"🎒",n:"Pack your school bag",d:"Pack everything you need for tomorrow before bed",s:1},
+  {a:"7–10",e:"🧽",n:"Clean the bathroom sink",d:"Scrub the sink, taps, and wipe down the counter",s:2},
+  {a:"7–10",e:"🐾",n:"Feed and water the pet",d:"Fill the food bowl and make sure the water is fresh",s:1},
+  {a:"11–13",e:"🍳",n:"Cook a simple meal",d:"Make a meal for the family with supervision",s:3},
+  {a:"11–13",e:"🧺",n:"Do a full load of laundry",d:"Wash, dry, fold, and put away a full load independently",s:3},
+  {a:"11–13",e:"🚽",n:"Scrub the toilet and bathroom",d:"Clean the toilet, sink, mirror, and floor",s:3},
+  {a:"11–13",e:"🧹",n:"Mop the floors",d:"Fill the bucket and mop the kitchen and bathroom floors",s:2},
+  {a:"11–13",e:"🗑️",n:"Take out all the rubbish",d:"Empty all bins and put the bags outside",s:2},
+  {a:"11–13",e:"🛒",n:"Help write the shopping list",d:"Check the fridge and cupboards and write what we need",s:2},
+  {a:"11–13",e:"🍽️",n:"Clean up after dinner",d:"Clear the table, wash up, and wipe the kitchen counters",s:2},
+  {a:"11–13",e:"👶",n:"Help look after a younger sibling",d:"Play with and supervise a younger sibling for 30 minutes",s:3},
+  {a:"11–13",e:"📚",n:"Organise your school schedule",d:"Review your homework, assignments, and upcoming tests",s:2},
+];
+const REWARD_SUGS={
+  screen:[{e:"📺",t:"1 hour extra anime tonight"},{e:"🎮",t:"60 min gaming session each"},{e:"🎬",t:"Grace & Lauren choose Friday's movie"},{e:"📱",t:"30 min extra screen time each"},{e:"🎌",t:"Watch a new anime together"}],
+  family:[{e:"🎬",t:"Family movie night with snacks"},{e:"🍕",t:"Pizza and movie night"},{e:"🎲",t:"Family board game night"},{e:"🍳",t:"Cook a special meal together"},{e:"🏕️",t:"Backyard campfire night"}],
+  outings:[{e:"🎳",t:"Bowling night out"},{e:"🌳",t:"Trip to the park or forest"},{e:"🍦",t:"Ice cream outing"},{e:"🏊",t:"Swimming pool day"},{e:"🎡",t:"Weekend adventure trip"}],
+  privs:[{e:"🌙",t:"Grace & Lauren stay up 30 min late"},{e:"👑",t:"Kids choose what's for dinner"},{e:"📺",t:"Control the TV remote all evening"},{e:"🚫",t:"Skip one quest next week each"},{e:"🛏️",t:"Sleep-in Saturday morning"}],
+  treats:[{e:"🍫",t:"Choose a special dessert this week"},{e:"📚",t:"New manga volume for Grace or Lauren"},{e:"🧁",t:"Bake a cake together"},{e:"🎁",t:"Small surprise treat bag"},{e:"🌮",t:"Favourite restaurant for dinner"}]
+};
+const CE=["🧹","🍽️","🧺","🛁","🚽","🪣","🗑️","🛏️","🌿","🐾","📦","🧴","🪟","🧽","🍳","🥗"];
+const ME=["🐉","⚔️","🌸","🦊","🐺","🐱","🐼","🌙","⭐","🔥","💫","🎮"];
+const COLS=["#7c6ff7","#22c97a","#f04060","#f060a0","#3b9ef0","#f5c842","#5a50d4","#18a862"];
+const WORDS=["Quests","Missions","Contributions","Jobs","Tasks","Responsibilities"];
+let ST={},pinBuf="",selCE="🧹",selME="🐱",selCol=COLS[0],curKid=null,qlFlt="All";
+let voices=[],selVoice=null,audioCtx=null,expandedQL=null,rsugSlot=null;
+function calcAge(dob){const t=new Date(),b=new Date(dob);let a=t.getFullYear()-b.getFullYear();const m=t.getMonth()-b.getMonth();if(m<0||(m===0&&t.getDate()<b.getDate()))a--;return a;}
+function isBday(dob){const t=new Date(),b=new Date(dob);return t.getMonth()===b.getMonth()&&t.getDate()===b.getDate();}
+function isYoung(id){const m=ST.members.find(x=>x.id===id);return m&&calcAge(m.dob)<=6;}
+function tw(){return ST.taskWord||"Quest";}
+function dayOfYear(){const n=new Date();return Math.floor((n-new Date(n.getFullYear(),0,0))/86400000);}
+function weekKey(){const d=new Date(),day=d.getDay(),diff=d.getDate()-day+(day===0?-6:1);return new Date(new Date().setDate(diff)).toISOString().slice(0,10);}
+function load(){try{const s=localStorage.getItem('fdv9');if(s){ST=JSON.parse(s);return;}}catch(e){}ST=def();}
+function save(){try{localStorage.setItem('fdv9',JSON.stringify(ST));}catch(e){}}
+function def(){return{pin:"1234",rewards:[{text:"Family Movie Night",emoji:"🎬"},{text:"Ice cream outing",emoji:"🍦"},null],threshold:80,taskWord:"Quest",soundEnabled:true,
+  members:[{id:"grace",name:"Grace",dob:"2013-08-01",emoji:"⚔️",color:"#7c6ff7",isParent:false},{id:"lauren",name:"Lauren",dob:"2014-09-18",emoji:"🌸",color:"#f060a0",isParent:false},{id:"christian",name:"Christian",dob:"2019-09-24",emoji:"🐉",color:"#22c97a",isParent:false},{id:"constance",name:"Constance",dob:"2023-04-12",emoji:"🦊",color:"#f5c842",isParent:false},{id:"bill",name:"Bill",dob:"1981-10-31",emoji:"🔥",color:"#3b9ef0",isParent:true},{id:"ying",name:"Ying",dob:"1981-03-31",emoji:"💫",color:"#f5c842",isParent:true}],
+  chores:[{id:"c1",name:"Wash the dishes",desc:"Clean all dishes and put them away",emoji:"🍽️",assignee:"grace",points:2,done:false},{id:"c2",name:"Vacuum the living room",desc:"Use the vacuum from the hallway closet",emoji:"🧹",assignee:"lauren",points:2,done:false},{id:"c3",name:"Tidy the toy box",desc:"Put all your toys into the big box",emoji:"📦",assignee:"christian",points:1,done:false},{id:"c4",name:"Pick up your things",desc:"Put your things away and tidy up",emoji:"🌿",assignee:"constance",points:1,done:false}],
+  personalRewards:[{id:"pr1",memberId:"grace",text:"Extra anime episode",stars:15},{id:"pr2",memberId:"lauren",text:"Extra anime episode",stars:15},{id:"pr3",memberId:"christian",text:"Choose a bedtime story",stars:10},{id:"pr4",memberId:"constance",text:"Extra cuddle time",stars:8}],
+  history:[],stars:{grace:0,lauren:0,christian:0,constance:0,bill:0,ying:0},weeklyStars:{},currentWeek:weekKey(),selectedVoiceName:null,
+  monthlyRewards:[null,null,null],grandRewards:[null,null,null],
+  monthlyStarTarget:120,grandStarTarget:400,
+  monthlyStarsAccum:0,currentMonth:''
+};}
+function chkWeek(){const wk=weekKey();if(ST.currentWeek!==wk){ST.weeklyStars={};ST.currentWeek=wk;save();}}
+function addStars(id,pts){if(!ST.stars[id])ST.stars[id]=0;ST.stars[id]+=pts;if(!ST.weeklyStars[id])ST.weeklyStars[id]=0;ST.weeklyStars[id]+=pts;}
+function getActiveRewards(){return(ST.rewards||[]).filter(r=>r);}
+function getACtx(){if(!audioCtx)try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}return audioCtx;}
+function playChime(){if(!ST.soundEnabled)return;const ctx=getACtx();if(!ctx)return;[523.25,659.25,783.99].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,ctx.currentTime);g.gain.linearRampToValueAtTime(0.18/(i+1),ctx.currentTime+0.01+i*0.06);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2+i*0.1);o.start(ctx.currentTime+i*0.06);o.stop(ctx.currentTime+1.5);});}
+function togSnd(v){ST.soundEnabled=v;save();}
+function loadVoices(){if(!window.speechSynthesis)return;voices=speechSynthesis.getVoices();if(!voices.length)speechSynthesis.onvoiceschanged=()=>{voices=speechSynthesis.getVoices();pickBest();};else pickBest();}
+function pickBest(){if(ST.selectedVoiceName){const f=voices.find(v=>v.name===ST.selectedVoiceName);if(f){selVoice=f;updVLbl();return;}}const pref=['Samantha','Karen','Moira','Tessa','Fiona','Ava','Allison'];for(const n of pref){const v=voices.find(x=>x.name===n);if(v){selVoice=v;break;}}if(!selVoice){const en=voices.filter(v=>v.lang.startsWith('en'));selVoice=en[0]||voices[0]||null;}updVLbl();}
+function speak(txt,young){if(!speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);if(selVoice)u.voice=selVoice;u.rate=young?0.78:0.9;u.pitch=young?1.2:1.0;u.volume=1;speechSynthesis.speak(u);}
+function speakVerse(){const v=V[(dayOfYear()-1)%365];if(v)speak(v.t+' — '+v.r,false);}
+function openVov(){const vl=document.getElementById('vlist');vl.innerHTML='';const en=voices.filter(v=>v.lang.startsWith('en'));const show=en.length?en:voices;if(!show.length){vl.innerHTML='<p style="font-size:13px;color:var(--text3);padding:10px;font-weight:600;">No voices found. Try Safari on iPad.</p>';return;}show.forEach(v=>{const d=document.createElement('div');d.className='vopt'+(selVoice&&selVoice.name===v.name?' on':'');d.innerHTML=`<div style="flex:1;font-size:13px;font-weight:600;color:var(--text);">${v.name}</div><span style="font-size:11px;color:var(--text3);margin-right:8px;font-weight:600;">${v.lang}</span><button style="font-size:11px;padding:4px 10px;border-radius:7px;border:2px solid var(--border2);background:var(--bg3);cursor:pointer;font-weight:700;color:var(--text);font-family:'Nunito',sans-serif;" onclick="prvV('${v.name.replace(/'/g,"\\'")}')">Preview</button>`;d.onclick=(e)=>{if(e.target.tagName==='BUTTON')return;selVoice=v;ST.selectedVoiceName=v.name;save();document.querySelectorAll('.vopt').forEach(x=>x.classList.remove('on'));d.classList.add('on');updVLbl();};vl.appendChild(d);});document.getElementById('vov').style.display='flex';}
+function prvV(n){const v=voices.find(x=>x.name===n);if(!v)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance("Hi! I am going to help you with your quests today. Let's go!");u.voice=v;u.rate=0.8;u.pitch=1.15;u.volume=1;speechSynthesis.speak(u);}
+function closeVov(){document.getElementById('vov').style.display='none';}
+function updVLbl(){const el=document.getElementById('cur-voice');if(el&&selVoice)el.textContent='Current voice: '+selVoice.name;}
+function show(id){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));document.getElementById('sc-'+id).classList.add('on');if(id==='home')renderHome();if(id==='parent')renderParent();}
+function showPin(){pinBuf="";updPD();document.getElementById('pin-err').textContent="";show('pin');}
+function pp(v){if(v==='c')pinBuf="";else if(v==='d')pinBuf=pinBuf.slice(0,-1);else if(pinBuf.length<4)pinBuf+=v;updPD();if(pinBuf.length===4){setTimeout(()=>{if(pinBuf===ST.pin){show('parent');pinBuf="";updPD();}else{document.getElementById('pin-err').textContent="Incorrect PIN.";pinBuf="";updPD();}},200);}}
+function updPD(){for(let i=0;i<4;i++)document.getElementById('pd'+i).classList.toggle('on',i<pinBuf.length);}
+function showPS(n){document.querySelectorAll('.ps').forEach(s=>s.classList.remove('on'));document.querySelectorAll('.pni').forEach(x=>x.classList.remove('on'));document.getElementById('ps-'+n).classList.add('on');document.getElementById('pn-'+n).classList.add('on');if(n==='week')renderWeek();if(n==='rewards')renderRewards();if(n==='settings')renderSettings();}
+function renderVerse(){const v=V[(dayOfYear()-1)%365];if(!v)return;document.getElementById('verse-text').textContent='"'+v.t+'"';document.getElementById('verse-ref').textContent='— '+v.r;}
+function renderHome(){
+  chkWeek();
+  document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',day:'numeric',month:'long'});
+  renderVerse();
+  const bd=document.getElementById('bday-area');bd.innerHTML='';
+  ST.members.forEach(m=>{if(isBday(m.dob)){const age=calcAge(m.dob);bd.innerHTML=`<div class="bday"><div style="font-size:28px;">🎂</div><div style="flex:1;"><div style="font-family:'Fredoka One',cursive;font-size:15px;color:var(--pink);">Happy Birthday, ${m.name}!</div><div style="font-size:11px;color:var(--text3);margin-top:2px;font-weight:600;">Turning ${age} today — no ${tw().toLowerCase()}s for the birthday star! 🎉</div></div></div>`;}});
+  const rewards=getActiveRewards();
+  const rd=document.getElementById('goal-rewards-display');rd.innerHTML='';
+  rewards.length?rewards.forEach(r=>{const c=document.createElement('span');c.className='reward-chip';c.textContent=r.emoji+' '+r.text;rd.appendChild(c);}):rd.innerHTML='<span style="font-size:12px;color:var(--text3);font-weight:600;">No reward set — visit Parent Settings</span>';
+  const dow=new Date().getDay();
+  const dr=document.getElementById('days-row');dr.innerHTML='';
+  ['Mon','Tue','Wed','Thu','Fri'].forEach((dn,i)=>{
+    const dayNum=i+1,filled=dow>dayNum||(dow===dayNum),isToday=dow===dayNum;
+    const div=document.createElement('div');div.className='day-dot'+(filled?' filled':'')+(isToday?' today':'');
+    div.innerHTML=`<div class="dl">${dn}</div><div class="dc">${filled?'✓':''}</div>`;
+    dr.appendChild(div);
+  });
+  const total=ST.chores.length,done=ST.chores.filter(c=>c.done).length,pct=total>0?Math.round((done/total)*100):0;
+  document.getElementById('goal-fill').style.width=pct+'%';
+  document.getElementById('goal-done').textContent=done+' of '+total+' '+tw().toLowerCase()+'s done';
+  document.getElementById('goal-pct').textContent=pct+'% · need '+ST.threshold+'%';
+  const unlocked=pct>=ST.threshold&&total>0;
+  document.getElementById('goal-unlocked').style.display=unlocked?'flex':'none';
+  if(unlocked){const ul=document.getElementById('goal-unlock-list');ul.innerHTML='';rewards.forEach(r=>{const c=document.createElement('span');c.className='reward-chip';c.textContent=r.emoji+' '+r.text;ul.appendChild(c);});}
+  document.getElementById('kids-lbl').textContent='Tap your name to see your '+tw().toLowerCase()+'s';
+  const grid=document.getElementById('kids-grid');grid.innerHTML='';
+  ST.members.filter(m=>!m.isParent).forEach(m=>{
+    const age=calcAge(m.dob),mc=ST.chores.filter(c=>c.assignee===m.id),md=mc.filter(c=>c.done).length;
+    const stars=ST.stars[m.id]||0,ws=ST.weeklyStars[m.id]||0,bday=isBday(m.dob);
+    const maxW=Math.max(1,...ST.members.filter(x=>!x.isParent).map(x=>ST.weeklyStars[x.id]||0));
+    const xpPct=Math.round((ws/maxW)*100);
+    const div=document.createElement('div');div.className='kc';
+    if(bday){div.style.borderColor='var(--pink)';div.style.boxShadow='0 0 16px var(--pink-glow)';}
+    div.onclick=()=>openQuests(m.id);
+    div.innerHTML=`<div class="kc-av" style="border-color:${m.color};box-shadow:0 0 10px ${m.color}44;"><span style="font-size:24px;">${m.emoji}</span></div><div class="kc-name">${m.name}${bday?' 🎂':''}</div><div class="kc-age">Age ${age}</div><div class="kc-stars"><span class="star-icon">★</span><span class="star-count" style="color:${m.color};">${stars}</span></div><div class="kc-prog">${md}/${mc.length} done</div><div class="kc-xp"><div class="kc-xp-fill" style="width:${xpPct}%;background:linear-gradient(90deg,${m.color},${m.color}88);"></div></div>`;
+    grid.appendChild(div);
+  });
+  const wl=document.getElementById('wpp-list');wl.innerHTML='';
+  const kids=ST.members.filter(m=>!m.isParent),maxW=Math.max(1,...kids.map(m=>ST.weeklyStars[m.id]||0));
+  kids.forEach(m=>{
+    const ws=ST.weeklyStars[m.id]||0,p2=Math.round((ws/maxW)*100);
+    const next=(ST.personalRewards||[]).filter(r=>r.memberId===m.id).find(r=>r.stars>(ST.stars[m.id]||0));
+    const row=document.createElement('div');row.className='wpr';
+    row.innerHTML=`<span class="wpr-name" style="color:${m.color};">${m.name}</span><div class="wpr-track"><div class="wpr-fill" style="width:${p2}%;background:linear-gradient(90deg,${m.color},${m.color}88);"></div></div><span class="wpr-stars">★ ${ws}</span>`;
+    wl.appendChild(row);
+    if(next){const h=document.createElement('div');h.className='wpr-hint';h.textContent=`${next.stars-(ST.stars[m.id]||0)} more → ${next.text}`;wl.appendChild(h);}
+  });
+  const ac=document.getElementById('activity-card');
+  ac.innerHTML=ST.history.length?ST.history.slice(0,6).map(h=>{const mem=ST.members.find(x=>x.name===h.name);return`<div class="ar"><span class="ar-name" style="color:${mem?.color||'var(--purple)'};">${h.name}</span><span class="ar-task">${h.chore}</span><span class="ar-check">✓</span><span class="ar-time">${h.time}</span></div>`;}).join(''):'<div style="font-size:12px;color:var(--text3);font-weight:600;padding:4px 0;">No activity yet today.</div>';
+
+  chkMonthReset();
+  renderGoalBars();
+}
+function openQuests(kidId){
+  curKid=kidId;const m=ST.members.find(x=>x.id===kidId),young=isYoung(kidId);
+  document.getElementById('q-title').textContent=m.name+"'s "+tw()+"s";
+  document.getElementById('q-sub').textContent='Tap 🔊 to hear, then tap the circle when done!';
+  const ql=document.getElementById('quest-list');ql.className='quest-list '+(young?'young':'standard');
+  renderQuestList();show('quests');
+}
+function renderQuestList(){
+  const list=document.getElementById('quest-list');list.innerHTML='';
+  const my=ST.chores.filter(c=>c.assignee===curKid),young=isYoung(curKid);
+  if(!my.length){list.innerHTML=`<div style="text-align:center;padding:40px;font-family:'Fredoka One',cursive;font-size:20px;color:var(--text3);">No ${tw().toLowerCase()}s today! 🎉</div>`;return;}
+  my.forEach(c=>{
+    const item=document.createElement('div');item.className='qi'+(c.done?' done':'');item.id='qi-'+c.id;
+    const de=c.desc.replace(/'/g,"\\'").replace(/"/g,'\\"');
+    item.innerHTML=`<div class="qi-emoji">${c.emoji}</div><div class="qi-body"><div class="qi-name">${c.name}</div><div class="qi-desc">${c.desc}</div><div class="qi-pts">★ ${c.points} ${c.points===1?'star':'stars'}</div></div><button class="qi-audio" title="Read aloud" onclick="speak('${de}',${young})">🔊</button><button class="qi-check ${c.done?'on':''}" onclick="togQ('${c.id}',event)">${c.done?'✓':''}</button>`;
+    list.appendChild(item);
+  });
+}
+function togQ(cid,e){
+  const c=ST.chores.find(x=>x.id===cid);if(!c)return;
+  if(!c.done){
+    c.done=true;addStars(curKid,c.points);
+    const m=ST.members.find(x=>x.id===curKid);
+    ST.history.unshift({name:m.name,chore:c.name,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})});
+    if(ST.history.length>50)ST.history.pop();
+    if(!ST.monthlyStarsAccum) ST.monthlyStarsAccum=0;
+    ST.monthlyStarsAccum += c.points;
+    playChime();
+    setTimeout(()=>{const el=document.getElementById('qi-'+cid);if(el){el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),550);}},50);
+    confetti(e);
+    if(isYoung(curKid))setTimeout(()=>speak("Wow, you did it! That is "+c.points+(c.points===1?" whole star! Amazing!":" whole stars! You are a superstar!"),true),400);
+  } else {
+    c.done=false;
+    ST.stars[curKid]=Math.max(0,(ST.stars[curKid]||0)-c.points);
+    ST.weeklyStars[curKid]=Math.max(0,(ST.weeklyStars[curKid]||0)-c.points);
+  }
+  save();renderQuestList();
+}
+function confetti(e){const em=['⭐','✨','🌟','💫','🎉','🏆','⚔️','🐉','🌸'];for(let i=0;i<10;i++){const el=document.createElement('div');el.className='cb';el.textContent=em[Math.floor(Math.random()*em.length)];el.style.left=(e.clientX+(Math.random()-0.5)*100)+'px';el.style.top=(e.clientY+(Math.random()-0.5)*50)+'px';el.style.animationDelay=(Math.random()*0.35)+'s';document.body.appendChild(el);setTimeout(()=>el.remove(),1300);}}
+function toast(msg){const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2400);}
+function renderParent(){renderWeek();renderRewards();renderSettings();const st=document.getElementById('snd-tog');if(st)st.checked=ST.soundEnabled!==false;updVLbl();}
+function renderWeek(){
+  const tot=ST.chores.length,dn=ST.chores.filter(c=>c.done).length,ts=Object.values(ST.stars).reduce((a,b)=>a+b,0);
+  const sg=document.getElementById('stat-grid');if(sg)sg.innerHTML=`<div class="stc"><div class="stn">${dn}/${tot}</div><div class="stl">${tw()}s today</div></div><div class="stc"><div class="stn">${tot>0?Math.round(dn/tot*100):0}%</div><div class="stl">Completion</div></div><div class="stc"><div class="stn">${ts}</div><div class="stl">Total stars</div></div>`;
+  const sel=document.getElementById('nc-who');if(sel)sel.innerHTML=ST.members.map(m=>`<option value="${m.id}">${m.name} (${calcAge(m.dob)})</option>`).join('');
+  const ep=document.getElementById('chore-ep');if(ep){ep.innerHTML='';CE.forEach(e=>{const b=document.createElement('button');b.className='eo'+(selCE===e?' on':'');b.textContent=e;b.type='button';b.onclick=()=>{selCE=e;renderWeek();};ep.appendChild(b);});}
+  renderTodayList();renderHistList();renderQLib();
+}
+function renderTodayList(){const tl=document.getElementById('today-list');if(!tl)return;tl.innerHTML='';if(!ST.chores.length){tl.innerHTML='<div style="font-size:12px;color:var(--text3);font-weight:600;padding:6px 0;">No quests assigned yet.</div>';return;}ST.chores.forEach(c=>{const m=ST.members.find(x=>x.id===c.assignee);const d=document.createElement('div');d.className='li';d.innerHTML=`<span style="font-size:17px;">${c.emoji}</span><div style="flex:1;"><div style="font-size:12px;font-weight:800;color:var(--text);">${c.name}</div><div style="font-size:11px;color:var(--text3);font-weight:600;">→ ${m?m.name:'?'} · ${c.points} ★ · ${c.done?'Done ✓':'Pending'}</div></div><button class="bd" onclick="rmQ('${c.id}')">Remove</button>`;tl.appendChild(d);});}
+function renderHistList(){const hl=document.getElementById('hist-list');if(!hl)return;hl.innerHTML=ST.history.length===0?'<div style="font-size:12px;color:var(--text3);font-weight:600;padding:6px 0;">No activity yet.</div>':ST.history.slice(0,15).map(h=>{const mem=ST.members.find(x=>x.name===h.name);return`<div style="display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;"><span style="font-weight:800;width:70px;flex-shrink:0;color:${mem?.color||'var(--purple)'};">${h.name}</span><span style="flex:1;color:var(--text2);font-weight:600;">${h.chore}</span><span style="color:var(--green);">✓</span><span style="font-size:10px;color:var(--text3);font-weight:600;">${h.time}</span></div>`;}).join('');}
+function renderQLib(){
+  const ages=[...new Set(QL.map(q=>q.a))];
+  const fb=document.getElementById('ql-fb');if(!fb)return;fb.innerHTML='';
+  ['All',...ages].forEach(ag=>{const b=document.createElement('button');b.textContent=ag==='All'?'All ages':'Age '+ag;b.className=qlFlt===ag?'on':'';b.onclick=()=>{qlFlt=ag;expandedQL=null;renderQLib();};fb.appendChild(b);});
+  const ct=document.getElementById('ql-content');if(!ct)return;ct.innerHTML='';
+  const grps=qlFlt==='All'?ages:[qlFlt];
+  grps.forEach(ag=>{
+    const items=QL.filter(q=>q.a===ag);const sec=document.createElement('div');sec.className='ql-age';
+    sec.innerHTML=`<div class="ql-ah">Age ${ag}</div>`;
+    items.forEach((q,qi)=>{
+      const uid=ag.replace(/[^a-z0-9]/gi,'_')+'-'+qi,isExp=expandedQL===uid;
+      const row=document.createElement('div');row.className='ql-row'+(isExp?' expanded':'');
+      row.innerHTML=`<span class="ql-em">${q.e}</span><div class="ql-body"><div class="ql-name">${q.n}</div><div class="ql-desc">${q.d}</div></div><span class="ql-pts">★${q.s}</span><button class="ql-addbtn ${isExp?'cancel':''}" onclick="toggleQLExp('${uid}',event)">${isExp?'Cancel':'+ Add'}</button>`;
+      if(isExp){
+        const panel=document.createElement('div');panel.className='assign-panel';
+        const kids=ST.members.filter(m=>!m.isParent);
+        panel.innerHTML=`<div class="assign-label">Who is this quest for?</div><div class="assign-grid" id="ag-${uid}"></div><div class="assign-confirm"><button class="bp" style="font-size:12px;padding:5px 14px;" onclick="confirmAdd('${q.n.replace(/'/g,"\\'")}','${q.d.replace(/'/g,"\\'")}','${q.e}',${q.s},'${uid}')">Add quest ✓</button><span style="font-size:11px;color:var(--text3);margin-left:8px;font-weight:600;" id="ac-hint-${uid}">Select a family member above</span></div>`;
+        row.appendChild(panel);
+        setTimeout(()=>{const ag2=document.getElementById('ag-'+uid);if(!ag2)return;kids.forEach(m=>{const btn=document.createElement('button');btn.className='assign-btn';btn.dataset.memberId=m.id;btn.innerHTML=`<div class="ab-em">${m.emoji}</div><div class="ab-name" style="color:${m.color};">${m.name}</div>`;btn.onclick=()=>{document.querySelectorAll(`#ag-${uid} .assign-btn`).forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');const h=document.getElementById('ac-hint-'+uid);if(h)h.textContent='Ready to add to '+m.name;};ag2.appendChild(btn);});},0);
+      }
+      sec.appendChild(row);
+    });
+    ct.appendChild(sec);
+  });
+}
+function toggleQLExp(uid,e){e.stopPropagation();expandedQL=expandedQL===uid?null:uid;renderQLib();setTimeout(()=>{const el=document.querySelector('.ql-row.expanded');if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});},50);}
+function confirmAdd(name,desc,emoji,stars,uid){const ag2=document.getElementById('ag-'+uid);if(!ag2)return;const sel=ag2.querySelector('.assign-btn.sel');if(!sel){const h=document.getElementById('ac-hint-'+uid);if(h){h.style.color='var(--red)';h.textContent='Please select a family member first!';}return;}const m=ST.members.find(x=>x.id===sel.dataset.memberId);ST.chores.push({id:'c'+Date.now(),name,desc,emoji,assignee:m.id,points:stars,done:false});save();expandedQL=null;renderQLib();renderTodayList();toast('"'+name+'" added to '+m.name+"'s quests! ✓");}
+function addQuest(){const name=document.getElementById('nc-name').value.trim(),desc=document.getElementById('nc-desc').value.trim(),who=document.getElementById('nc-who').value,pts=parseInt(document.getElementById('nc-pts').value);if(!name)return;ST.chores.push({id:'c'+Date.now(),name,desc:desc||name,emoji:selCE,assignee:who,points:pts,done:false});save();document.getElementById('nc-name').value='';document.getElementById('nc-desc').value='';renderTodayList();}
+function rmQ(id){ST.chores=ST.chores.filter(c=>c.id!==id);save();renderTodayList();}
+function renderRewards(){
+  if(!ST.rewards)ST.rewards=[null,null,null];while(ST.rewards.length<3)ST.rewards.push(null);
+  const sl=document.getElementById('reward-slots');if(!sl)return;sl.innerHTML='';
+  ST.rewards.forEach((r,i)=>{const div=document.createElement('div');div.className='reward-slot'+(r?' filled':'');if(r){div.innerHTML=`<span class="rs-num">${i+1}</span><span style="font-size:20px;">${r.emoji}</span><span style="flex:1;font-size:13px;font-weight:700;color:var(--text);">${r.text}</span><button class="rs-clear" onclick="clearR(${i})">✕</button>`;div.onclick=(e)=>{if(e.target.classList.contains('rs-clear'))return;openRsug(i);};}else{div.innerHTML=`<span class="rs-num">${i+1}</span><span style="font-size:18px;color:var(--text3);">➕</span><span style="flex:1;font-size:12px;font-weight:600;color:var(--text3);">Tap to add reward ${i+1}</span>`;div.onclick=()=>openRsug(i);}sl.appendChild(div);});
+  const tv=document.getElementById('thresh');if(tv)tv.value=ST.threshold;const tvl=document.getElementById('thresh-val');if(tvl)tvl.textContent=ST.threshold+'%';
+  if(!ST.personalRewards)ST.personalRewards=[];const psel=document.getElementById('pr-m');if(psel)psel.innerHTML=ST.members.filter(m=>!m.isParent).map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
+  const prl=document.getElementById('pr-list');if(prl){prl.innerHTML='';ST.personalRewards.forEach(pr=>{const m=ST.members.find(x=>x.id===pr.memberId);const ts=ST.stars[pr.memberId]||0;const d=document.createElement('div');d.className='li';d.innerHTML=`<span style="color:var(--gold);">⭐</span><div style="flex:1;"><div style="font-size:12px;font-weight:800;color:var(--text);">${pr.text}</div><div style="font-size:11px;color:var(--text3);font-weight:600;">${m?m.name:'?'} · ${pr.stars} ★ · ${ts>=pr.stars?'✅ Unlocked!':Math.max(0,pr.stars-ts)+' to go'}</div></div><button class="bd" onclick="rmPR('${pr.id}')">Remove</button>`;prl.appendChild(d);});}
+  renderMonthlySlots();
+  renderGrandSlots();
+}
+// Override openRsug to use tier-aware version for weekly tab
+function openRsug(i){ openTierRsug('weekly', i); }
+function _openRsug_orig(i){rsugSlot=i;document.getElementById('rsug-title').textContent='Choose reward '+(i+1)+' of 3';const cats={screen:'rs-screen',family:'rs-family',outings:'rs-outings',privs:'rs-privs',treats:'rs-treats'};Object.entries(cats).forEach(([cat,id])=>{const el=document.getElementById(id);if(!el)return;el.innerHTML='';REWARD_SUGS[cat].forEach(r=>{const d=document.createElement('div');d.className='rsug';d.innerHTML=`<span style="font-size:15px;width:22px;text-align:center;">${r.e}</span><span style="flex:1;font-size:12px;font-weight:600;color:var(--text2);">${r.t}</span><span style="font-size:11px;color:var(--purple);font-weight:800;">Pick</span>`;d.onclick=()=>pickR(r.t,r.e);el.appendChild(d);});});document.getElementById('rsug-custom-t').value='';document.getElementById('rsug-custom-e').value='';document.getElementById('rsug-overlay').style.display='flex';}
+function pickR(t,e){if(!ST.rewards)ST.rewards=[null,null,null];ST.rewards[rsugSlot]={text:t,emoji:e};save();closeRsug();renderRewards();renderHome();}
+function pickCustomR(){const t=document.getElementById('rsug-custom-t').value.trim(),e=document.getElementById('rsug-custom-e').value.trim()||'🎁';if(!t)return;pickR(t,e);}
+function clearR(i){ST.rewards[i]=null;save();renderRewards();renderHome();}
+function closeRsug(){document.getElementById('rsug-overlay').style.display='none';}
+function updThresh(v){ST.threshold=parseInt(v);document.getElementById('thresh-val').textContent=v+'%';save();}
+function addPR(){const text=document.getElementById('pr-t').value.trim(),stars=parseInt(document.getElementById('pr-s').value),memberId=document.getElementById('pr-m').value;if(!text||!stars)return;if(!ST.personalRewards)ST.personalRewards=[];ST.personalRewards.push({id:'pr'+Date.now(),memberId,text,stars});save();document.getElementById('pr-t').value='';document.getElementById('pr-s').value='';renderRewards();}
+function rmPR(id){ST.personalRewards=ST.personalRewards.filter(r=>r.id!==id);save();renderRewards();}
+function renderSettings(){
+  const fl=document.getElementById('fam-list');if(fl){fl.innerHTML='';ST.members.forEach(m=>{const age=calcAge(m.dob),stars=ST.stars[m.id]||0;const d=document.createElement('div');d.className='li';d.innerHTML=`<div style="width:34px;height:34px;border-radius:50%;background:${m.color}22;border:2px solid ${m.color};display:flex;align-items:center;justify-content:center;font-size:17px;">${m.emoji}</div><div style="flex:1;"><div style="font-size:12px;font-weight:800;color:var(--text);">${m.name}${m.isParent?'<span style="font-size:10px;background:rgba(60,147,240,0.15);color:#3b9ef0;padding:1px 7px;border-radius:8px;margin-left:6px;font-weight:700;">parent</span>':''}</div><div style="font-size:11px;color:var(--text3);font-weight:600;">Age ${age} · ${stars} total stars</div></div><div style="display:flex;gap:5px;">${!m.isParent?`<button style="font-size:11px;padding:4px 10px;border-radius:7px;border:2px solid var(--purple);background:rgba(124,111,247,0.15);color:var(--purple);cursor:pointer;font-weight:700;font-family:'Nunito',sans-serif;" onclick="editMem('${m.id}')">✏ Edit</button><button class="bd" onclick="rmMem('${m.id}')">Remove</button>`:''}</div>`; fl.appendChild(d);});}
+  const mep=document.getElementById('mem-ep');if(mep){mep.innerHTML='';ME.forEach(e=>{const b=document.createElement('button');b.className='eo'+(selME===e?' on':'');b.textContent=e;b.type='button';b.onclick=()=>{selME=e;renderSettings();};mep.appendChild(b);});}
+  const cp=document.getElementById('col-pick');if(cp){cp.innerHTML='';COLS.forEach(c=>{const b=document.createElement('div');b.className='co'+(selCol===c?' on':'');b.style.background=c;b.onclick=()=>{selCol=c;renderSettings();};cp.appendChild(b);});}
+  const wc=document.getElementById('word-chips');if(wc){wc.innerHTML='';WORDS.forEach(w=>{const d=document.createElement('div');d.className='wchip'+(ST.taskWord===w?' on':'');d.textContent=w;d.onclick=()=>{ST.taskWord=w;save();renderSettings();};wc.appendChild(d);});}
+  const st=document.getElementById('snd-tog');if(st)st.checked=ST.soundEnabled!==false;updVLbl();
+}
+function addMem(){const name=document.getElementById('nm-n').value.trim(),age=parseInt(document.getElementById('nm-a').value);if(!name||!age)return;const id='m'+Date.now(),year=new Date().getFullYear()-age;ST.members.push({id,name,dob:year+'-01-01',emoji:selME,color:selCol,isParent:false});ST.stars[id]=0;ST.weeklyStars[id]=0;save();document.getElementById('nm-n').value='';document.getElementById('nm-a').value='';renderSettings();}
+function rmMem(id){ST.members=ST.members.filter(m=>m.id!==id);ST.chores=ST.chores.filter(c=>c.assignee!==id);delete ST.stars[id];delete ST.weeklyStars[id];save();renderSettings();}
+function chgPin(){const n=document.getElementById('np1').value,c=document.getElementById('np2').value,msg=document.getElementById('pin-msg');if(n.length!==4||!/^\d{4}$/.test(n)){msg.style.color='var(--red)';msg.textContent='Must be 4 digits.';return;}if(n!==c){msg.style.color='var(--red)';msg.textContent="PINs don't match.";return;}ST.pin=n;save();msg.style.color='var(--green)';msg.textContent='PIN updated!';document.getElementById('np1').value='';document.getElementById('np2').value='';}
+function resetDay(){if(!confirm('Reset all quest completions for today?'))return;ST.chores.forEach(c=>c.done=false);save();renderWeek();renderHome();alert('Ready for a new day!');}
+
+// ── EXTENDED EMOJI SETS ───────────────────────────────────────────────
+const ME_SET1=["🐉","⚔️","🌸","🦊","🐺","🐱","🐼","🌙","⭐","🔥","💫","🎮"];
+const ME_SET2=["🦁","🐯","🦄","🐸","🐧","🦋","🌺","🍀","🌊","⚡","🎯","🏆","🎸","🎨","🧙","🧝","🧚","🦸","🥷","🐲","🌈","🍁","🎭","🎪"];
+
+// ── EDIT MEMBER ────────────────────────────────────────────────────────
+let editingMemberId = null;
+let editSelEmoji = "⚔️";
+let editSelColor = "#7c6ff7";
+
+function editMem(id){
+  const m = ST.members.find(x=>x.id===id);
+  if(!m) return;
+  editingMemberId = id;
+  editSelEmoji = m.emoji;
+  editSelColor = m.color;
+  document.getElementById('edit-name').value = m.name;
+  renderEditModal();
+  document.getElementById('edit-modal').style.display='flex';
+}
+
+function renderEditModal(){
+  const m = ST.members.find(x=>x.id===editingMemberId);
+  if(!m) return;
+
+  // Preview
+  const prev = document.getElementById('edit-preview');
+  prev.textContent = editSelEmoji;
+  prev.style.borderColor = editSelColor;
+  prev.style.background = editSelColor+'22';
+  document.getElementById('edit-preview-name').textContent = document.getElementById('edit-name').value || m.name;
+
+  // Emoji picker set 1
+  const ep1 = document.getElementById('edit-emoji-picker');
+  ep1.innerHTML='';
+  ME_SET1.forEach(e=>{
+    const b=document.createElement('button');
+    b.style.cssText=`width:34px;height:34px;border-radius:8px;border:2px solid ${editSelEmoji===e?'var(--purple)':'var(--border)'};background:${editSelEmoji===e?'var(--purple-glow)':'var(--bg3)'};cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all 0.12s;`;
+    b.textContent=e;b.type='button';
+    b.onclick=()=>{editSelEmoji=e;renderEditModal();};
+    ep1.appendChild(b);
+  });
+
+  // Emoji picker set 2 (more variety)
+  const ep2 = document.getElementById('edit-emoji-picker2');
+  ep2.innerHTML='';
+  ME_SET2.forEach(e=>{
+    const b=document.createElement('button');
+    b.style.cssText=`width:34px;height:34px;border-radius:8px;border:2px solid ${editSelEmoji===e?'var(--purple)':'var(--border)'};background:${editSelEmoji===e?'var(--purple-glow)':'var(--bg3)'};cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all 0.12s;`;
+    b.textContent=e;b.type='button';
+    b.onclick=()=>{editSelEmoji=e;renderEditModal();};
+    ep2.appendChild(b);
+  });
+
+  // Colour picker
+  const cp = document.getElementById('edit-col-picker');
+  cp.innerHTML='';
+  COLS.forEach(c=>{
+    const b=document.createElement('div');
+    b.style.cssText=`width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid ${editSelColor===c?'#fff':'transparent'};background:${c};box-shadow:${editSelColor===c?'0 0 8px rgba(255,255,255,0.3)':''};transition:all 0.12s;`;
+    b.onclick=()=>{editSelColor=c;renderEditModal();};
+    cp.appendChild(b);
+  });
+}
+
+function saveEditMem(){
+  const m = ST.members.find(x=>x.id===editingMemberId);
+  if(!m) return;
+  const newName = document.getElementById('edit-name').value.trim();
+  if(newName) m.name = newName;
+  m.emoji = editSelEmoji;
+  m.color = editSelColor;
+  save();
+  closeEditModal();
+  renderSettings();
+  renderHome();
+  toast(m.name + "'s avatar updated! ✓");
+}
+
+function closeEditModal(){
+  document.getElementById('edit-modal').style.display='none';
+  editingMemberId=null;
+}
+
+// Update preview name as user types
+document.addEventListener('input', function(e){
+  if(e.target.id==='edit-name' && editingMemberId){
+    const prev=document.getElementById('edit-preview-name');
+    if(prev) prev.textContent=e.target.value||'';
+  }
+});
+
+// ── REWARD TAB SWITCHING ───────────────────────────────────────────────
+let currentRTab = 'weekly';
+function switchRTab(tab){
+  currentRTab = tab;
+  ['weekly','monthly','grand'].forEach(t=>{
+    const panel = document.getElementById('rpanel-'+t);
+    const btn = document.getElementById('rtab-'+t);
+    if(panel) panel.style.display = t===tab?'block':'none';
+    if(btn){
+      if(t===tab){
+        btn.style.borderColor = t==='weekly'?'var(--purple)':t==='monthly'?'#6a8aff':'var(--gold)';
+        btn.style.background = t==='weekly'?'var(--purple2)':t==='monthly'?'#2a3a7f':'#4a3600';
+        btn.style.color = '#fff';
+      } else {
+        btn.style.borderColor = 'var(--border)';
+        btn.style.background = 'var(--bg3)';
+        btn.style.color = 'var(--text2)';
+      }
+    }
+  });
+  const tr = document.getElementById('thresh-row');
+  if(tr) tr.style.display = tab==='weekly'?'flex':'none';
+}
+
+// ── MONTHLY / GRAND REWARD SLOTS ──────────────────────────────────────
+function renderMonthlySlots(){
+  if(!ST.monthlyRewards) ST.monthlyRewards=[null,null,null];
+  while(ST.monthlyRewards.length<3) ST.monthlyRewards.push(null);
+  renderRewardSlotsInto('monthly-reward-slots', ST.monthlyRewards, 'monthly');
+
+  // Target input
+  const ti = document.getElementById('monthly-target-input');
+  if(ti && ST.monthlyStarTarget) ti.value = ST.monthlyStarTarget;
+
+  // Suggestion
+  const kids = ST.members.filter(m=>!m.isParent);
+  const avgDaily = Math.max(1, ST.chores.length / Math.max(1, kids.length));
+  const suggested = Math.round(avgDaily * kids.length * 5 * 4 * 0.75); // 75% of max 4 weeks
+  const sg = document.getElementById('monthly-suggestion');
+  if(sg) sg.textContent = suggested ? `(suggested: ~${suggested} stars)` : '';
+}
+
+function renderGrandSlots(){
+  if(!ST.grandRewards) ST.grandRewards=[null,null,null];
+  while(ST.grandRewards.length<3) ST.grandRewards.push(null);
+  renderRewardSlotsInto('grand-reward-slots', ST.grandRewards, 'grand');
+
+  const ti = document.getElementById('grand-target-input');
+  if(ti && ST.grandStarTarget) ti.value = ST.grandStarTarget;
+
+  const kids = ST.members.filter(m=>!m.isParent);
+  const avgDaily = Math.max(1, ST.chores.length / Math.max(1, kids.length));
+  const suggested = Math.round(avgDaily * kids.length * 5 * 10 * 0.7); // ~10 weeks
+  const sg = document.getElementById('grand-suggestion');
+  if(sg) sg.textContent = suggested ? `(suggested: ~${suggested} stars for ~10 weeks)` : '';
+}
+
+function renderRewardSlotsInto(containerId, rewardsArr, tier){
+  const sl = document.getElementById(containerId);
+  if(!sl) return;
+  sl.innerHTML='';
+  rewardsArr.forEach((r,i)=>{
+    const div=document.createElement('div');
+    div.className='reward-slot'+(r?' filled':'');
+    const borderCol = tier==='monthly'?'#6a8aff':tier==='grand'?'var(--gold)':'var(--purple)';
+    if(r) div.style.borderColor=borderCol;
+    if(r){
+      div.innerHTML=`<span class="rs-num" style="border-color:${borderCol};color:${borderCol};background:${borderCol}22;">${i+1}</span><span style="font-size:20px;">${r.emoji}</span><span style="flex:1;font-size:13px;font-weight:700;color:var(--text);">${r.text}</span><button class="rs-clear" onclick="clearTierR('${tier}',${i})">✕</button>`;
+      div.onclick=(e)=>{if(e.target.classList.contains('rs-clear'))return;openTierRsug(tier,i);};
+    } else {
+      div.innerHTML=`<span class="rs-num" style="border-color:${borderCol};color:${borderCol};">${i+1}</span><span style="font-size:18px;color:var(--text3);">➕</span><span style="flex:1;font-size:12px;font-weight:600;color:var(--text3);">Tap to add ${tier} reward ${i+1}</span>`;
+      div.onclick=()=>openTierRsug(tier,i);
+    }
+    sl.appendChild(div);
+  });
+}
+
+let tierRsugContext = {tier:'weekly', slot:0};
+function openTierRsug(tier, slot){
+  tierRsugContext = {tier, slot};
+  rsugSlot = slot;
+  const labels = {weekly:'Weekly', monthly:'Monthly', grand:'Grand'};
+  document.getElementById('rsug-title').textContent = `Choose ${labels[tier]} reward ${slot+1} of 3`;
+  const cats={screen:'rs-screen',family:'rs-family',outings:'rs-outings',privs:'rs-privs',treats:'rs-treats'};
+  Object.entries(cats).forEach(([cat,id])=>{
+    const el=document.getElementById(id);if(!el)return;el.innerHTML='';
+    REWARD_SUGS[cat].forEach(r=>{
+      const d=document.createElement('div');d.className='rsug';
+      d.innerHTML=`<span style="font-size:15px;width:22px;text-align:center;">${r.e}</span><span style="flex:1;font-size:12px;font-weight:600;color:var(--text2);">${r.t}</span><span style="font-size:11px;color:var(--purple);font-weight:800;">Pick</span>`;
+      d.onclick=()=>pickTierR(r.t,r.e);el.appendChild(d);
+    });
+  });
+  document.getElementById('rsug-custom-t').value='';document.getElementById('rsug-custom-e').value='';
+  document.getElementById('rsug-overlay').style.display='flex';
+}
+
+function pickTierR(t,e){
+  const tier = tierRsugContext.tier;
+  const slot = tierRsugContext.slot;
+  if(tier==='weekly'){
+    if(!ST.rewards) ST.rewards=[null,null,null];
+    ST.rewards[slot]={text:t,emoji:e};
+  } else if(tier==='monthly'){
+    if(!ST.monthlyRewards) ST.monthlyRewards=[null,null,null];
+    ST.monthlyRewards[slot]={text:t,emoji:e};
+  } else {
+    if(!ST.grandRewards) ST.grandRewards=[null,null,null];
+    ST.grandRewards[slot]={text:t,emoji:e};
+  }
+  save();closeRsug();renderRewards();renderHome();
+}
+
+function clearTierR(tier, i){
+  if(tier==='weekly') ST.rewards[i]=null;
+  else if(tier==='monthly'){if(!ST.monthlyRewards)ST.monthlyRewards=[null,null,null];ST.monthlyRewards[i]=null;}
+  else{if(!ST.grandRewards)ST.grandRewards=[null,null,null];ST.grandRewards[i]=null;}
+  save();renderRewards();renderHome();
+}
+
+function updMonthlyTarget(v){ST.monthlyStarTarget=parseInt(v)||0;save();renderHome();}
+function updGrandTarget(v){ST.grandStarTarget=parseInt(v)||0;save();renderHome();}
+
+// ── MONTHLY/GRAND GOAL RENDERING ON HOME ──────────────────────────────
+function renderGoalBars(){
+  // Monthly
+  const mTarget = ST.monthlyStarTarget || 0;
+  const mStars = ST.monthlyStarsAccum || 0;
+  const mPct = mTarget>0 ? Math.min(100, Math.round((mStars/mTarget)*100)) : 0;
+  document.getElementById('monthly-fill').style.width = mPct+'%';
+  document.getElementById('monthly-stars').textContent = mStars+' stars this month';
+  document.getElementById('monthly-target').textContent = mTarget>0 ? (mPct+'% of '+mTarget+' star goal') : 'Set a target in Rewards';
+
+  const mRewards = (ST.monthlyRewards||[]).filter(r=>r);
+  const mRD = document.getElementById('monthly-rewards-display');
+  if(mRD){mRD.innerHTML='';mRewards.length?mRewards.forEach(r=>{const c=document.createElement('span');c.className='reward-chip';c.style.borderColor='#6a8aff';c.textContent=r.emoji+' '+r.text;mRD.appendChild(c);}):mRD.innerHTML='<span style="font-size:12px;color:var(--text3);font-weight:600;">Set monthly rewards in Parent Settings</span>';}
+  document.getElementById('monthly-unlocked').style.display = (mTarget>0 && mStars>=mTarget)?'flex':'none';
+  if(mTarget>0&&mStars>=mTarget){const ul=document.getElementById('monthly-unlock-list');if(ul){ul.innerHTML='';mRewards.forEach(r=>{const c=document.createElement('span');c.className='reward-chip';c.style.borderColor='#6a8aff';c.textContent=r.emoji+' '+r.text;ul.appendChild(c);});}}
+
+  // Grand
+  const gTarget = ST.grandStarTarget || 0;
+  const gStars = Object.values(ST.stars).reduce((a,b)=>a+b,0);
+  const gPct = gTarget>0 ? Math.min(100, Math.round((gStars/gTarget)*100)) : 0;
+  document.getElementById('grand-fill').style.width = gPct+'%';
+  document.getElementById('grand-stars').textContent = gStars+' total stars earned';
+  document.getElementById('grand-target').textContent = gTarget>0 ? (gPct+'% of '+gTarget+' star grand goal') : 'Set a target in Rewards';
+
+  const gRewards = (ST.grandRewards||[]).filter(r=>r);
+  const gRD = document.getElementById('grand-rewards-display');
+  if(gRD){gRD.innerHTML='';gRewards.length?gRewards.forEach(r=>{const c=document.createElement('span');c.className='reward-chip';c.style.borderColor='var(--gold)';c.style.color='var(--gold)';c.textContent=r.emoji+' '+r.text;gRD.appendChild(c);}):gRD.innerHTML='<span style="font-size:12px;color:var(--text3);font-weight:600;">Set grand rewards in Parent Settings</span>';}
+  document.getElementById('grand-unlocked').style.display = (gTarget>0 && gStars>=gTarget)?'flex':'none';
+  if(gTarget>0&&gStars>=gTarget){const ul=document.getElementById('grand-unlock-list');if(ul){ul.innerHTML='';gRewards.forEach(r=>{const c=document.createElement('span');c.className='reward-chip';c.style.borderColor='var(--gold)';c.style.color='var(--gold)';c.textContent=r.emoji+' '+r.text;ul.appendChild(c);});}}
+}
+
+// ── MONTHLY STAR ACCUMULATION ──────────────────────────────────────────
+function chkMonthReset(){
+  const now = new Date();
+  const monthKey = now.getFullYear()+'-'+(now.getMonth()+1);
+  if(ST.currentMonth !== monthKey){
+    ST.monthlyStarsAccum = 0;
+    ST.currentMonth = monthKey;
+    save();
+  }
+}
+
+
+load();loadVoices();renderHome();
+</script>
+</body>
+</html>
