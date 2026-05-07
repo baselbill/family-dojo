@@ -1334,12 +1334,14 @@ function renderParentFamily(){
     const cls=CLASSES[kid.classId]||CLASSES.scout;
     const age=calcAge(kid.dob);
     const level=levelFromXp(kid.xp||0);
+    const stars=(ST.weeklyStars||{})[kid.id]||0;
     memberHTML+=`<div class="li" style="background:linear-gradient(90deg,${cls.accent}10,transparent);border-left:3px solid ${cls.accent};">
       <div style="flex:1;">
         <div style="font-weight:600;font-size:13px;">${escHtml(kid.name)}</div>
-        <div style="font-size:11px;color:var(--text2);">${age} years · ${cls.name} · L${level}</div>
+        <div style="font-size:11px;color:var(--text2);">${age} years · ${cls.name} · L${level} · ★${stars} this week</div>
       </div>
-      <button class="bp" style="padding:5px 14px;font-size:11px;" onclick="editKid('${kid.id}')">Edit</button>
+      <button class="bp" style="padding:5px 12px;font-size:11px;" onclick="editKid('${kid.id}')">Edit</button>
+      <button style="padding:5px 10px;font-size:11px;border-radius:8px;border:1px solid rgba(255,200,0,0.4);background:rgba(255,200,0,0.08);color:var(--gold);cursor:pointer;font-family:inherit;" onclick="resetKidXp('${kid.id}','${escHtml(kid.name)}')">↺ XP</button>
       <button class="bd" style="padding:5px 12px;font-size:11px;" onclick="delKid('${kid.id}')">Remove</button>
     </div>`;
   }
@@ -1376,7 +1378,24 @@ function renderParentFamily(){
         ${voices.map((v,i)=>`<option value="${i}" ${selVoice===v?'selected':''}>${v.name}</option>`).join('')}
       </select>
 
-      <button class="bd" style="width:100%;margin-top:12px;" onclick="if(confirm('Reset all chores to not done today?')){ST.chores.forEach(c=>c.done=false);save();renderHome();}">🔄 Reset Today's Progress</button>
+      <button class="bd" style="width:100%;margin-top:12px;" onclick="if(confirm('Reset all chores to not done today?')){ST.chores.forEach(c=>c.done=false);save();renderParent();}">🔄 Reset Today's Chores</button>
+    </div>
+
+    <div class="af">
+      <div class="af-title">🔄 Reset & New Season</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">Use these when starting a new week, month, or fresh school year. Individual hero XP can be reset using the ↺ XP button next to each child above.</div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,200,0,0.4);background:rgba(255,200,0,0.06);color:var(--gold);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;text-align:left;padding-left:14px;" onclick="resetWeeklyStars()">
+          📅 New Week — Reset Weekly Stars
+        </button>
+        <button style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(100,160,255,0.4);background:rgba(100,160,255,0.06);color:#8aacff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;text-align:left;padding-left:14px;" onclick="resetMonthlyStars()">
+          🗓 New Month — Reset Monthly Star Count
+        </button>
+        <button style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(240,64,96,0.4);background:rgba(240,64,96,0.06);color:var(--red);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;text-align:left;padding-left:14px;" onclick="factoryReset()">
+          ⚠️ Full Reset — Wipe All Progress & Start Over
+        </button>
+      </div>
     </div>
   </div>`;
 }
@@ -1384,6 +1403,38 @@ function renderParentFamily(){
 function delReward(tier,slot){if(!confirm('Remove this reward?'))return;const key=tier==='weekly'?'rewards':tier==='monthly'?'monthlyRewards':'grandRewards';ST[key][slot]=null;save();renderParent();}
 function delKid(id){if(!confirm('Remove '+ST.members.find(m=>m.id===id).name+'?'))return;ST.members=ST.members.filter(m=>m.id!==id);ST.chores=ST.chores.filter(c=>c.assignee!==id);save();renderParent();}
 function editKid(id){openCreator(id);}
+
+function resetKidXp(id,name){
+  if(!confirm('Reset '+name+'\'s XP and level back to zero? Their class and pet will be kept.'))return;
+  const kid=ST.members.find(m=>m.id===id);if(!kid)return;
+  kid.xp=0;
+  if(ST.weeklyStars)ST.weeklyStars[id]=0;
+  save();renderParent();
+}
+function resetWeeklyStars(){
+  if(!confirm('Reset all weekly stars to zero? This is like starting a new week.'))return;
+  ST.weeklyStars={};
+  save();renderParent();
+}
+function resetMonthlyStars(){
+  if(!confirm('Reset the monthly star count to zero? Individual hero XP and levels are not affected.'))return;
+  ST.monthlyStarsAccum=0;
+  save();renderParent();
+}
+function factoryReset(){
+  if(!confirm('⚠️ Full Reset: this will wipe ALL progress — XP, levels, stars, chores, rewards, and activity log — for every hero. Family members and their customization will be kept.\n\nThis cannot be undone. Are you sure?'))return;
+  if(!confirm('Last chance. Wipe all progress now?'))return;
+  ST.members.filter(m=>!m.isParent).forEach(m=>{m.xp=0;});
+  ST.chores=[];
+  ST.weeklyStars={};
+  ST.monthlyStarsAccum=0;
+  ST.history=[];
+  ST.rewards=[null,null,null];
+  ST.monthlyRewards=[null,null,null];
+  ST.grandRewards=[null,null,null];
+  save();renderParent();
+}
+
 function addKidModal(){const name=prompt('Child name:');if(!name)return;const id=name.toLowerCase().replace(/\s+/g,'');if(ST.members.find(m=>m.id===id)){alert('Name already used');return;}const dob=prompt('Birth date (YYYY-MM-DD):');if(!dob)return;ST.members.push({id,name,dob,classId:'scout',hue:0,skin:0,petId:'cat',xp:0,emoji:'⭐',color:'#a0a8c8',isParent:false,photo:null});save();renderParent();}
 
 function removeChore(id){ST.chores=ST.chores.filter(c=>c.id!==id);save();renderParent();}
