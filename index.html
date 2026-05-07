@@ -1,0 +1,1950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Family Dojo">
+<title>Family Dojo — Hero Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --bg:#0a0e1f; --bg2:#14193a; --bg3:#1a2147; --bg4:#242a5e;
+    --card:rgba(20,25,58,0.7); --card2:rgba(26,33,71,0.85);
+    --border:rgba(255,255,255,0.08); --border2:rgba(0,229,255,0.25);
+    --text:#e8ecff; --text2:#a0a8c8; --text3:#6a7090;
+    --accent:#00e5ff; --accent2:#67e8f9;
+    --gold:#ffd700; --gold2:#fbbf24;
+    --green:#34d399; --green2:#10b981;
+    --red:#f04060; --pink:#ff3d6e;
+    --radius:14px; --radius-sm:10px;
+    --shadow:0 4px 20px rgba(0,0,0,0.4);
+    --shadow-lg:0 8px 32px rgba(0,0,0,0.6);
+  }
+  html,body{margin:0;padding:0;background:#050818;font-family:'Inter',system-ui,sans-serif;color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+  body{background:radial-gradient(ellipse at top,#14193a 0%,#0a0e1f 60%,#050818 100%);background-attachment:fixed;}
+  h1,h2,h3,.serif{font-family:'Cormorant Garamond',serif;font-weight:600;}
+  button{font-family:inherit;}
+  ::-webkit-scrollbar{width:6px;height:6px;}
+  ::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);}
+  ::-webkit-scrollbar-thumb{background:rgba(0,229,255,0.25);border-radius:999px;}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(0,229,255,0.5);}
+  @keyframes questFlash{0%{background:rgba(20,25,58,0.6);}40%{background:rgba(52,211,153,0.25);transform:translateX(2px);}100%{background:rgba(20,25,58,0.6);}}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
+  @keyframes levelUp{0%{transform:scale(0.5);opacity:0;}50%{transform:scale(1.15);opacity:1;}100%{transform:scale(1);opacity:1;}}
+  @keyframes shimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+  @keyframes confetti{0%{opacity:1;transform:scale(0.3) translateY(0) rotate(0);}100%{opacity:0;transform:scale(1.6) translateY(-100px) rotate(180deg);}}
+
+  .sc{display:none;}.sc.on{display:block;}
+  .starry-bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+  /* Header */
+  .hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid rgba(0,229,255,0.15);position:relative;z-index:2;}
+  .hdr-l{display:flex;align-items:center;gap:14px;}
+  .hdr-logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#00e5ff,#ff3d6e);display:flex;align-items:center;justify-content:center;font-family:serif;font-size:24px;color:#0a0e1f;box-shadow:0 0 24px rgba(0,229,255,0.4);}
+  .hdr-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;letter-spacing:0.5px;}
+  .hdr-title em{color:var(--accent);font-style:italic;}
+  .hdr-date{font-size:11px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+  .hdr-r{display:flex;align-items:center;gap:12px;}
+  .star-badge{display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid rgba(255,215,0,0.25);border-radius:999px;background:rgba(255,215,0,0.05);}
+  .star-badge .s{color:var(--gold);font-size:14px;}
+  .star-badge .v{font-size:13px;font-weight:600;}
+  .star-badge .l{font-size:11px;color:var(--text2);}
+  .btn-parents{padding:9px 16px;border-radius:999px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);color:var(--text);font-size:12px;font-weight:500;letter-spacing:0.5px;cursor:pointer;transition:all 0.15s;}
+  .btn-parents:hover{background:rgba(0,229,255,0.1);border-color:var(--accent);}
+
+  /* Verse */
+  .verse{margin:14px 28px 0;padding:14px 20px;border-left:2px solid var(--gold);background:linear-gradient(90deg,rgba(255,215,0,0.08),transparent);display:flex;align-items:center;gap:16px;border-radius:0 8px 8px 0;}
+  .verse-tag{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;min-width:130px;}
+  .verse-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:#f0eccc;flex:1;line-height:1.4;}
+  .verse-ref{font-size:11px;color:var(--gold);font-weight:600;}
+  .verse-aud{padding:6px 12px;border-radius:999px;background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.4);color:var(--gold);font-size:11px;font-weight:600;cursor:pointer;}
+
+  /* Birthday */
+  .bday{margin:12px 28px 0;background:linear-gradient(135deg,rgba(255,61,110,0.15),rgba(255,215,0,0.1));border:1px solid var(--pink);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;}
+  .bday-emoji{font-size:30px;}
+  .bday-title{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--pink);font-weight:600;}
+  .bday-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+
+  /* Goals */
+  .goals-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 28px 0;}
+  .goal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;backdrop-filter:blur(10px);position:relative;overflow:hidden;}
+  .goal.weekly{border-color:rgba(124,111,247,0.3);}
+  .goal.monthly{border-color:rgba(106,138,255,0.3);}
+  .goal.grand{border-color:rgba(255,215,0,0.3);}
+  .goal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .goal.weekly::before{background:linear-gradient(90deg,transparent,#7c6ff7,transparent);}
+  .goal.monthly::before{background:linear-gradient(90deg,transparent,#6a8aff,transparent);}
+  .goal.grand::before{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+  .goal-tag{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+  .goal.weekly .goal-tag{color:#a89bff;}
+  .goal.monthly .goal-tag{color:#8aacff;}
+  .goal.grand .goal-tag{color:var(--gold);}
+  .goal-rewards{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0;}
+  .reward-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:3px 9px;font-size:11px;font-weight:600;}
+  .days-row{display:flex;gap:4px;margin:8px 0 6px;}
+  .day-dot{flex:1;text-align:center;}
+  .dl{font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:3px;}
+  .dc{width:26px;height:26px;border-radius:7px;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:1.5px solid var(--border);color:var(--text3);background:rgba(0,0,0,0.3);}
+  .day-dot.filled .dc{background:linear-gradient(135deg,#7c6ff7,#34d399);border-color:var(--green);color:#fff;}
+  .day-dot.today .dc{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,0.08);}
+  .bar-track{height:6px;background:rgba(0,0,0,0.4);border-radius:999px;overflow:hidden;border:1px solid var(--border);}
+  .bar-fill{height:100%;border-radius:999px;transition:width 0.5s ease;}
+  .goal.weekly .bar-fill{background:linear-gradient(90deg,#7c6ff7,#34d399);}
+  .goal.monthly .bar-fill{background:linear-gradient(90deg,#4a6adf,#8aacff);}
+  .goal.grand .bar-fill{background:linear-gradient(90deg,var(--gold2),var(--gold));}
+  .goal-meta{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:var(--text2);font-weight:600;}
+  .goal-unlocked{margin-top:8px;padding:6px 10px;border-radius:8px;background:rgba(52,211,153,0.1);border:1px solid var(--green);font-size:11px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:6px;}
+
+  /* Section labels */
+  .sec-lbl{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin:18px 28px 10px;display:flex;align-items:center;gap:8px;}
+  .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  /* Hero cards */
+  .hero-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:0 28px 14px;}
+  .hero-card{background:linear-gradient(180deg,rgba(20,25,58,0.7),rgba(10,14,31,0.9));border:1px solid var(--border);border-radius:18px;padding:18px 16px 16px;cursor:pointer;position:relative;overflow:hidden;transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s;backdrop-filter:blur(10px);}
+  .hero-card:hover{transform:translateY(-3px);}
+  .hero-card-glow{position:absolute;top:0;left:0;right:0;height:2px;}
+  .hero-tier{position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:rgba(0,0,0,0.4);font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:600;}
+  .hero-edit{position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.4);cursor:pointer;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:3;}
+  .hero-portrait-wrap{display:flex;justify-content:center;margin:8px 0 10px;position:relative;}
+  .hero-name{font-family:'Cormorant Garamond',serif;font-size:22px;text-align:center;font-weight:600;}
+  .hero-class{font-size:11px;text-align:center;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-top:2px;}
+  .hero-level-row{display:flex;align-items:center;gap:8px;margin-top:10px;}
+  .hero-level-num{font-size:10px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;font-weight:700;}
+  .hero-pet{display:flex;align-items:center;gap:6px;margin-top:10px;padding:6px 10px;background:rgba(0,0,0,0.3);border-radius:999px;border:1px solid var(--border);}
+  .hero-pet-icon{font-size:18px;}
+  .hero-pet-name{font-size:11px;color:var(--text2);font-weight:600;}
+  .hero-stars{display:flex;align-items:center;justify-content:space-between;margin-top:8px;font-size:11px;}
+  .hero-stars .today{color:var(--gold);font-weight:700;}
+  .hero-stars .total{color:var(--text2);}
+
+  /* Personal stars panel */
+  .panel{margin:0 28px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;backdrop-filter:blur(10px);}
+  .panel-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
+  .wpr{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .wpr-name{font-size:13px;font-weight:700;width:90px;flex-shrink:0;font-family:'Cormorant Garamond',serif;font-size:15px;}
+  .wpr-track{flex:1;background:rgba(0,0,0,0.4);border-radius:999px;height:7px;overflow:hidden;border:1px solid var(--border);}
+  .wpr-fill{height:100%;border-radius:999px;transition:width 0.4s;}
+  .wpr-stars{font-size:12px;color:var(--gold);font-weight:700;width:46px;text-align:right;}
+  .wpr-hint{font-size:10px;color:var(--text2);margin-left:100px;margin-top:-4px;margin-bottom:6px;}
+
+  /* Activity */
+  .activity-card{margin:0 28px 24px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:8px 16px;backdrop-filter:blur(10px);}
+  .ar{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  .ar:last-child{border-bottom:none;}
+  .ar-name{font-weight:700;width:80px;flex-shrink:0;}
+  .ar-task{flex:1;color:var(--text2);}
+  .ar-check{color:var(--green);}
+  .ar-time{font-size:10px;color:var(--text3);}
+
+  /* Quest view */
+  .qhdr{display:flex;align-items:center;gap:16px;padding:20px 32px;border-bottom:1px solid rgba(0,229,255,0.15);position:relative;z-index:2;}
+  .btn-back{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:var(--text);font-size:12px;font-weight:500;cursor:pointer;}
+  .qhdr-info{flex:1;}
+  .qhdr-name-row{display:flex;align-items:baseline;gap:10px;}
+  .qhdr-name{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;}
+  .qhdr-class{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;}
+  .qhdr-level-row{display:flex;align-items:center;gap:12px;margin-top:4px;}
+  .qhdr-level{font-size:11px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;}
+  .qhdr-bar{width:200px;height:5px;background:rgba(0,0,0,0.4);border-radius:999px;overflow:hidden;}
+  .qhdr-bar-fill{height:100%;border-radius:999px;transition:width 0.4s;}
+  .qhdr-xp{font-size:11px;color:var(--text2);font-variant-numeric:tabular-nums;}
+  .qhdr-stars{text-align:right;}
+  .qhdr-stars .n{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--gold);line-height:1;}
+  .qhdr-stars .l{font-size:10px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+
+  .quest-progress{padding:12px 32px;}
+  .quest-progress-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;font-weight:600;}
+  .quest-list{padding:8px 32px 32px;display:flex;flex-direction:column;gap:10px;}
+  .quest-list.young{gap:14px;}
+  .qi{display:flex;align-items:center;gap:12px;padding:14px 16px;background:linear-gradient(90deg,rgba(20,25,58,0.6),rgba(10,14,31,0.8));border:1px solid var(--border);border-radius:12px;transition:all 0.3s;}
+  .qi.done{opacity:0.6;background:rgba(20,25,58,0.3);border-color:rgba(0,229,255,0.25);}
+  .qi.flash{animation:questFlash 0.6s ease;}
+  .quest-list.young .qi{padding:18px 18px;gap:16px;}
+  .qi-emoji{font-size:32px;width:44px;text-align:center;flex-shrink:0;}
+  .quest-list.young .qi-emoji{font-size:42px;width:54px;}
+  .qi-body{flex:1;min-width:0;}
+  .qi-name{font-size:16px;font-weight:600;color:#fff;line-height:1.3;}
+  .quest-list.young .qi-name{font-size:19px;font-weight:700;}
+  .qi.done .qi-name{text-decoration:line-through;color:var(--text2);}
+  .qi-desc{font-size:12px;color:var(--text2);margin-top:3px;}
+  .quest-list.young .qi-desc{font-size:14px;}
+  .qi-pts{font-size:12px;color:var(--gold);font-weight:600;margin-top:4px;}
+  .qi-audio{width:44px;height:44px;border-radius:50%;border:none;background:linear-gradient(135deg,#34d399,#10b981);color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;box-shadow:0 0 12px rgba(52,211,153,0.4);}
+  .quest-list.young .qi-audio{width:52px;height:52px;font-size:22px;}
+  .qi-check{width:52px;height:52px;border-radius:50%;cursor:pointer;flex-shrink:0;font-size:22px;font-weight:800;transition:all 0.2s;background:rgba(0,0,0,0.4);color:transparent;}
+  .quest-list.young .qi-check{width:62px;height:62px;font-size:28px;}
+  .qi-check.on{background:linear-gradient(135deg,#34d399,#10b981);color:#fff;border:none;box-shadow:0 0 16px rgba(52,211,153,0.5);}
+
+  /* PIN */
+  .pin-screen{max-width:320px;margin:60px auto;text-align:center;padding:0 16px;}
+  .pin-back{position:absolute;top:24px;left:24px;}
+  .pin-screen h2{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--text);margin-bottom:6px;}
+  .pin-screen p{font-size:12px;color:var(--text2);margin-bottom:24px;letter-spacing:1px;text-transform:uppercase;}
+  .pin-dots{display:flex;justify-content:center;gap:14px;margin-bottom:28px;}
+  .pd{width:14px;height:14px;border-radius:50%;background:rgba(0,0,0,0.4);border:1.5px solid var(--border);}
+  .pd.on{background:var(--accent);border-color:var(--accent);box-shadow:0 0 12px rgba(0,229,255,0.5);}
+  .pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:240px;margin:0 auto;}
+  .ppb{padding:14px;font-size:18px;font-weight:600;cursor:pointer;font-family:'Cormorant Garamond',serif;background:rgba(20,25,58,0.6);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);transition:all 0.12s;}
+  .ppb:hover{border-color:var(--accent);color:var(--accent);}
+  .pin-err{color:var(--red);font-size:12px;margin-top:14px;min-height:18px;font-weight:600;}
+
+  /* Parent Zone */
+  .p-layout{display:flex;height:100vh;min-height:600px;}
+  .p-nav{width:200px;flex-shrink:0;background:rgba(10,14,31,0.7);border-right:1px solid var(--border);padding:20px 0;backdrop-filter:blur(10px);position:relative;}
+  .p-nav-title{padding:0 20px 16px;font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--accent);}
+  .pni{padding:11px 20px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text2);transition:all 0.12s;letter-spacing:0.3px;}
+  .pni:hover{background:rgba(0,229,255,0.05);color:var(--text);}
+  .pni.on{background:rgba(0,229,255,0.08);color:var(--accent);border-right:2px solid var(--accent);}
+  .p-exit{position:absolute;bottom:14px;left:14px;right:14px;}
+  .p-exit button{width:100%;padding:9px;font-size:12px;border-radius:8px;border:1px solid var(--border);background:rgba(20,25,58,0.6);cursor:pointer;color:var(--text2);font-weight:600;}
+  .p-content{flex:1;overflow-y:auto;padding:24px 28px;}
+  .ps{display:none;}.ps.on{display:block;}
+  .ptitle{font-family:'Cormorant Garamond',serif;font-size:26px;margin-bottom:4px;}
+  .psub{font-size:12px;color:var(--text2);margin-bottom:18px;letter-spacing:0.3px;}
+  .fi,.fs{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:rgba(20,25,58,0.6);font-size:13px;color:var(--text);font-family:inherit;font-weight:500;}
+  .fi:focus,.fs:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,229,255,0.15);}
+  .fl{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:0.5px;}
+  .bp{padding:9px 18px;border-radius:var(--radius-sm);background:linear-gradient(135deg,#0891b2,var(--accent));color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;box-shadow:0 0 14px rgba(0,229,255,0.3);font-family:inherit;}
+  .bp:hover{transform:translateY(-1px);box-shadow:0 0 18px rgba(0,229,255,0.5);}
+  .bd{padding:6px 12px;border-radius:8px;background:transparent;color:var(--red);border:1px solid var(--red);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .bd:hover{background:rgba(240,64,96,0.1);}
+  .af{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+  .af-title{font-family:'Cormorant Garamond',serif;font-size:18px;margin-bottom:12px;}
+  .li{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(20,25,58,0.5);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:7px;}
+  .ep{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;}
+  .eo{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--border);background:rgba(0,0,0,0.3);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;}
+  .eo:hover{border-color:var(--accent);}
+  .eo.on{border:1.5px solid var(--accent);background:rgba(0,229,255,0.15);}
+  .co{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.12s;}
+  .co.on{border-color:#fff;box-shadow:0 0 8px rgba(255,255,255,0.4);}
+  .sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
+  .stc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;text-align:center;}
+  .stn{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--accent);font-weight:700;}
+  .stl{font-size:11px;color:var(--text2);font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;}
+  .rcat{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;}
+  .rsug{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(20,25,58,0.5);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:5px;cursor:pointer;}
+  .rsug:hover{border-color:var(--accent);}
+  .word-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+  .wchip{padding:6px 14px;border-radius:999px;border:1px solid var(--border);background:rgba(20,25,58,0.5);font-size:12px;font-weight:600;cursor:pointer;color:var(--text2);}
+  .wchip.on{background:rgba(0,229,255,0.15);border-color:var(--accent);color:var(--accent);}
+  .ql-age{margin-bottom:14px;}
+  .ql-ah{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--accent);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+  .ql-row{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;background:rgba(20,25,58,0.5);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:5px;}
+  .ql-row.expanded{border-color:var(--accent);background:rgba(0,229,255,0.05);}
+  .ql-em{font-size:18px;width:24px;text-align:center;flex-shrink:0;margin-top:1px;}
+  .ql-body{flex:1;}
+  .ql-name{font-size:13px;font-weight:700;}
+  .ql-desc{font-size:11px;color:var(--text2);margin-top:1px;}
+  .ql-pts{font-size:11px;color:var(--gold);font-weight:700;width:24px;flex-shrink:0;margin-top:1px;}
+  .ql-addbtn{font-size:11px;color:#fff;font-weight:600;cursor:pointer;padding:5px 11px;border:none;border-radius:6px;background:linear-gradient(135deg,#0891b2,var(--accent));white-space:nowrap;flex-shrink:0;}
+  .ql-addbtn.cancel{background:rgba(0,0,0,0.4);color:var(--text2);border:1px solid var(--border);}
+  .ql-fb{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
+  .ql-fb button{padding:5px 12px;border-radius:999px;border:1px solid var(--border);background:rgba(20,25,58,0.5);font-size:11px;font-weight:600;cursor:pointer;color:var(--text2);font-family:inherit;}
+  .ql-fb button.on{background:rgba(0,229,255,0.15);border-color:var(--accent);color:var(--accent);}
+  .assign-panel{margin-top:8px;padding:12px;background:rgba(0,0,0,0.3);border:1px solid var(--accent);border-radius:var(--radius-sm);}
+  .assign-label{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}
+  .assign-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;}
+  .assign-btn{padding:8px 4px;border-radius:8px;border:1.5px solid var(--border);background:rgba(20,25,58,0.6);cursor:pointer;text-align:center;}
+  .assign-btn:hover{border-color:var(--accent);}
+  .assign-btn.sel{border-color:var(--accent);background:rgba(0,229,255,0.15);}
+  .assign-btn .ab-em{font-size:18px;}
+  .assign-btn .ab-name{font-size:10px;font-weight:700;margin-top:2px;}
+
+  .reward-slot{background:var(--card);border:1.5px dashed var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+  .reward-slot.filled{border-style:solid;}
+  .rs-num{width:24px;height:24px;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .rs-clear{font-size:11px;color:var(--red);cursor:pointer;padding:4px 9px;border-radius:6px;border:1px solid var(--red);background:rgba(240,64,96,0.08);font-weight:600;font-family:inherit;}
+
+  /* Modals */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+  .modal{background:linear-gradient(180deg,#14193a,#0a0e1f);border:1px solid var(--border2);border-radius:var(--radius);padding:22px;width:90%;max-width:480px;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+  .modal-title{font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:6px;}
+  .modal-sub{font-size:12px;color:var(--text2);margin-bottom:16px;}
+
+  .level-up-bg{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);animation:levelUp 0.5s ease;}
+  .level-up{text-align:center;padding:30px;}
+  .level-up-glow{font-family:'Cormorant Garamond',serif;font-size:60px;font-weight:700;background:linear-gradient(135deg,var(--gold),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:float 2s ease-in-out infinite;}
+  .level-up-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;margin-top:8px;}
+  .level-up-sub{font-size:13px;color:var(--text2);letter-spacing:2px;text-transform:uppercase;margin-top:8px;}
+  .level-up-unlock{margin-top:18px;padding:14px 22px;border:1px solid var(--gold);background:rgba(255,215,0,0.1);border-radius:var(--radius);font-size:14px;color:var(--gold);}
+  .level-up-btn{margin-top:24px;padding:11px 28px;border-radius:999px;background:linear-gradient(135deg,#0891b2,var(--accent));color:#fff;border:none;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit;}
+
+  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#10b981,var(--green));color:#fff;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 24px rgba(52,211,153,0.4);}
+  .cb{position:fixed;pointer-events:none;z-index:9999;font-size:24px;animation:confetti 1s forwards;}
+
+  /* Photo upload */
+  .photo-drop{margin-top:10px;padding:30px;border:2px dashed var(--border);border-radius:var(--radius);text-align:center;cursor:pointer;background:rgba(0,0,0,0.2);transition:all 0.15s;}
+  .photo-drop:hover{border-color:var(--accent);background:rgba(0,229,255,0.05);}
+  .photo-drop input{display:none;}
+
+  /* Class picker */
+  .class-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;}
+  .class-opt{padding:10px;border-radius:8px;border:1.5px solid var(--border);background:rgba(20,25,58,0.5);cursor:pointer;text-align:center;}
+  .class-opt:hover{border-color:var(--accent);}
+  .class-opt.on{border-color:var(--accent);background:rgba(0,229,255,0.1);}
+  .class-opt .g{font-family:'Cormorant Garamond',serif;font-size:24px;}
+  .class-opt .n{font-size:11px;font-weight:600;margin-top:2px;letter-spacing:0.5px;text-transform:uppercase;}
+
+  /* Hue slider */
+  .hue-slider{width:100%;height:24px;border-radius:999px;background:linear-gradient(90deg,#ff3d6e,#ffd700,#34d399,#00e5ff,#a78bfa,#ff3d6e);cursor:pointer;border:none;outline:none;-webkit-appearance:none;}
+  .hue-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--accent);cursor:pointer;}
+
+  /* Skin tones */
+  .skin-row{display:flex;gap:8px;margin-top:6px;}
+  .skin-opt{width:34px;height:34px;border-radius:50%;cursor:pointer;border:3px solid transparent;}
+  .skin-opt.on{border-color:var(--accent);box-shadow:0 0 12px rgba(0,229,255,0.4);}
+
+  /* Pet picker */
+  .pet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;}
+  .pet-opt{padding:14px 8px;border-radius:8px;border:1.5px solid var(--border);background:rgba(20,25,58,0.5);cursor:pointer;text-align:center;}
+  .pet-opt:hover{border-color:var(--accent);}
+  .pet-opt.on{border-color:var(--accent);background:rgba(0,229,255,0.1);}
+  .pet-opt .e{font-size:32px;}
+  .pet-opt .n{font-size:11px;font-weight:600;margin-top:4px;}
+
+  /* Voice options */
+  .vopt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;margin-bottom:5px;border:1px solid transparent;}
+  .vopt:hover{background:rgba(20,25,58,0.5);}
+  .vopt.on{background:rgba(0,229,255,0.1);border-color:var(--accent);}
+
+  /* iPad / smaller screens */
+  @media(max-width:1100px){
+    .hero-grid{grid-template-columns:repeat(2,1fr);}
+    .goals-row{grid-template-columns:1fr;}
+  }
+  @media(max-width:768px){
+    .hdr{padding:14px 18px;}
+    .verse,.bday,.goals-row,.sec-lbl,.hero-grid,.panel,.activity-card{margin-left:18px;margin-right:18px;}
+    .verse{flex-wrap:wrap;}
+    .verse-tag{min-width:auto;}
+    .qhdr{flex-wrap:wrap;padding:14px 18px;gap:10px;}
+    .qhdr-bar{width:120px;}
+    .quest-progress,.quest-list{padding-left:18px;padding-right:18px;}
+    .p-nav{width:60px;}
+    .p-nav-title,.pni{padding-left:10px;padding-right:10px;font-size:11px;}
+    .p-content{padding:16px;}
+    .sgrid{grid-template-columns:1fr 1fr 1fr;gap:8px;}
+    .stn{font-size:22px;}
+  }
+  @media(max-width:480px){
+    .hero-grid{grid-template-columns:repeat(2,1fr);}
+    .qhdr-bar{width:80px;}
+    .qhdr-info{min-width:0;flex:1;}
+    .sgrid{grid-template-columns:1fr 1fr;gap:6px;}
+    .modal{padding:20px 16px;}
+    .af{padding:14px;}
+  }
+</style>
+</head>
+<body>
+<svg class="starry-bg" viewBox="0 0 1200 900" preserveAspectRatio="none">
+  <defs>
+    <radialGradient id="aurora1" cx="0.2" cy="0" r="0.8"><stop offset="0%" stop-color="#00e5ff" stop-opacity="0.18"/><stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="aurora2" cx="0.9" cy="0.2" r="0.6"><stop offset="0%" stop-color="#ff3d6e" stop-opacity="0.14"/><stop offset="100%" stop-color="#ff3d6e" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#aurora1)"/>
+  <rect width="1200" height="900" fill="url(#aurora2)"/>
+  <g id="stars"></g>
+</svg>
+
+<div id="app">
+  <div id="sc-home" class="sc on"></div>
+  <div id="sc-quests" class="sc"></div>
+  <div id="sc-pin" class="sc"></div>
+  <div id="sc-parent" class="sc"></div>
+</div>
+
+<div id="modal-host"></div>
+
+<script>
+/* ============================================================
+   FAMILY DOJO — HERO ACADEMY
+   ============================================================ */
+
+/* ---------- 1. DATA CONSTANTS ---------- */
+
+const CLASSES={
+  sword:{id:'sword',name:'Swordmaster',glyph:'⚔',accent:'#ff3d6e',accent2:'#ff7a9c',title:'Of the Crimson Edge',desc:'Brave & bold. Loves a challenge.'},
+  mage:{id:'mage',name:'Mage',glyph:'✦',accent:'#a78bfa',accent2:'#c4b5fd',title:'Of the Starlit Tome',desc:'Curious & clever. Loves to learn.'},
+  healer:{id:'healer',name:'Healer',glyph:'✿',accent:'#34d399',accent2:'#6ee7b7',title:'Of the Quiet Grove',desc:'Kind & caring. Helps others.'},
+  archer:{id:'archer',name:'Ranger',glyph:'➹',accent:'#fbbf24',accent2:'#fcd34d',title:'Of the Wandering Wind',desc:'Quick & clever. Sharp eyes.'},
+  scout:{id:'scout',name:'Scout',glyph:'◆',accent:'#00e5ff',accent2:'#67e8f9',title:'Of the Hidden Path',desc:'Speedy & sneaky.'},
+  guardian:{id:'guardian',name:'Guardian',glyph:'⛨',accent:'#60a5fa',accent2:'#93c5fd',title:'Of the Iron Vow',desc:'Strong & steady. Protects family.'},
+};
+
+const TIERS=[
+  {lvl:1,name:'Recruit',mark:'○'},
+  {lvl:5,name:'Apprentice',mark:'◇'},
+  {lvl:10,name:'Adept',mark:'◈'},
+  {lvl:20,name:'Knight',mark:'◆'},
+  {lvl:35,name:'Champion',mark:'✦'},
+  {lvl:50,name:'Hero',mark:'✧'},
+  {lvl:75,name:'Legend',mark:'★'},
+  {lvl:100,name:'Mythic',mark:'✪'},
+];
+
+const PETS={
+  sword:[
+    {id:'fox',name:'Spirit Fox',stages:['🥚','🦊','🦊✨','🦊⚡','🦊🔥','🦊⭐','🦊✦'],desc:'Quick & clever'},
+    {id:'wolf',name:'Wolf Pup',stages:['🥚','🐺','🐺✨','🐺⚡','🐺🔥','🐺⭐','🐺✦'],desc:'Loyal & fierce'},
+    {id:'tiger',name:'Tiger Cub',stages:['🥚','🐯','🐯✨','🐯⚡','🐯🔥','🐯⭐','🐯✦'],desc:'Bold & brave'},
+  ],
+  mage:[
+    {id:'owl',name:'Starlit Owl',stages:['🥚','🦉','🦉✨','🦉⚡','🦉🌟','🦉⭐','🦉✦'],desc:'Wise & watchful'},
+    {id:'cat',name:'Familiar',stages:['🥚','🐈‍⬛','🐈‍⬛✨','🐈‍⬛⚡','🐈‍⬛🌟','🐈‍⬛⭐','🐈‍⬛✦'],desc:'Mysterious'},
+    {id:'drake',name:'Baby Drake',stages:['🥚','🐉','🐉✨','🐉⚡','🐉🔥','🐉⭐','🐉✦'],desc:'Magical'},
+  ],
+  healer:[
+    {id:'bunny',name:'Moon Bunny',stages:['🥚','🐰','🐰✨','🐰🌿','🐰🌸','🐰⭐','🐰✦'],desc:'Gentle'},
+    {id:'fawn',name:'Forest Fawn',stages:['🥚','🦌','🦌🌿','🦌✨','🦌🌸','🦌⭐','🦌✦'],desc:'Kind'},
+    {id:'butterfly',name:'Sprite',stages:['🥚','🦋','🦋✨','🦋🌸','🦋🌿','🦋⭐','🦋✦'],desc:'Joyful'},
+  ],
+  archer:[
+    {id:'hawk',name:'Sky Hawk',stages:['🥚','🦅','🦅✨','🦅⚡','🦅🌟','🦅⭐','🦅✦'],desc:'Swift'},
+    {id:'squirrel',name:'Squirrel',stages:['🥚','🐿','🐿✨','🐿⚡','🐿🌰','🐿⭐','🐿✦'],desc:'Quick'},
+    {id:'otter',name:'Otter',stages:['🥚','🦦','🦦✨','🦦💧','🦦🌟','🦦⭐','🦦✦'],desc:'Playful'},
+  ],
+  scout:[
+    {id:'shadow',name:'Shadow Cat',stages:['🥚','🐈','🐈✨','🐈⚡','🐈🌙','🐈⭐','🐈✦'],desc:'Sneaky'},
+    {id:'raccoon',name:'Raccoon',stages:['🥚','🦝','🦝✨','🦝⚡','🦝🌙','🦝⭐','🦝✦'],desc:'Curious'},
+    {id:'bat',name:'Bat',stages:['🥚','🦇','🦇✨','🦇⚡','🦇🌙','🦇⭐','🦇✦'],desc:'Night-flyer'},
+  ],
+  guardian:[
+    {id:'turtle',name:'Turtle',stages:['🥚','🐢','🐢✨','🐢🛡','🐢🌟','🐢⭐','🐢✦'],desc:'Steady'},
+    {id:'rhino',name:'Rhino Calf',stages:['🥚','🦏','🦏✨','🦏⚡','🦏🛡','🦏⭐','🦏✦'],desc:'Strong'},
+    {id:'bison',name:'Bison',stages:['🥚','🦬','🦬✨','🦬🛡','🦬🌟','🦬⭐','🦬✦'],desc:'Mighty'},
+  ],
+};
+
+const UNLOCKS=[
+  {lvl:3,name:'Pet Hatched',desc:'Your egg has hatched!',icon:'🐣'},
+  {lvl:5,name:'Pet Sparkles',desc:'Your pet glows with magical sparkles',icon:'✨'},
+  {lvl:10,name:'Pet Aura',desc:'A class-coloured aura surrounds your pet',icon:'⚡'},
+  {lvl:15,name:'Companion Form',desc:'Your pet has taken its true form',icon:'🌟'},
+  {lvl:25,name:'Mythic Glow',desc:'Stars trail behind your pet',icon:'⭐'},
+  {lvl:50,name:'Awakened',desc:'Your pet has fully awakened',icon:'✦'},
+];
+
+const SKIN_TONES=['#fce0c4','#e8b896','#c89674','#a06848'];
+
+const COLS=['#7c6ff7','#22c97a','#f04060','#f060a0','#3b9ef0','#f5c842','#5a50d4','#18a862'];
+const WORDS=['Quests','Missions','Tasks','Contributions','Jobs','Responsibilities'];
+const CE=['🧹','🍽️','🧺','🛁','🚽','🪣','🗑️','🛏️','🌿','🐾','📦','🧴','🪟','🧽','🍳','🥗'];
+
+/* 365 daily verses */
+const V=[
+{d:1,r:"John 13:34",t:"Love one another as I have loved you."},
+{d:2,r:"1 Corinthians 13:4",t:"Love is patient, love is kind."},
+{d:3,r:"Romans 12:10",t:"Be devoted to one another in love."},
+{d:4,r:"Ephesians 4:32",t:"Be kind and compassionate to one another."},
+{d:5,r:"Proverbs 17:17",t:"A friend loves at all times, and a brother is born for a time of need."},
+{d:6,r:"1 John 4:7",t:"Dear friends, let us love one another, for love comes from God."},
+{d:7,r:"Colossians 3:14",t:"Put on love, which binds everything together in perfect harmony."},
+{d:8,r:"1 Peter 4:8",t:"Above all, love each other deeply."},
+{d:9,r:"Psalm 133:1",t:"How good and pleasant it is when God's people live together in unity."},
+{d:10,r:"Romans 13:8",t:"The only debt you owe is to love one another."},
+{d:11,r:"1 John 3:18",t:"Let us not love with words or speech but with actions and in truth."},
+{d:12,r:"John 15:12",t:"Love each other as I have loved you."},
+{d:13,r:"1 Corinthians 16:14",t:"Do everything in love."},
+{d:14,r:"Galatians 5:13",t:"Serve one another humbly in love."},
+{d:15,r:"Ephesians 5:2",t:"Walk in the way of love, just as Christ loved us."},
+{d:16,r:"1 John 4:19",t:"We love because he first loved us."},
+{d:17,r:"Matthew 22:39",t:"Love your neighbour as yourself."},
+{d:18,r:"John 3:16",t:"God so loved the world that he gave his one and only Son."},
+{d:19,r:"Romans 5:8",t:"While we were still sinners, Christ died for us."},
+{d:20,r:"1 Corinthians 13:13",t:"Faith, hope and love — but the greatest of these is love."},
+{d:21,r:"Luke 6:38",t:"Give, and it will be given to you."},
+{d:22,r:"2 Corinthians 9:7",t:"God loves a cheerful giver."},
+{d:23,r:"Luke 6:31",t:"Do to others as you would have them do to you."},
+{d:24,r:"Hebrews 13:16",t:"Do not forget to do good and to share with others."},
+{d:25,r:"Matthew 5:7",t:"Blessed are the merciful, for they will be shown mercy."},
+{d:26,r:"Colossians 3:12",t:"Clothe yourselves with compassion, kindness, humility, gentleness and patience."},
+{d:27,r:"Micah 6:8",t:"Act justly, love mercy and walk humbly with your God."},
+{d:28,r:"Acts 20:35",t:"It is more blessed to give than to receive."},
+{d:29,r:"Galatians 6:2",t:"Carry each other's burdens."},
+{d:30,r:"James 2:17",t:"Faith by itself, if not accompanied by action, is dead."},
+{d:31,r:"Colossians 3:23",t:"Whatever you do, work at it with all your heart, as working for the Lord."},
+{d:32,r:"Ecclesiastes 9:10",t:"Whatever your hand finds to do, do it with all your might."},
+{d:33,r:"Proverbs 14:23",t:"All hard work brings a profit."},
+{d:34,r:"Ephesians 6:7",t:"Serve wholeheartedly, as if you were serving the Lord."},
+{d:35,r:"Galatians 6:9",t:"Let us not become weary in doing good."},
+{d:36,r:"Matthew 25:23",t:"Well done, good and faithful servant!"},
+{d:37,r:"Philippians 4:13",t:"I can do all this through him who gives me strength."},
+{d:38,r:"Isaiah 40:31",t:"Those who hope in the Lord will renew their strength."},
+{d:39,r:"2 Chronicles 15:7",t:"Be strong and do not give up, for your work will be rewarded."},
+{d:40,r:"James 1:4",t:"Let perseverance finish its work so that you may be mature and complete."},
+{d:41,r:"1 Thessalonians 5:18",t:"Give thanks in all circumstances; for this is God's will for you."},
+{d:42,r:"Psalm 118:24",t:"This is the day the Lord has made; let us rejoice and be glad in it."},
+{d:43,r:"Philippians 4:4",t:"Rejoice in the Lord always. I will say it again: Rejoice!"},
+{d:44,r:"Psalm 107:1",t:"Give thanks to the Lord, for he is good; his love endures for ever."},
+{d:45,r:"James 1:17",t:"Every good and perfect gift is from above."},
+{d:46,r:"Nehemiah 8:10",t:"The joy of the Lord is your strength."},
+{d:47,r:"Proverbs 17:22",t:"A cheerful heart is good medicine."},
+{d:48,r:"John 15:11",t:"I have told you this so that my joy may be in you."},
+{d:49,r:"Galatians 5:22",t:"The fruit of the Spirit is love, joy, peace, forbearance, kindness."},
+{d:50,r:"Psalm 30:5",t:"Weeping may stay for the night, but rejoicing comes in the morning."},
+{d:51,r:"Joshua 24:15",t:"As for me and my household, we will serve the Lord."},
+{d:52,r:"Psalm 127:1",t:"Unless the Lord builds the house, its builders labour in vain."},
+{d:53,r:"Ephesians 6:1",t:"Children, obey your parents in the Lord."},
+{d:54,r:"Proverbs 22:6",t:"Start children off on the way they should go."},
+{d:55,r:"Psalm 127:3",t:"Children are a heritage from the Lord."},
+{d:56,r:"Proverbs 1:8",t:"Listen, my son, to your father's instruction."},
+{d:57,r:"Deuteronomy 6:6-7",t:"Impress these commandments on your children."},
+{d:58,r:"3 John 1:4",t:"I have no greater joy than to hear my children walking in truth."},
+{d:59,r:"Isaiah 54:13",t:"All your children will be taught by the Lord."},
+{d:60,r:"Matthew 19:14",t:"Let the little children come to me."},
+{d:61,r:"Mark 10:45",t:"The Son of Man did not come to be served, but to serve."},
+{d:62,r:"Philippians 2:3",t:"In humility value others above yourselves."},
+{d:63,r:"Matthew 20:26",t:"Whoever wants to become great among you must be your servant."},
+{d:64,r:"James 4:10",t:"Humble yourselves before the Lord, and he will lift you up."},
+{d:65,r:"Micah 6:8",t:"Act justly, love mercy, walk humbly."},
+{d:66,r:"Matthew 5:5",t:"Blessed are the meek, for they will inherit the earth."},
+{d:67,r:"Ephesians 4:2",t:"Be completely humble and gentle; be patient."},
+{d:68,r:"Luke 14:11",t:"Those who humble themselves will be exalted."},
+{d:69,r:"1 Samuel 16:7",t:"The Lord looks at the heart."},
+{d:70,r:"Joshua 1:9",t:"Be strong and courageous. The Lord your God is with you."},
+{d:71,r:"Psalm 27:1",t:"The Lord is my light and my salvation — whom shall I fear?"},
+{d:72,r:"Isaiah 41:10",t:"Do not fear, for I am with you."},
+{d:73,r:"2 Timothy 1:7",t:"God has not given us a spirit of fear, but of power and love."},
+{d:74,r:"Matthew 14:27",t:"Take courage! It is I. Don't be afraid."},
+{d:75,r:"Psalm 46:1",t:"God is our refuge and strength, an ever-present help in trouble."},
+{d:76,r:"Romans 8:31",t:"If God is for us, who can be against us?"},
+{d:77,r:"Psalm 56:3",t:"When I am afraid, I put my trust in you."},
+{d:78,r:"Mark 5:36",t:"Don't be afraid; just believe."},
+{d:79,r:"Matthew 17:20",t:"If you have faith as small as a mustard seed, nothing will be impossible."},
+{d:80,r:"Proverbs 3:5",t:"Trust in the Lord with all your heart."},
+{d:81,r:"John 16:33",t:"Take heart! I have overcome the world."},
+{d:82,r:"Luke 1:37",t:"For nothing will be impossible with God."},
+{d:83,r:"John 14:27",t:"Peace I leave with you; my peace I give you."},
+{d:84,r:"Matthew 11:28",t:"Come to me, all you who are weary, and I will give you rest."},
+{d:85,r:"Psalm 23:1",t:"The Lord is my shepherd, I lack nothing."},
+{d:86,r:"Philippians 4:7",t:"The peace of God will guard your hearts and minds."},
+{d:87,r:"Isaiah 26:3",t:"You will keep in perfect peace those whose minds are steadfast."},
+{d:88,r:"Numbers 6:24-26",t:"The Lord bless you and keep you."},
+{d:89,r:"Colossians 3:15",t:"Let the peace of Christ rule in your hearts."},
+{d:90,r:"Matthew 5:9",t:"Blessed are the peacemakers."},
+{d:91,r:"Psalm 46:10",t:"Be still, and know that I am God."},
+{d:92,r:"Isaiah 40:29",t:"He gives strength to the weary."},
+{d:93,r:"Psalm 55:22",t:"Cast your cares on the Lord and he will sustain you."},
+{d:94,r:"Psalm 62:1",t:"Truly my soul finds rest in God."},
+{d:95,r:"Exodus 33:14",t:"My Presence will go with you, and I will give you rest."},
+{d:96,r:"Proverbs 1:7",t:"The fear of the Lord is the beginning of wisdom."},
+{d:97,r:"James 1:5",t:"If any of you lacks wisdom, you should ask God."},
+{d:98,r:"Proverbs 2:6",t:"The Lord gives wisdom; from his mouth come knowledge and understanding."},
+{d:99,r:"Colossians 2:3",t:"In Christ are hidden all the treasures of wisdom and knowledge."},
+{d:100,r:"Psalm 119:105",t:"Your word is a lamp for my feet, a light on my path."},
+{d:101,r:"Proverbs 8:11",t:"Wisdom is more precious than rubies."},
+{d:102,r:"James 3:17",t:"The wisdom that comes from heaven is first of all pure."},
+{d:103,r:"John 8:32",t:"The truth will set you free."},
+{d:104,r:"Ephesians 4:15",t:"Speaking the truth in love, we will grow."},
+{d:105,r:"Proverbs 11:3",t:"The integrity of the upright guides them."},
+{d:106,r:"Luke 16:10",t:"Whoever can be trusted with very little can also be trusted with much."},
+{d:107,r:"Proverbs 10:9",t:"Whoever walks in integrity walks securely."},
+{d:108,r:"Matthew 5:37",t:"All you need to say is simply yes or no."},
+{d:109,r:"Philippians 4:8",t:"Whatever is true, whatever is noble, whatever is right — think about such things."},
+{d:110,r:"Matthew 5:8",t:"Blessed are the pure in heart, for they will see God."},
+{d:111,r:"Romans 12:2",t:"Be transformed by the renewing of your mind."},
+{d:112,r:"Psalm 51:10",t:"Create in me a pure heart, O God."},
+{d:113,r:"1 John 1:9",t:"If we confess our sins, he is faithful and just and will forgive us."},
+{d:114,r:"Matthew 5:16",t:"Let your light shine before others."},
+{d:115,r:"1 Timothy 6:6",t:"Godliness with contentment is great gain."},
+{d:116,r:"Hebrews 13:5",t:"Be content with what you have."},
+{d:117,r:"Philippians 4:11",t:"I have learned to be content whatever the circumstances."},
+{d:118,r:"Psalm 34:10",t:"Those who seek the Lord lack no good thing."},
+{d:119,r:"Philippians 4:19",t:"My God will meet all your needs."},
+{d:120,r:"Matthew 7:11",t:"How much more will your Father in heaven give good gifts to those who ask him!"}
+];
+// Verses 121-365 fill same pattern; for brevity we cycle through these 120.
+
+const QL=[
+  {a:"2–3",e:"🧸",n:"Put toys in the toy box",d:"Pick up all your toys and put them away",s:1},
+  {a:"2–3",e:"👕",n:"Put dirty clothes in the hamper",d:"Find your dirty clothes and put them in the basket",s:1},
+  {a:"2–3",e:"🌿",n:"Water a plant",d:"Use the small watering can to water the plant",s:1},
+  {a:"2–3",e:"👟",n:"Put your shoes away",d:"Put your shoes in the right spot by the door",s:1},
+  {a:"2–3",e:"🥄",n:"Carry items to the table",d:"Help bring napkins or plastic cups to the table",s:1},
+  {a:"4–6",e:"🛏️",n:"Make your bed",d:"Pull the covers up and straighten your pillow",s:1},
+  {a:"4–6",e:"🍽️",n:"Set the table for dinner",d:"Put a plate, fork, and napkin at each seat",s:1},
+  {a:"4–6",e:"🧹",n:"Sweep the floor",d:"Use the small broom to sweep up crumbs",s:2},
+  {a:"4–6",e:"🧺",n:"Sort laundry by colour",d:"Make a pile of light clothes and a pile of dark clothes",s:1},
+  {a:"4–6",e:"🍎",n:"Wipe down the dining table",d:"Use a damp cloth to wipe all the crumbs off the table",s:1},
+  {a:"4–6",e:"📦",n:"Tidy your bedroom",d:"Put everything back where it belongs in your room",s:2},
+  {a:"4–6",e:"🗑️",n:"Empty small rubbish bins",d:"Carry the small bins to the big bin and empty them",s:1},
+  {a:"4–6",e:"🧴",n:"Wipe bathroom sinks",d:"Use a cloth to wipe the sink and tap until they shine",s:1},
+  {a:"7–10",e:"🍽️",n:"Load the dishwasher",d:"Rinse the dishes and stack them in the dishwasher",s:2},
+  {a:"7–10",e:"🧺",n:"Fold and put away laundry",d:"Fold your clean clothes neatly and put them in your drawer",s:2},
+  {a:"7–10",e:"🍳",n:"Help prepare a meal",d:"Help chop vegetables or stir the pot with supervision",s:2},
+  {a:"7–10",e:"🧹",n:"Vacuum a room",d:"Use the vacuum cleaner to clean the whole room",s:2},
+  {a:"7–10",e:"🪟",n:"Clean the windows",d:"Spray and wipe the windows until they're streak-free",s:2},
+  {a:"7–10",e:"🌿",n:"Water all the plants",d:"Water every plant in the house that needs it",s:1},
+  {a:"7–10",e:"🎒",n:"Pack your school bag",d:"Pack everything you need for tomorrow before bed",s:1},
+  {a:"7–10",e:"🧽",n:"Clean the bathroom sink",d:"Scrub the sink, taps, and wipe down the counter",s:2},
+  {a:"7–10",e:"🐾",n:"Feed and water the pet",d:"Fill the food bowl and make sure the water is fresh",s:1},
+  {a:"11–13",e:"🍳",n:"Cook a simple meal",d:"Make a meal for the family with supervision",s:3},
+  {a:"11–13",e:"🧺",n:"Do a full load of laundry",d:"Wash, dry, fold, and put away a full load independently",s:3},
+  {a:"11–13",e:"🚽",n:"Scrub the toilet and bathroom",d:"Clean the toilet, sink, mirror, and floor",s:3},
+  {a:"11–13",e:"🧹",n:"Mop the floors",d:"Fill the bucket and mop the kitchen and bathroom floors",s:2},
+  {a:"11–13",e:"🗑️",n:"Take out all the rubbish",d:"Empty all bins and put the bags outside",s:2},
+  {a:"11–13",e:"🛒",n:"Help write the shopping list",d:"Check the fridge and cupboards and write what we need",s:2},
+  {a:"11–13",e:"🍽️",n:"Clean up after dinner",d:"Clear the table, wash up, and wipe the kitchen counters",s:2},
+  {a:"11–13",e:"👶",n:"Help look after a younger sibling",d:"Play with and supervise a younger sibling for 30 minutes",s:3},
+  {a:"11–13",e:"📚",n:"Organise your school schedule",d:"Review your homework, assignments, and upcoming tests",s:2},
+];
+
+const REWARD_SUGS={
+  screen:[{e:"📺",t:"1 hour extra anime tonight"},{e:"🎮",t:"60 min gaming session"},{e:"🎬",t:"Choose Friday's movie"},{e:"📱",t:"30 min extra screen time"},{e:"🎌",t:"Watch a new anime together"}],
+  family:[{e:"🎬",t:"Family movie night with snacks"},{e:"🍕",t:"Pizza and movie night"},{e:"🎲",t:"Family board game night"},{e:"🍳",t:"Cook a special meal together"},{e:"🏕️",t:"Backyard campfire night"}],
+  outings:[{e:"🎳",t:"Bowling night out"},{e:"🌳",t:"Trip to the park or forest"},{e:"🍦",t:"Ice cream outing"},{e:"🏊",t:"Swimming pool day"},{e:"🎡",t:"Weekend adventure trip"}],
+  privs:[{e:"🌙",t:"Stay up 30 min late"},{e:"👑",t:"Choose what's for dinner"},{e:"📺",t:"Control the TV remote"},{e:"🚫",t:"Skip one quest next week"},{e:"🛏️",t:"Sleep-in Saturday morning"}],
+  treats:[{e:"🍫",t:"Choose a special dessert"},{e:"📚",t:"New manga volume"},{e:"🧁",t:"Bake a cake together"},{e:"🎁",t:"Small surprise treat bag"},{e:"🌮",t:"Favourite restaurant for dinner"}]
+};
+
+/* ---------- 2. STATE ---------- */
+let ST={};
+let pinBuf="",curKid=null,qlFlt='All',rsugCtx={tier:'weekly',slot:0},expandedQL=null;
+let voices=[],selVoice=null,audioCtx=null,editingMemberId=null;
+let creatorState=null;
+
+function defaultState(){
+  return {
+    pin:'1234',
+    threshold:80,
+    taskWord:'Quest',
+    soundEnabled:true,
+    selectedVoiceName:null,
+    members:[
+      {id:'grace',name:'Grace',dob:'2012-07-14',classId:'mage',hue:280,skin:1,petId:'owl',xp:248,emoji:'⚔️',color:'#a78bfa',isParent:false,photo:null},
+      {id:'lauren',name:'Lauren',dob:'2013-03-22',classId:'archer',hue:38,skin:0,petId:'hawk',xp:196,emoji:'🌸',color:'#fbbf24',isParent:false,photo:null},
+      {id:'christian',name:'Christian',dob:'2019-05-07',classId:'sword',hue:0,skin:1,petId:'tiger',xp:84,emoji:'🐉',color:'#ff3d6e',isParent:false,photo:null},
+      {id:'constance',name:'Constance',dob:'2022-11-10',classId:'healer',hue:150,skin:0,petId:'bunny',xp:28,emoji:'🦊',color:'#34d399',isParent:false,photo:null},
+      {id:'bill',name:'Bill',dob:'1981-10-31',emoji:'🔥',color:'#3b9ef0',isParent:true},
+      {id:'ying',name:'Ying',dob:'1981-03-31',emoji:'💫',color:'#f5c842',isParent:true},
+    ],
+    chores:[
+      {id:'c1',name:'Make your bed',desc:'Pull up covers, fluff pillow',emoji:'🛏️',assignee:'grace',points:1,done:true},
+      {id:'c2',name:'Reading practice',desc:'20 minutes of your book',emoji:'📚',assignee:'grace',points:2,done:true},
+      {id:'c3',name:'Empty the dishwasher',desc:'Put everything where it belongs',emoji:'🍽️',assignee:'grace',points:2,done:false},
+      {id:'c4',name:'Tidy your room',desc:'Floor clear, desk neat',emoji:'🧹',assignee:'grace',points:2,done:false},
+      {id:'c5',name:'Make your bed',desc:'Pull up covers, fluff pillow',emoji:'🛏️',assignee:'lauren',points:1,done:true},
+      {id:'c6',name:'Brush teeth',desc:'2 full minutes',emoji:'🦷',assignee:'lauren',points:1,done:true},
+      {id:'c7',name:'Put away laundry',desc:'Drawer & closet',emoji:'🧺',assignee:'lauren',points:2,done:true},
+      {id:'c8',name:'Math practice',desc:'15 minutes',emoji:'📐',assignee:'lauren',points:2,done:false},
+      {id:'c9',name:'Make your bed',desc:'Pull up the covers',emoji:'🛏️',assignee:'christian',points:1,done:true},
+      {id:'c10',name:'Brush teeth',desc:'Top, bottom, and tongue',emoji:'🦷',assignee:'christian',points:1,done:true},
+      {id:'c11',name:'Put on clothes',desc:'Pick from your drawer',emoji:'👕',assignee:'christian',points:1,done:false},
+      {id:'c12',name:'Tidy toys',desc:'In the toy box',emoji:'🧸',assignee:'christian',points:1,done:false},
+      {id:'c13',name:'Brush teeth',desc:'With Mama or Dada',emoji:'🦷',assignee:'constance',points:1,done:true},
+      {id:'c14',name:'Find your shoes',desc:'By the door',emoji:'👟',assignee:'constance',points:1,done:false},
+      {id:'c15',name:'Pick up bears',desc:'Put them on the shelf',emoji:'🧸',assignee:'constance',points:1,done:false},
+    ],
+    rewards:[{text:'Family Movie Night',emoji:'🎬'},{text:'Pizza Friday',emoji:'🍕'},null],
+    monthlyRewards:[{text:'Theme park day',emoji:'🎢'},null,null],
+    grandRewards:[{text:'Beach trip',emoji:'✈️'},{text:'3 nights away',emoji:'🏖'},null],
+    monthlyStarTarget:480,
+    grandStarTarget:2000,
+    monthlyStarsAccum:156,
+    currentMonth:'',
+    currentWeek:weekKey(),
+    weeklyStars:{grace:18,lauren:14,christian:9,constance:5},
+    history:[
+      {name:'Lauren',chore:'Put away laundry',time:'8:42 AM'},
+      {name:'Grace',chore:'Reading practice',time:'8:30 AM'},
+      {name:'Christian',chore:'Brush teeth',time:'8:15 AM'},
+      {name:'Grace',chore:'Make your bed',time:'8:04 AM'},
+      {name:'Lauren',chore:'Brush teeth',time:'7:58 AM'},
+      {name:'Constance',chore:'Brush teeth',time:'7:52 AM'},
+    ],
+    personalRewards:[
+      {id:'pr1',memberId:'grace',text:'Extra anime episode',stars:15},
+      {id:'pr2',memberId:'lauren',text:'Extra anime episode',stars:15},
+      {id:'pr3',memberId:'christian',text:'Choose a bedtime story',stars:10},
+      {id:'pr4',memberId:'constance',text:'Extra cuddle time',stars:8},
+    ],
+  };
+}
+
+function load(){
+  try{const s=localStorage.getItem('fdv10');if(s){ST=JSON.parse(s);ensureFields();return;}}catch(e){}
+  ST=defaultState();save();
+}
+function save(){try{localStorage.setItem('fdv10',JSON.stringify(ST));}catch(e){}}
+function ensureFields(){
+  // Backward-fill any missing fields in case of older state
+  ST.members=ST.members||[];
+  ST.chores=ST.chores||[];
+  ST.rewards=ST.rewards||[null,null,null];
+  ST.monthlyRewards=ST.monthlyRewards||[null,null,null];
+  ST.grandRewards=ST.grandRewards||[null,null,null];
+  ST.weeklyStars=ST.weeklyStars||{};
+  ST.history=ST.history||[];
+  ST.personalRewards=ST.personalRewards||[];
+  ST.monthlyStarsAccum=ST.monthlyStarsAccum||0;
+  ST.monthlyStarTarget=ST.monthlyStarTarget||480;
+  ST.grandStarTarget=ST.grandStarTarget||2000;
+  ST.threshold=ST.threshold||80;
+  ST.taskWord=ST.taskWord||'Quest';
+  if(ST.soundEnabled===undefined)ST.soundEnabled=true;
+  ST.customChores=ST.customChores||[];
+  ST.rewardLibrary=ST.rewardLibrary||[];
+}
+
+/* ---------- 3. HELPERS ---------- */
+function calcAge(dob){const t=new Date(),b=new Date(dob);let a=t.getFullYear()-b.getFullYear();const m=t.getMonth()-b.getMonth();if(m<0||(m===0&&t.getDate()<b.getDate()))a--;return a;}
+function isBday(dob){if(!dob)return false;const t=new Date(),b=new Date(dob);return t.getMonth()===b.getMonth()&&t.getDate()===b.getDate();}
+function isYoung(id){const m=ST.members.find(x=>x.id===id);return m&&calcAge(m.dob)<=7;}
+function tw(){return ST.taskWord||'Quest';}
+function dayOfYear(){const n=new Date();return Math.floor((n-new Date(n.getFullYear(),0,0))/86400000);}
+function weekKey(){const d=new Date(),day=d.getDay(),diff=d.getDate()-day+(day===0?-6:1);return new Date(new Date().setDate(diff)).toISOString().slice(0,10);}
+function escHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+// XP / level math
+function xpForLevel(level){return 4*level*(level-1);}
+function levelFromXp(xp){let lvl=1;while(xpForLevel(lvl+1)<=xp)lvl++;return lvl;}
+function xpProgress(xp){const lvl=levelFromXp(xp);const cur=xpForLevel(lvl);const next=xpForLevel(lvl+1);return{level:lvl,cur,next,inLevel:xp-cur,needed:next-cur,pct:((xp-cur)/(next-cur))*100};}
+function tierFor(level){let t=TIERS[0];for(const tt of TIERS)if(level>=tt.lvl)t=tt;return t;}
+function petStage(level){
+  if(level<3)return 0; // egg
+  if(level<5)return 1; // baseline
+  if(level<10)return 2; // sparkle
+  if(level<15)return 3; // aura
+  if(level<25)return 4; // form
+  if(level<50)return 5; // mythic
+  return 6; // awakened
+}
+function getPet(member){const list=PETS[member.classId]||PETS.scout;return list.find(p=>p.id===member.petId)||list[0];}
+function unlocksFor(level){return UNLOCKS.filter(u=>level>=u.lvl);}
+function nextUnlockFor(level){return UNLOCKS.find(u=>u.lvl>level);}
+
+function chkWeek(){const wk=weekKey();if(ST.currentWeek!==wk){ST.weeklyStars={};ST.currentWeek=wk;save();}}
+function chkMonth(){const now=new Date();const mk=now.getFullYear()+'-'+(now.getMonth()+1);if(ST.currentMonth!==mk){ST.monthlyStarsAccum=0;ST.currentMonth=mk;save();}}
+function totalStars(){return Math.floor((ST.members||[]).filter(m=>!m.isParent).reduce((s,m)=>s+(m.xp||0),0));}
+function memberStars(id){const m=ST.members.find(x=>x.id===id);return m?m.xp||0:0;}
+
+/* ---------- 4. PORTRAIT (SVG anime hero) ---------- */
+function heroPortraitSVG(member,size){
+  if(!size)size=120;
+  if(member.photo){
+    return `<div style="width:${size}px;height:${size}px;border-radius:50%;background-image:url('${member.photo}');background-size:cover;background-position:center;border:2px solid ${CLASSES[member.classId]?.accent||'#00e5ff'};box-shadow:0 0 20px ${CLASSES[member.classId]?.accent||'#00e5ff'}55;"></div>`;
+  }
+  const cls=CLASSES[member.classId]||CLASSES.scout;
+  const skin=SKIN_TONES[member.skin||0];
+  const hue=member.hue||0;
+  const hair=`hsl(${hue},65%,38%)`;
+  const hairLight=`hsl(${hue},75%,65%)`;
+  const iris=`hsl(${(hue+180)%360},50%,35%)`;
+  const id=`p-${member.id}-${size}`;
+  const lvl=levelFromXp(member.xp||0);
+  const hasAura=lvl>=5;
+  const hasGoldFrame=lvl>=50;
+  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" style="display:block;">
+    <defs>
+      <radialGradient id="${id}-bg" cx="50%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="${cls.accent}" stop-opacity="0.32"/>
+        <stop offset="100%" stop-color="#0a0e1f" stop-opacity="0"/>
+      </radialGradient>
+      <clipPath id="${id}-clip"><circle cx="50" cy="50" r="49"/></clipPath>
+    </defs>
+    <g clip-path="url(#${id}-clip)">
+      <rect width="100" height="100" fill="url(#${id}-bg)"/>
+      ${hasAura?`<circle cx="50" cy="50" r="46" fill="none" stroke="${cls.accent}" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.6"/>`:''}
+      ${classOutfit(cls,member.classId)}
+      <path d="M44 72 L44 80 Q50 82 56 80 L56 72 Z" fill="${skin}"/>
+      <path d="M32 50 Q32 70 42 76 Q50 80 58 76 Q68 70 68 50 Q68 36 50 36 Q32 36 32 50 Z" fill="${skin}"/>
+      <ellipse cx="38" cy="64" rx="2.5" ry="1.2" fill="#ff9eb5" opacity="0.4"/>
+      <ellipse cx="62" cy="64" rx="2.5" ry="1.2" fill="#ff9eb5" opacity="0.4"/>
+      <ellipse cx="42" cy="56" rx="4" ry="5" fill="#fff"/>
+      <ellipse cx="58" cy="56" rx="4" ry="5" fill="#fff"/>
+      <ellipse cx="42" cy="57" rx="3" ry="4" fill="${iris}"/>
+      <ellipse cx="58" cy="57" rx="3" ry="4" fill="${iris}"/>
+      <ellipse cx="42" cy="57.5" rx="1.4" ry="2.5" fill="#1a1622"/>
+      <ellipse cx="58" cy="57.5" rx="1.4" ry="2.5" fill="#1a1622"/>
+      <circle cx="43" cy="55" r="1" fill="#fff"/>
+      <circle cx="59" cy="55" r="1" fill="#fff"/>
+      <path d="M38 53 Q42 51 46 53" stroke="#1a1622" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <path d="M54 53 Q58 51 62 53" stroke="#1a1622" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <path d="M50 62 L49 64" stroke="#1a1622" stroke-width="0.7" stroke-linecap="round" opacity="0.5"/>
+      <path d="M47 68 Q50 70 53 68" stroke="#1a1622" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      ${hairFor(member,hair,hairLight)}
+    </g>
+    <circle cx="50" cy="50" r="48" fill="none" stroke="${hasGoldFrame?'#ffd700':cls.accent}" stroke-width="${hasGoldFrame?2:1.4}" opacity="${hasGoldFrame?0.9:0.7}" ${hasGoldFrame?'stroke-dasharray="3 2"':''}/>
+  </svg>`;
+}
+
+function classOutfit(cls,id){
+  const a=cls.accent,a2=cls.accent2;
+  if(id==='mage')return `<path d="M22 100 L28 78 Q50 72 72 78 L78 100 Z" fill="${a}"/><path d="M28 78 Q50 72 72 78 L70 82 Q50 76 30 82 Z" fill="${a2}"/><text x="50" y="86" text-anchor="middle" font-size="7" fill="#ffd700">✦</text>`;
+  if(id==='archer')return `<path d="M24 100 L30 78 Q50 74 70 78 L76 100 Z" fill="${a}"/><path d="M30 78 L70 96" stroke="${a2}" stroke-width="2" fill="none"/><circle cx="50" cy="87" r="2" fill="${a2}"/>`;
+  if(id==='sword')return `<path d="M22 100 L30 76 Q50 72 70 76 L78 100 Z" fill="${a}"/><circle cx="50" cy="84" r="0.9" fill="${a2}"/><circle cx="50" cy="90" r="0.9" fill="${a2}"/><circle cx="50" cy="96" r="0.9" fill="${a2}"/>`;
+  if(id==='healer')return `<path d="M24 100 L30 78 Q50 74 70 78 L76 100 Z" fill="${a}"/><path d="M38 78 Q50 80 62 78 L60 100 L40 100 Z" fill="#fff" opacity="0.85"/>`;
+  return `<path d="M24 100 L30 78 Q50 74 70 78 L76 100 Z" fill="${a}"/>`;
+}
+
+function hairFor(member,hair,hairLight){
+  const cls=member.classId;
+  if(cls==='mage')return `<g><path d="M22 38 Q18 60 22 88 L30 92 Q26 70 28 50 Z" fill="${hair}"/><path d="M78 38 Q82 60 78 88 L70 92 Q74 70 72 50 Z" fill="${hair}"/><path d="M30 32 Q50 18 70 32 Q74 40 70 44 L30 44 Q26 40 30 32 Z" fill="${hair}"/><path d="M32 34 Q38 42 44 38 L42 46 Q36 50 30 44 Z" fill="${hair}"/><path d="M56 38 Q62 42 68 34 Q70 44 64 46 L56 46 Z" fill="${hair}"/></g>`;
+  if(cls==='healer')return `<g><circle cx="26" cy="26" r="9" fill="${hair}"/><circle cx="74" cy="26" r="9" fill="${hair}"/><circle cx="26" cy="24" r="3" fill="${hairLight}" opacity="0.6"/><circle cx="74" cy="24" r="3" fill="${hairLight}" opacity="0.6"/><path d="M30 32 Q50 20 70 32 Q74 40 70 44 L30 44 Q26 40 30 32 Z" fill="${hair}"/></g>`;
+  if(cls==='archer')return `<g><path d="M18 38 Q12 56 16 78 Q22 84 26 76 Q24 60 28 46 Z" fill="${hair}"/><path d="M82 38 Q88 56 84 78 Q78 84 74 76 Q76 60 72 46 Z" fill="${hair}"/><path d="M30 30 Q50 16 70 30 Q74 40 70 44 L30 44 Q26 40 30 30 Z" fill="${hair}"/></g>`;
+  // default: short messy
+  return `<g><path d="M26 36 Q22 50 26 56 L32 50 Q30 42 32 38 Z" fill="${hair}"/><path d="M74 36 Q78 50 74 56 L68 50 Q70 42 68 38 Z" fill="${hair}"/><path d="M28 30 Q50 14 72 30 Q76 40 72 44 L28 44 Q24 40 28 30 Z" fill="${hair}"/><path d="M32 34 L36 44 L40 36 L44 46 L46 36 Z" fill="${hair}"/><path d="M54 36 L56 46 L60 36 L64 44 L68 34 Z" fill="${hair}"/></g>`;
+}
+
+function petDisplay(member){
+  const pet=getPet(member);
+  const lvl=levelFromXp(member.xp||0);
+  const stage=petStage(lvl);
+  return pet.stages[stage]||pet.stages[0];
+}
+
+/* ---------- 5. AUDIO + VOICE ---------- */
+function getACtx(){if(!audioCtx)try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}return audioCtx;}
+function playChime(){if(!ST.soundEnabled)return;const ctx=getACtx();if(!ctx)return;[523.25,659.25,783.99].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,ctx.currentTime);g.gain.linearRampToValueAtTime(0.18/(i+1),ctx.currentTime+0.01+i*0.06);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2+i*0.1);o.start(ctx.currentTime+i*0.06);o.stop(ctx.currentTime+1.5);});}
+function loadVoices(){if(!window.speechSynthesis)return;voices=speechSynthesis.getVoices();if(!voices.length)speechSynthesis.onvoiceschanged=()=>{voices=speechSynthesis.getVoices();pickBest();};else pickBest();}
+function pickBest(){if(ST.selectedVoiceName){const f=voices.find(v=>v.name===ST.selectedVoiceName);if(f){selVoice=f;return;}}const pref=['Samantha','Karen','Moira','Tessa','Fiona','Ava','Allison'];for(const n of pref){const v=voices.find(x=>x.name===n);if(v){selVoice=v;break;}}if(!selVoice){const en=voices.filter(v=>v.lang.startsWith('en'));selVoice=en[0]||voices[0]||null;}}
+function speak(txt,young){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);if(selVoice)u.voice=selVoice;u.rate=young?0.78:0.9;u.pitch=young?1.2:1.0;u.volume=1;speechSynthesis.speak(u);}
+function speakVerse(){const v=V[(dayOfYear()-1)%V.length];if(v)speak(v.t+' — '+v.r,false);}
+
+/* ---------- 6. SCREEN ROUTING ---------- */
+function show(id){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));document.getElementById('sc-'+id).classList.add('on');if(id==='home')renderHome();if(id==='quests')renderQuestView();if(id==='pin')renderPin();if(id==='parent')renderParent();window.scrollTo(0,0);}
+function showPin(){pinBuf='';show('pin');}
+function pp(v){if(v==='c')pinBuf='';else if(v==='d')pinBuf=pinBuf.slice(0,-1);else if(pinBuf.length<4)pinBuf+=v;updPD();if(pinBuf.length===4){setTimeout(()=>{if(pinBuf===ST.pin){show('parent');pinBuf='';}else{const e=document.getElementById('pin-err');if(e)e.textContent='Incorrect PIN.';pinBuf='';updPD();}},200);}}
+function updPD(){for(let i=0;i<4;i++){const el=document.getElementById('pd'+i);if(el)el.classList.toggle('on',i<pinBuf.length);}}
+
+function toast(msg){const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2400);}
+
+function confettiBurst(x,y){const em=['⭐','✨','🌟','💫','🎉','🏆','⚔️','🐉','🌸'];for(let i=0;i<10;i++){const el=document.createElement('div');el.className='cb';el.textContent=em[Math.floor(Math.random()*em.length)];el.style.left=(x+(Math.random()-0.5)*100)+'px';el.style.top=(y+(Math.random()-0.5)*50)+'px';el.style.animationDelay=(Math.random()*0.35)+'s';document.body.appendChild(el);setTimeout(()=>el.remove(),1300);}}
+
+/* ---------- 7a. HOME ---------- */
+function renderHome(){
+  chkWeek();chkMonth();
+  const today=new Date();
+  const dayName=today.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+  const total=ST.chores.length;
+  const done=ST.chores.filter(c=>c.done).length;
+  const pct=total>0?Math.round((done/total)*100):0;
+  const dow=today.getDay();
+  const monthlyStars=ST.monthlyStarsAccum||0;
+  const grandStars=totalStars();
+
+  // Birthday detection
+  let bdayHTML='';
+  for(const m of ST.members){
+    if(!m.isParent && isBday(m.dob)){
+      const age=calcAge(m.dob);
+      bdayHTML=`<div class="bday">
+        <div class="bday-emoji">🎂</div>
+        <div style="flex:1;">
+          <div class="bday-title">Happy Birthday, ${escHtml(m.name)}!</div>
+          <div class="bday-sub">Turning ${age} today — no ${tw().toLowerCase()}s for the birthday star! 🎉</div>
+        </div>
+      </div>`;
+      break;
+    }
+  }
+
+  // Verse of the day
+  const v=V[(dayOfYear()-1)%V.length];
+
+  // Days row (Mon-Fri)
+  let daysHTML='';
+  ['Mon','Tue','Wed','Thu','Fri'].forEach((dn,i)=>{
+    const dayNum=i+1;
+    const filled=dow>dayNum||dow===dayNum;
+    const isToday=dow===dayNum;
+    daysHTML+=`<div class="day-dot ${filled?'filled':''} ${isToday?'today':''}"><div class="dl">${dn}</div><div class="dc">${filled?'✓':''}</div></div>`;
+  });
+
+  // Weekly rewards display
+  const weeklyR=(ST.rewards||[]).filter(r=>r);
+  const weeklyRHTML=weeklyR.length?weeklyR.map(r=>`<span class="reward-chip">${r.emoji} ${escHtml(r.text)}</span>`).join(''):'<span style="font-size:11px;color:var(--text3);">No reward set</span>';
+  const weeklyUnlocked=pct>=ST.threshold&&total>0;
+
+  // Monthly rewards
+  const monthlyR=(ST.monthlyRewards||[]).filter(r=>r);
+  const monthlyRHTML=monthlyR.length?monthlyR.map(r=>`<span class="reward-chip" style="border-color:rgba(106,138,255,0.4);">${r.emoji} ${escHtml(r.text)}</span>`).join(''):'<span style="font-size:11px;color:var(--text3);">No monthly reward</span>';
+  const monthlyPct=ST.monthlyStarTarget>0?Math.min(100,Math.round((monthlyStars/ST.monthlyStarTarget)*100)):0;
+  const monthlyUnlocked=ST.monthlyStarTarget>0&&monthlyStars>=ST.monthlyStarTarget;
+
+  // Grand rewards
+  const grandR=(ST.grandRewards||[]).filter(r=>r);
+  const grandRHTML=grandR.length?grandR.map(r=>`<span class="reward-chip" style="border-color:rgba(255,215,0,0.4);">${r.emoji} ${escHtml(r.text)}</span>`).join(''):'<span style="font-size:11px;color:var(--text3);">No grand reward</span>';
+  const grandPct=ST.grandStarTarget>0?Math.min(100,Math.round((grandStars/ST.grandStarTarget)*100)):0;
+  const grandUnlocked=ST.grandStarTarget>0&&grandStars>=ST.grandStarTarget;
+
+  // Hero cards (4 kids)
+  const kids=ST.members.filter(m=>!m.isParent);
+  let heroHTML='';
+  for(const kid of kids){
+    const cls=CLASSES[kid.classId]||CLASSES.scout;
+    const prog=xpProgress(kid.xp||0);
+    const tier=tierFor(prog.level);
+    const myCh=ST.chores.filter(c=>c.assignee===kid.id);
+    const myDone=myCh.filter(c=>c.done).length;
+    const todayStars=myCh.filter(c=>c.done).reduce((s,c)=>s+c.points,0);
+    const totalK=Math.floor(kid.xp||0);
+    const bday=isBday(kid.dob);
+    const petIcon=petDisplay(kid);
+    const pet=getPet(kid);
+    heroHTML+=`<div class="hero-card" style="border-color:${cls.accent}40;${bday?'box-shadow:0 0 24px rgba(255,61,110,0.4);border-color:var(--pink);':''}" onclick="openQuests('${kid.id}')">
+      <div class="hero-card-glow" style="background:linear-gradient(90deg,transparent,${cls.accent},transparent);"></div>
+      <button class="hero-edit" style="border:1px solid ${cls.accent}40;color:${cls.accent2};" onclick="event.stopPropagation();openCreator('${kid.id}')" title="Customize">✎</button>
+      <div class="hero-tier" style="border:1px solid ${cls.accent}30;color:${cls.accent2};">${tier.mark} ${tier.name}</div>
+      <div class="hero-portrait-wrap">${heroPortraitSVG(kid,110)}</div>
+      <div class="hero-name">${escHtml(kid.name)}${bday?' 🎂':''}</div>
+      <div class="hero-class" style="color:${cls.accent2};">${cls.name}</div>
+      <div class="hero-level-row">
+        <span class="hero-level-num">L${prog.level}</span>
+        <div class="bar-track" style="flex:1;border-color:${cls.accent}25;"><div class="bar-fill" style="width:${prog.pct}%;background:linear-gradient(90deg,${cls.accent2},${cls.accent});box-shadow:0 0 8px ${cls.accent};"></div></div>
+      </div>
+      <div class="hero-pet">
+        <span class="hero-pet-icon">${petIcon}</span>
+        <span class="hero-pet-name">${escHtml(pet.name)}</span>
+      </div>
+      <div class="hero-stars">
+        <span class="today">★ ${todayStars} today</span>
+        <span class="total">${myDone}/${myCh.length} ${tw().toLowerCase()}s</span>
+      </div>
+    </div>`;
+  }
+
+  // Personal stars panel (this week)
+  const maxW=Math.max(1,...kids.map(m=>(ST.weeklyStars||{})[m.id]||0));
+  let personalHTML='';
+  for(const m of kids){
+    const ws=(ST.weeklyStars||{})[m.id]||0;
+    const p2=Math.round((ws/maxW)*100);
+    const cls=CLASSES[m.classId]||CLASSES.scout;
+    const next=(ST.personalRewards||[]).filter(r=>r.memberId===m.id).find(r=>r.stars>(m.xp||0));
+    personalHTML+=`<div class="wpr">
+      <span class="wpr-name" style="color:${cls.accent};">${escHtml(m.name)}</span>
+      <div class="wpr-track"><div class="wpr-fill" style="width:${p2}%;background:linear-gradient(90deg,${cls.accent2},${cls.accent});"></div></div>
+      <span class="wpr-stars">★ ${ws}</span>
+    </div>`;
+    if(next){personalHTML+=`<div class="wpr-hint">${next.stars-(m.xp||0)} more → ${escHtml(next.text)}</div>`;}
+  }
+
+  // Activity
+  let activityHTML='';
+  if(ST.history && ST.history.length){
+    activityHTML=ST.history.slice(0,6).map(h=>{
+      const mem=ST.members.find(x=>x.name===h.name);
+      const acc=mem?(CLASSES[mem.classId]?.accent||mem.color||'#a0a8c8'):'#a0a8c8';
+      return `<div class="ar"><span class="ar-name" style="color:${acc};">${escHtml(h.name)}</span><span class="ar-task">${escHtml(h.chore)}</span><span class="ar-check">✓</span><span class="ar-time">${escHtml(h.time)}</span></div>`;
+    }).join('');
+  } else {
+    activityHTML='<div style="font-size:12px;color:var(--text3);padding:6px 0;">No activity yet today.</div>';
+  }
+
+  document.getElementById('sc-home').innerHTML=`
+    <div class="hdr">
+      <div class="hdr-l">
+        <div class="hdr-logo">✦</div>
+        <div>
+          <div class="hdr-title">Family Dojo <em>Academy</em></div>
+          <div class="hdr-date">${dayName}</div>
+        </div>
+      </div>
+      <div class="hdr-r">
+        <div class="star-badge"><span class="s">★</span><span class="v">${monthlyStars}</span><span class="l">family stars · this month</span></div>
+        <button class="btn-parents" onclick="showPin()">⚙ Parent Zone</button>
+      </div>
+    </div>
+    ${bdayHTML}
+    <div class="verse">
+      <div class="verse-tag">✝ Verse of the Day</div>
+      <div class="verse-text">"${escHtml(v.t)}"</div>
+      <div class="verse-ref">${escHtml(v.r)}</div>
+      <button class="verse-aud" onclick="speakVerse()">🔊 Listen</button>
+    </div>
+    <div class="goals-row">
+      <div class="goal weekly">
+        <div class="goal-tag">⚡ Weekly · Mon–Fri</div>
+        <div class="goal-rewards">${weeklyRHTML}</div>
+        <div class="days-row">${daysHTML}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;"></div></div>
+        <div class="goal-meta"><span>${done} of ${total} done</span><span>${pct}% · need ${ST.threshold}%</span></div>
+        ${weeklyUnlocked?'<div class="goal-unlocked">🎉 Weekly goal reached!</div>':''}
+      </div>
+      <div class="goal monthly">
+        <div class="goal-tag">🌙 Monthly Mission</div>
+        <div class="goal-rewards">${monthlyRHTML}</div>
+        <div style="margin:10px 0 6px;"><div class="bar-track"><div class="bar-fill" style="width:${monthlyPct}%;"></div></div></div>
+        <div class="goal-meta"><span>${monthlyStars} stars</span><span>${ST.monthlyStarTarget>0?monthlyPct+'% of '+ST.monthlyStarTarget:'Set target'}</span></div>
+        ${monthlyUnlocked?'<div class="goal-unlocked">🌟 Monthly goal reached!</div>':''}
+      </div>
+      <div class="goal grand">
+        <div class="goal-tag">👑 Grand Saga</div>
+        <div class="goal-rewards">${grandRHTML}</div>
+        <div style="margin:10px 0 6px;"><div class="bar-track"><div class="bar-fill" style="width:${grandPct}%;"></div></div></div>
+        <div class="goal-meta"><span>${grandStars} stars total</span><span>${ST.grandStarTarget>0?grandPct+'% of '+ST.grandStarTarget:'Set target'}</span></div>
+        ${grandUnlocked?'<div class="goal-unlocked">👑 Grand goal reached!</div>':''}
+      </div>
+    </div>
+    <div class="sec-lbl">Tap your hero to start</div>
+    <div class="hero-grid">${heroHTML}</div>
+    <div class="panel">
+      <div class="panel-title">⭐ Personal Stars This Week</div>
+      ${personalHTML}
+    </div>
+    <div class="sec-lbl">Recent Activity</div>
+    <div class="activity-card">${activityHTML}</div>
+  `;
+}
+
+/* ---------- 7b. QUEST + PARENT ---------- */
+function openQuests(kidId){curKid=kidId;show('quests');}
+function renderQuestView(){
+  const m=ST.members.find(x=>x.id===curKid);
+  if(!m){show('home');return;}
+  const cls=CLASSES[m.classId]||CLASSES.scout;
+  const prog=xpProgress(m.xp||0);
+  const tier=tierFor(prog.level);
+  const young=isYoung(curKid);
+  const myCh=ST.chores.filter(c=>c.assignee===curKid);
+  const todayStars=myCh.filter(c=>c.done).reduce((s,c)=>s+c.points,0);
+  const totalP=myCh.reduce((s,c)=>s+c.points,0);
+  const pctDone=totalP?(todayStars/totalP)*100:0;
+
+  let questsHTML='';
+  if(myCh.length===0){
+    questsHTML=`<div style="text-align:center;padding:60px;font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--text2);">No ${tw().toLowerCase()}s today! 🎉</div>`;
+  } else {
+    for(const c of myCh){
+      const de=c.desc.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"');
+      questsHTML+=`<div class="qi ${c.done?'done':''}" id="qi-${c.id}" style="border-left:3px solid ${c.done?'#34d399':cls.accent};">
+        <div class="qi-emoji">${c.emoji}</div>
+        <div class="qi-body">
+          <div class="qi-name">${escHtml(c.name)}</div>
+          <div class="qi-desc">${escHtml(c.desc)}</div>
+          <div class="qi-pts">+${c.points} ★ XP</div>
+        </div>
+        <button class="qi-audio" onclick="speak('${escHtml(c.name)}. ${de}',${young})" title="Read aloud">🔊</button>
+        <button class="qi-check ${c.done?'on':''}" onclick="togQ('${c.id}',event)">${c.done?'✓':''}</button>
+      </div>`;
+    }
+  }
+
+  document.getElementById('sc-quests').innerHTML=`
+    <div class="qhdr" style="border-bottom-color:${cls.accent}30;background:linear-gradient(90deg,${cls.accent}10,transparent);">
+      <button class="btn-back" onclick="show('home')">← Party</button>
+      ${heroPortraitSVG(m,72)}
+      <div class="qhdr-info">
+        <div class="qhdr-name-row">
+          <span class="qhdr-name">${escHtml(m.name)}</span>
+          <span class="qhdr-class" style="color:${cls.accent2};">${tier.name} · ${cls.name}</span>
+        </div>
+        <div class="qhdr-level-row">
+          <span class="qhdr-level">Level ${prog.level}</span>
+          <div class="qhdr-bar" style="border:1px solid ${cls.accent}25;"><div class="qhdr-bar-fill" style="width:${prog.pct}%;background:linear-gradient(90deg,${cls.accent2},${cls.accent});box-shadow:0 0 8px ${cls.accent};"></div></div>
+          <span class="qhdr-xp">${prog.inLevel}/${prog.needed} XP</span>
+        </div>
+      </div>
+      <div class="qhdr-stars">
+        <div class="n">★ ${todayStars}</div>
+        <div class="l">earned today</div>
+      </div>
+    </div>
+    <div class="quest-progress">
+      <div class="quest-progress-row">
+        <span>${young?"Today's Missions":"Today's Quests"}</span>
+        <span>${myCh.filter(c=>c.done).length} of ${myCh.length} complete</span>
+      </div>
+      <div class="bar-track" style="height:4px;"><div class="bar-fill" style="width:${pctDone}%;background:linear-gradient(90deg,${cls.accent2},${cls.accent});"></div></div>
+    </div>
+    <div class="quest-list ${young?'young':''}">${questsHTML}</div>
+  `;
+}
+
+function togQ(cid,e){
+  const c=ST.chores.find(x=>x.id===cid);if(!c)return;
+  const m=ST.members.find(x=>x.id===curKid);if(!m)return;
+  if(!c.done){
+    c.done=true;
+    const oldLevel=levelFromXp(m.xp||0);
+    m.xp=(m.xp||0)+c.points;
+    const newLevel=levelFromXp(m.xp);
+    if(!ST.weeklyStars[curKid])ST.weeklyStars[curKid]=0;
+    ST.weeklyStars[curKid]+=c.points;
+    ST.monthlyStarsAccum=(ST.monthlyStarsAccum||0)+c.points;
+    ST.history.unshift({name:m.name,chore:c.name,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})});
+    if(ST.history.length>50)ST.history.pop();
+    playChime();
+    if(e&&e.clientX)confettiBurst(e.clientX,e.clientY);
+    save();
+    if(newLevel>oldLevel){showLevelUp(m,newLevel);return;}
+  } else {
+    c.done=false;
+    m.xp=Math.max(0,(m.xp||0)-c.points);
+    if(ST.weeklyStars[curKid])ST.weeklyStars[curKid]=Math.max(0,ST.weeklyStars[curKid]-c.points);
+    ST.monthlyStarsAccum=Math.max(0,(ST.monthlyStarsAccum||0)-c.points);
+    save();
+  }
+  renderQuestView();
+}
+
+function showLevelUp(member,level){
+  const cls=CLASSES[member.classId]||CLASSES.scout;
+  const tier=tierFor(level);
+  const unlock=UNLOCKS.find(u=>u.lvl===level);
+  const newPet=unlock?petDisplay(member):'';
+  const host=document.getElementById('modal-host');
+  host.innerHTML=`<div class="level-up-bg" id="level-up-overlay">
+    <div class="level-up">
+      <div class="level-up-glow">L${level}</div>
+      <div class="level-up-title" style="color:${cls.accent};">${escHtml(member.name)} levelled up!</div>
+      <div class="level-up-sub">${tier.name} · ${cls.name}</div>
+      ${unlock?`<div class="level-up-unlock">
+        ${newPet?`<div style="font-size:48px;margin-bottom:8px;animation:float 2s ease-in-out infinite;">${newPet}</div>`:''}
+        <span style="font-size:20px;">${unlock.icon}</span> <strong>${escHtml(unlock.name)}</strong> — ${escHtml(unlock.desc)}
+      </div>`:''}
+      <button class="level-up-btn" onclick="closeLevelUp()">Continue</button>
+    </div>
+  </div>`;
+}
+function closeLevelUp(){document.getElementById('modal-host').innerHTML='';renderQuestView();}
+
+/* ---------- 7c. PIN ---------- */
+function renderPin(){
+  document.getElementById('sc-pin').innerHTML=`
+    <div style="padding:24px;">
+      <button class="btn-back" onclick="show('home')">← Back</button>
+    </div>
+    <div class="pin-screen">
+      <h2>Parent Zone</h2>
+      <p>Enter your 4-digit PIN</p>
+      <div class="pin-dots">
+        <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
+        <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
+      </div>
+      <div class="pin-pad">
+        ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="ppb" onclick="pp('${n}')">${n}</button>`).join('')}
+        <button class="ppb" onclick="pp('c')" style="font-size:11px;">Clear</button>
+        <button class="ppb" onclick="pp('0')">0</button>
+        <button class="ppb" onclick="pp('d')" style="font-size:11px;">Del</button>
+      </div>
+      <div class="pin-err" id="pin-err"></div>
+    </div>
+  `;
+  updPD();
+}
+
+function setParentTab(tab){window.parentTabState=tab;renderParent();}
+function renderParent(){
+  const tabState=window.parentTabState||'week';
+  const kids=ST.members.filter(m=>!m.isParent);
+  const total=ST.chores.length;
+  const done=ST.chores.filter(c=>c.done).length;
+  const pct=total>0?Math.round((done/total)*100):0;
+  // Save scroll before full rebuild
+  const prevScroll=document.querySelector('#sc-parent .p-content')?.scrollTop||0;
+
+  let html=`<div class="p-layout">
+    <div class="p-nav">
+      <div class="p-nav-title">Parent Zone</div>
+      <div class="pni ${tabState==='week'?'on':''}" onclick="setParentTab('week')">⚡ Daily Chores</div>
+      <div class="pni ${tabState==='goals'?'on':''}" onclick="setParentTab('goals')">🎁 Rewards</div>
+      <div class="pni ${tabState==='family'?'on':''}" onclick="setParentTab('family')">👨‍👩‍👧‍👦 Family</div>
+      <div class="p-exit"><button onclick="show('home')">← Exit</button></div>
+    </div>
+    <div class="p-content">
+      ${renderParentWeek(kids,total,done,pct)}
+      ${renderParentGoals()}
+      ${renderParentFamily()}
+    </div>
+  </div>`;
+  document.getElementById('sc-parent').innerHTML=html;
+  document.querySelectorAll('.ps').forEach(s=>s.classList.remove('on'));
+  const active=document.getElementById('ps-'+tabState);
+  if(active)active.classList.add('on');
+  // Restore scroll position
+  const pc=document.querySelector('#sc-parent .p-content');
+  if(pc)pc.scrollTop=prevScroll;
+}
+
+function renderParentWeek(kids,total,done,pct){
+  const weeklyStarsTotal=Object.values(ST.weeklyStars||{}).reduce((s,v)=>s+v,0);
+
+  // ── Per-kid assigned chore lists ──────────────────────────────────
+  let kidChoreHTML='';
+  for(const kid of kids){
+    const cls=CLASSES[kid.classId]||CLASSES.scout;
+    const myChores=ST.chores.filter(c=>c.assignee===kid.id);
+    const myDone=myChores.filter(c=>c.done).length;
+    kidChoreHTML+=`<div style="margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div style="width:10px;height:10px;border-radius:50%;background:${cls.accent};flex-shrink:0;"></div>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:${cls.accent};">${escHtml(kid.name)}</span>
+        <span style="font-size:11px;color:var(--text2);">${myDone}/${myChores.length} done</span>
+        <button onclick="openAddChoreModal('${kid.id}')" style="margin-left:auto;padding:4px 12px;border-radius:999px;background:rgba(0,229,255,0.1);border:1px solid var(--accent);color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;">+ Add</button>
+      </div>
+      ${myChores.length===0?'<div style="font-size:12px;color:var(--text3);padding:4px 0 6px;">No chores yet — use + Add or 📚 Quest Library</div>':''}
+      ${myChores.map(c=>`<div class="li" style="border-left:3px solid ${cls.accent}${c.done?';opacity:0.55':''};">
+        <span style="font-size:20px;">${c.emoji}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:600;${c.done?'text-decoration:line-through;color:var(--text2);':''}">${escHtml(c.name)}</div>
+          <div style="font-size:11px;color:var(--text3);">${c.desc?escHtml(c.desc):''}</div>
+        </div>
+        <span style="font-size:11px;color:var(--gold);font-weight:700;flex-shrink:0;">★${c.points}</span>
+        <button onclick="removeChore('${c.id}')" style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(240,64,96,0.4);background:rgba(240,64,96,0.06);color:var(--red);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">×</button>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  // ── Activity log ──────────────────────────────────────────────────
+  const actHTML=ST.history&&ST.history.length
+    ?ST.history.slice(0,8).map(h=>{const mem=ST.members.find(x=>x.name===h.name);const acc=mem?(CLASSES[mem.classId]?.accent||'#a0a8c8'):'#a0a8c8';return `<div class="ar"><span class="ar-name" style="color:${acc};">${escHtml(h.name)}</span><span class="ar-task">${escHtml(h.chore)}</span><span class="ar-check">✓</span><span class="ar-time">${escHtml(h.time)}</span></div>`;}).join('')
+    :'<div style="font-size:12px;color:var(--text3);padding:6px 0;">No activity yet.</div>';
+
+  return `<div class="ps on" id="ps-week">
+    <div class="ptitle">⚡ Daily Chores</div>
+    <div class="psub">Assign chores to each hero then track them on the home screen</div>
+
+    <div class="sgrid">
+      <div class="stc"><div class="stn">${done}</div><div class="stl">Done Today</div></div>
+      <div class="stc"><div class="stn">${pct}%</div><div class="stl">Completion</div></div>
+      <div class="stc"><div class="stn">★${weeklyStarsTotal}</div><div class="stl">Week Stars</div></div>
+    </div>
+
+    <div class="af">
+      <div class="af-title" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>📋 Assigned Chores</span>
+        <div style="display:flex;gap:6px;">
+          <button onclick="openQuestLibraryModal()" style="padding:4px 12px;border-radius:999px;border:1px solid var(--accent);background:rgba(0,229,255,0.08);color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;">📚 Quest Library</button>
+          <button onclick="openCustomChoreModal()" style="padding:4px 12px;border-radius:999px;border:1px solid var(--border);background:rgba(20,25,58,0.5);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;">✎ Custom</button>
+        </div>
+      </div>
+      ${kidChoreHTML}
+    </div>
+
+    <div class="af">
+      <div class="af-title">📝 Today's Activity</div>
+      ${actHTML}
+    </div>
+  </div>`;
+}
+
+function renderParentGoals(){
+  const monthlyStars=ST.monthlyStarsAccum||0;
+  const grandStars=totalStars();
+  const monthlyPct=ST.monthlyStarTarget>0?Math.min(100,Math.round((monthlyStars/ST.monthlyStarTarget)*100)):0;
+  const grandPct=ST.grandStarTarget>0?Math.min(100,Math.round((grandStars/ST.grandStarTarget)*100)):0;
+
+  // Weekly rewards
+  let weeklyRewardHTML='';
+  for(let i=0;i<3;i++){
+    const r=ST.rewards[i];
+    weeklyRewardHTML+=`<div class="reward-slot ${r?'filled':''}">
+      <div class="rs-num" style="background:rgba(124,111,247,0.2);color:#a89bff;">${i+1}</div>
+      <div style="flex:1;min-width:0;">
+        ${r?`<div style="font-weight:600;font-size:13px;">${r.emoji} ${escHtml(r.text)}</div>`:'<div style="color:var(--text3);font-size:12px;">Empty slot</div>'}
+      </div>
+      ${r?`<button class="rs-clear" onclick="delReward('weekly',${i})">Clear</button>`:''}
+    </div>`;
+  }
+
+  // Monthly rewards
+  let monthlyRewardHTML='';
+  for(let i=0;i<3;i++){
+    const r=ST.monthlyRewards[i];
+    monthlyRewardHTML+=`<div class="reward-slot ${r?'filled':''}">
+      <div class="rs-num" style="background:rgba(106,138,255,0.2);color:#8aacff;">${i+1}</div>
+      <div style="flex:1;min-width:0;">
+        ${r?`<div style="font-weight:600;font-size:13px;">${r.emoji} ${escHtml(r.text)}</div>`:'<div style="color:var(--text3);font-size:12px;">Empty slot</div>'}
+      </div>
+      ${r?`<button class="rs-clear" onclick="delReward('monthly',${i})">Clear</button>`:''}
+    </div>`;
+  }
+
+  // Grand rewards
+  let grandRewardHTML='';
+  for(let i=0;i<3;i++){
+    const r=ST.grandRewards[i];
+    grandRewardHTML+=`<div class="reward-slot ${r?'filled':''}">
+      <div class="rs-num" style="background:rgba(255,215,0,0.2);color:var(--gold);">${i+1}</div>
+      <div style="flex:1;min-width:0;">
+        ${r?`<div style="font-weight:600;font-size:13px;">${r.emoji} ${escHtml(r.text)}</div>`:'<div style="color:var(--text3);font-size:12px;">Empty slot</div>'}
+      </div>
+      ${r?`<button class="rs-clear" onclick="delReward('grand',${i})">Clear</button>`:''}
+    </div>`;
+  }
+
+  return `<div class="ps" id="ps-goals">
+    <div class="ptitle">🎁 Goals & Rewards</div>
+    <div class="psub">Set rewards for reaching milestones</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Weekly Target</div>
+        <div style="font-size:13px;margin-bottom:8px;display:flex;align-items:center;gap:8px;"><input type="number" value="${ST.threshold}" onchange="ST.threshold=parseInt(this.value);save();" style="width:60px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;"> % complete</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Monthly Target</div>
+        <div style="font-size:13px;display:flex;align-items:center;gap:8px;"><input type="number" value="${ST.monthlyStarTarget}" onchange="ST.monthlyStarTarget=parseInt(this.value);save();" style="width:70px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;"> stars</div>
+      </div>
+    </div>
+
+    <div class="af">
+      <div class="af-title" style="color:#a89bff;">⚡ Weekly Rewards (at ${ST.threshold}%)</div>
+      ${weeklyRewardHTML}
+      <button class="bp" style="width:100%;margin-top:10px;" onclick="openRewardPicker('weekly')">+ Add Reward</button>
+    </div>
+
+    <div class="af">
+      <div class="af-title" style="color:#8aacff;">🌙 Monthly Rewards (${monthlyPct}% • ${monthlyStars}/${ST.monthlyStarTarget}★)</div>
+      ${monthlyRewardHTML}
+      <button class="bp" style="width:100%;margin-top:10px;" onclick="openRewardPicker('monthly')">+ Add Reward</button>
+    </div>
+
+    <div class="af">
+      <div class="af-title" style="color:var(--gold);">👑 Grand Rewards (${grandPct}% • ${grandStars}/${ST.grandStarTarget}★)</div>
+      ${grandRewardHTML}
+      <button class="bp" style="width:100%;margin-top:10px;" onclick="openRewardPicker('grand')">+ Add Reward</button>
+    </div>
+
+    <div class="af">
+      <div class="af-title">📖 Reward Library</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px;">Your saved custom rewards — pick from these when assigning rewards to tiers.</div>
+      ${(ST.rewardLibrary||[]).length===0?'<div style="color:var(--text3);font-size:12px;padding:4px 0;">No saved rewards yet. Add a custom reward using any "+ Add Reward" button above.</div>':''}
+      ${(ST.rewardLibrary||[]).map((r,i)=>`<div class="reward-slot filled" style="margin-bottom:6px;">
+        <div style="font-size:20px;flex-shrink:0;">${r.emoji}</div>
+        <div style="flex:1;font-size:13px;font-weight:600;">${escHtml(r.text)}</div>
+        <button class="rs-clear" onclick="deleteRewardLib(${i})">Remove</button>
+      </div>`).join('')}
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px;">
+        <input id="rl-emoji" type="text" placeholder="🎁" style="width:52px;padding:8px;text-align:center;font-size:20px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);">
+        <input id="rl-text" type="text" placeholder="Add to reward library…" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;" onkeydown="if(event.key==='Enter')addToRewardLibDirect();">
+        <button onclick="addToRewardLibDirect()" style="padding:8px 14px;border-radius:8px;border:none;background:rgba(0,229,255,0.15);border:1px solid var(--accent);color:var(--accent);font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;">Save</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderParentFamily(){
+  const kids=ST.members.filter(m=>!m.isParent);
+  const parents=ST.members.filter(m=>m.isParent);
+
+  // Members list
+  let memberHTML='';
+  for(const kid of kids){
+    const cls=CLASSES[kid.classId]||CLASSES.scout;
+    const age=calcAge(kid.dob);
+    const level=levelFromXp(kid.xp||0);
+    memberHTML+=`<div class="li" style="background:linear-gradient(90deg,${cls.accent}10,transparent);border-left:3px solid ${cls.accent};">
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:13px;">${escHtml(kid.name)}</div>
+        <div style="font-size:11px;color:var(--text2);">${age} years · ${cls.name} · L${level}</div>
+      </div>
+      <button class="bp" style="padding:5px 14px;font-size:11px;" onclick="editKid('${kid.id}')">Edit</button>
+      <button class="bd" style="padding:5px 12px;font-size:11px;" onclick="delKid('${kid.id}')">Remove</button>
+    </div>`;
+  }
+
+  // Parent list
+  let parentHTML=parents.map(p=>`<div class="li"><span>${escHtml(p.name)}</span> (parent)</div>`).join('');
+
+  return `<div class="ps" id="ps-family">
+    <div class="ptitle">👨‍👩‍👧‍👦 Family & Settings</div>
+    <div class="psub">Manage family members and preferences</div>
+
+    <div class="af">
+      <div class="af-title">🧒 Family Members</div>
+      ${memberHTML}
+      <button class="bp" style="width:100%;margin-top:10px;" onclick="addKidModal()">+ Add Child</button>
+    </div>
+
+    <div class="af">
+      <div class="af-title">⚙ Settings</div>
+      <label class="fl">Task Word (default: Quest)</label>
+      <input type="text" value="${ST.taskWord||'Quest'}" onchange="ST.taskWord=this.value;save();" class="fi" style="margin-bottom:12px;">
+
+      <label class="fl">Sound Effects</label>
+      <div style="display:flex;gap:10px;margin-bottom:12px;">
+        <label><input type="checkbox" ${ST.soundEnabled?'checked':''} onchange="ST.soundEnabled=this.checked;save();"> Enable chime sound</label>
+      </div>
+
+      <label class="fl">Change PIN</label>
+      <input type="text" value="${ST.pin}" maxlength="4" onchange="ST.pin=this.value;save();" class="fi" placeholder="4-digit PIN" style="margin-bottom:12px;">
+
+      <label class="fl">Voice Selection</label>
+      <select id="voice-sel" class="fs" onchange="selVoice=(voices[parseInt(this.value)]||null);localStorage.setItem('fdvoice',this.value);" style="margin-bottom:16px;">
+        <option value="-1">Default System Voice</option>
+        ${voices.map((v,i)=>`<option value="${i}" ${selVoice===v?'selected':''}>${v.name}</option>`).join('')}
+      </select>
+
+      <button class="bd" style="width:100%;margin-top:12px;" onclick="if(confirm('Reset all chores to not done today?')){ST.chores.forEach(c=>c.done=false);save();renderHome();}">🔄 Reset Today's Progress</button>
+    </div>
+  </div>`;
+}
+
+function delReward(tier,slot){if(!confirm('Remove this reward?'))return;const key=tier==='weekly'?'rewards':tier==='monthly'?'monthlyRewards':'grandRewards';ST[key][slot]=null;save();renderParent();}
+function delKid(id){if(!confirm('Remove '+ST.members.find(m=>m.id===id).name+'?'))return;ST.members=ST.members.filter(m=>m.id!==id);ST.chores=ST.chores.filter(c=>c.assignee!==id);save();renderParent();}
+function editKid(id){openCreator(id);}
+function addKidModal(){const name=prompt('Child name:');if(!name)return;const id=name.toLowerCase().replace(/\s+/g,'');if(ST.members.find(m=>m.id===id)){alert('Name already used');return;}const dob=prompt('Birth date (YYYY-MM-DD):');if(!dob)return;ST.members.push({id,name,dob,classId:'scout',hue:0,skin:0,petId:'cat',xp:0,emoji:'⭐',color:'#a0a8c8',isParent:false,photo:null});save();renderParent();}
+
+function removeChore(id){ST.chores=ST.chores.filter(c=>c.id!==id);save();renderParent();}
+
+/* ── Reward Picker Modal ─────────────────────────────────────────────── */
+function openRewardPicker(tier){
+  const key=tier==='weekly'?'rewards':tier==='monthly'?'monthlyRewards':'grandRewards';
+  if((ST[key]||[]).every(r=>r!==null)){alert('All 3 reward slots are full. Clear one first.');return;}
+  window._rpTier=tier;
+  if(!window._rpCat)window._rpCat='screen';
+  renderRewardPicker();
+}
+function rpShowCat(cat){window._rpCat=cat;renderRewardPicker();}
+function renderRewardPicker(){
+  const tier=window._rpTier;
+  const activeCat=window._rpCat||'screen';
+  const catLabels={mylib:'⭐ My Library',screen:'📱 Screen',family:'🏠 Family',outings:'🌳 Outings',privs:'👑 Perks',treats:'🍬 Treats'};
+  const cats=Object.keys(catLabels);
+  const isLib=activeCat==='mylib';
+  const sugs=isLib?(ST.rewardLibrary||[]).map(r=>({e:r.emoji,t:r.text})):(REWARD_SUGS[activeCat]||[]);
+  const title=tier==='weekly'?'⚡ Weekly Reward':tier==='monthly'?'🌙 Monthly Reward':'👑 Grand Reward';
+  const host=document.getElementById('modal-host');
+  host.innerHTML=`<div class="modal-bg" onclick="if(event.target===this){window._rpTier=null;document.getElementById('modal-host').innerHTML='';}">
+    <div class="modal">
+      <div class="modal-title">${title}</div>
+      <div class="modal-sub">Pick a reward or enter your own below</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+        ${cats.map(c=>`<button style="padding:5px 12px;border-radius:999px;border:1px solid ${c===activeCat?'var(--accent)':'var(--border)'};background:${c===activeCat?'rgba(0,229,255,0.15)':'rgba(20,25,58,0.5)'};color:${c===activeCat?'var(--accent)':'var(--text2)'};font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;" onclick="rpShowCat('${c}')">${catLabels[c]}</button>`).join('')}
+      </div>
+      <div>
+        ${sugs.length===0?`<div style="color:var(--text3);font-size:13px;padding:10px 0;">No saved rewards yet. Add one below and it will appear here.</div>`:''}
+        ${sugs.map((s,i)=>{const se=s.e;const st=s.t.replace(/\\/g,'\\\\').replace(/'/g,"\\'");return `<div class="rsug" ${!isLib?`onclick="addRewardFromPicker('${se}','${st}')"`:''} style="${!isLib?'cursor:pointer;':''}">
+          <span style="font-size:20px;">${s.e}</span>
+          <span style="font-size:13px;flex:1;">${escHtml(s.t)}</span>
+          ${isLib?`
+            <button onclick="deleteRewardLib(${i})" style="border:none;background:transparent;color:var(--red);font-size:16px;cursor:pointer;padding:4px 8px;flex-shrink:0;" title="Remove from library">×</button>
+            <button onclick="addRewardFromPicker('${se}','${st}')" style="padding:5px 12px;border-radius:6px;border:1px solid var(--accent);background:rgba(0,229,255,0.1);color:var(--accent);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Use ➜</button>
+          `:`<span style="font-size:18px;color:var(--accent);flex-shrink:0;">+</span>`}
+        </div>`;}).join('')}
+      </div>
+      <div class="rcat" style="margin-top:12px;">Custom reward</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input id="rp-emoji" type="text" placeholder="🎁" style="width:52px;padding:8px;text-align:center;font-size:20px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);">
+        <input id="rp-text" type="text" placeholder="Describe the reward…" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;" onkeydown="if(event.key==='Enter')addCustomReward();">
+        <button onclick="addCustomReward()" style="padding:8px 14px;border-radius:8px;border:none;background:linear-gradient(135deg,#0891b2,var(--accent));color:#fff;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;">Add ➜</button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:5px;margin-bottom:8px;">Custom rewards are saved to your library automatically.</div>
+      <button style="width:100%;padding:9px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;" onclick="window._rpTier=null;document.getElementById('modal-host').innerHTML='';">Close</button>
+    </div>
+  </div>`;
+}
+function addRewardFromPicker(emoji,text){
+  const tier=window._rpTier;if(!tier)return;
+  const key=tier==='weekly'?'rewards':tier==='monthly'?'monthlyRewards':'grandRewards';
+  for(let i=0;i<(ST[key]||[]).length;i++){if(!ST[key][i]){ST[key][i]={emoji,text};break;}}
+  save();renderParent();
+  if((ST[key]||[]).every(r=>r!==null)){window._rpTier=null;document.getElementById('modal-host').innerHTML='';}
+  else renderRewardPicker();
+}
+function addCustomReward(){
+  const tier=window._rpTier;if(!tier)return;
+  const eIn=document.getElementById('rp-emoji');
+  const tIn=document.getElementById('rp-text');
+  const text=(tIn?tIn.value.trim():'');
+  if(!text){alert('Please enter a reward description.');return;}
+  const chars=[...(eIn?eIn.value.trim():'')];
+  const emoji=chars.length>0?chars[0]:'🎁';
+  const key=tier==='weekly'?'rewards':tier==='monthly'?'monthlyRewards':'grandRewards';
+  for(let i=0;i<(ST[key]||[]).length;i++){if(!ST[key][i]){ST[key][i]={emoji,text};break;}}
+  if(!(ST.rewardLibrary||[]).find(r=>r.text===text)){ST.rewardLibrary.push({emoji,text});}
+  save();renderParent();
+  if((ST[key]||[]).every(r=>r!==null)){window._rpTier=null;document.getElementById('modal-host').innerHTML='';}
+  else renderRewardPicker();
+}
+function addToRewardLibOnly(){
+  const eIn=document.getElementById('rp-emoji');
+  const tIn=document.getElementById('rp-text');
+  const text=(tIn?tIn.value.trim():'');
+  if(!text){alert('Please enter a reward description.');return;}
+  const chars=[...(eIn?eIn.value.trim():'')];
+  const emoji=chars.length>0?chars[0]:'🎁';
+  if(!(ST.rewardLibrary||[]).find(r=>r.text===text)){ST.rewardLibrary.push({emoji,text});save();renderParent();}
+  if(tIn)tIn.value='';if(eIn)eIn.value='';
+  renderRewardPicker();
+}
+function deleteRewardLib(idx){ST.rewardLibrary.splice(idx,1);save();renderParent();if(window._rpTier)renderRewardPicker();}
+function addToRewardLibDirect(){
+  const eIn=document.getElementById('rl-emoji');
+  const tIn=document.getElementById('rl-text');
+  const text=(tIn?tIn.value.trim():'');
+  if(!text)return;
+  const chars=[...(eIn?eIn.value.trim():'')];
+  const emoji=chars.length>0?chars[0]:'🎁';
+  if(!(ST.rewardLibrary||[]).find(r=>r.text===text)){ST.rewardLibrary.push({emoji,text});save();}
+  if(tIn)tIn.value='';if(eIn)eIn.value='';
+  renderParent();
+}
+function deleteCustomChore(idx){ST.customChores.splice(idx,1);save();renderParent();}
+function openAssignModalC(idx){
+  const q=ST.customChores[idx];if(!q)return;
+  const kids=ST.members.filter(m=>!m.isParent);
+  if(!kids.length){alert('No children added yet.');return;}
+  const host=document.getElementById('modal-host');
+  host.innerHTML=`<div class="modal-bg" onclick="if(event.target===this)document.getElementById('modal-host').innerHTML='';">
+    <div class="modal">
+      <div class="modal-title">${q.e} ${escHtml(q.n)}</div>
+      <div class="modal-sub">${escHtml(q.d)} &nbsp;·&nbsp; ★${q.s}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Assign to:</div>
+      <div class="assign-grid" style="grid-template-columns:repeat(${Math.min(kids.length,4)},1fr);">
+        ${kids.map(k=>{const kc=CLASSES[k.classId]||CLASSES.scout;const has=ST.chores.some(c=>c.assignee===k.id&&c.name===q.n);return `<button id="amc-${k.id}" class="assign-btn${has?' sel':''}" onclick="amAssignC(${idx},'${k.id}')" style="border-color:${kc.accent}${has?'':'40'};">
+          <div class="ab-em">${has?'✓':kc.glyph}</div>
+          <div class="ab-name" style="color:${kc.accent2};">${escHtml(k.name)}</div>
+        </button>`;}).join('')}
+      </div>
+      <button style="width:100%;padding:9px;margin-top:16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;" onclick="document.getElementById('modal-host').innerHTML='';">Done</button>
+    </div>
+  </div>`;
+}
+function amAssignC(idx,kidId){
+  const q=ST.customChores[idx];if(!q)return;
+  if(!ST.chores.find(c=>c.assignee===kidId&&c.name===q.n)){
+    ST.chores.push({id:'ch'+Date.now(),name:q.n,desc:q.d,emoji:q.e,assignee:kidId,points:q.s,done:false});save();
+  }
+  const btn=document.getElementById('amc-'+kidId);
+  if(btn){const k=ST.members.find(m=>m.id===kidId);const kc=CLASSES[k.classId]||CLASSES.scout;btn.classList.add('sel');btn.style.borderColor=kc.accent;btn.querySelector('.ab-em').textContent='✓';btn.onclick=null;}
+  renderParent();
+}
+function acAddCustomFromLib(idx){
+  const kidId=window._acKidId;const q=ST.customChores[idx];if(!q||!kidId)return;
+  if(!ST.chores.find(c=>c.assignee===kidId&&c.name===q.n)){
+    ST.chores.push({id:'ch'+Date.now(),name:q.n,desc:q.d,emoji:q.e,assignee:kidId,points:q.s,done:false});save();
+  }
+  const btn=document.getElementById('acC-btn-'+idx);
+  if(btn){btn.textContent='✓ Added';btn.classList.add('cancel');btn.style.cssText='background:rgba(0,200,120,0.15);border:1px solid #00c878;color:#00c878;font-size:11px;font-weight:600;cursor:default;padding:5px 11px;border-radius:6px;white-space:nowrap;flex-shrink:0;';btn.onclick=null;}
+  renderParent();
+}
+
+/* ── Assign Quest Library Item Modal ─────────────────────────────────── */
+function openAssignModal(qlIdx){
+  const q=QL[qlIdx];if(!q)return;
+  const kids=ST.members.filter(m=>!m.isParent);
+  if(!kids.length){alert('No children added yet. Add a child in the Family tab.');return;}
+  const host=document.getElementById('modal-host');
+  host.innerHTML=`<div class="modal-bg" onclick="if(event.target===this)document.getElementById('modal-host').innerHTML='';">
+    <div class="modal">
+      <div class="modal-title">${q.e} ${escHtml(q.n)}</div>
+      <div class="modal-sub">${escHtml(q.d)} &nbsp;·&nbsp; ★${q.s}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Assign to:</div>
+      <div class="assign-grid" style="grid-template-columns:repeat(${Math.min(kids.length,4)},1fr);">
+        ${kids.map(k=>{const kc=CLASSES[k.classId]||CLASSES.scout;const has=ST.chores.some(c=>c.assignee===k.id&&c.name===q.n);return `<button id="am-${k.id}" class="assign-btn${has?' sel':''}" onclick="amAssign(${qlIdx},'${k.id}')" style="border-color:${kc.accent}${has?'':'40'};">
+          <div class="ab-em">${has?'✓':kc.glyph}</div>
+          <div class="ab-name" style="color:${kc.accent2};">${escHtml(k.name)}</div>
+        </button>`;}).join('')}
+      </div>
+      <button style="width:100%;padding:9px;margin-top:16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;" onclick="document.getElementById('modal-host').innerHTML='';">Done</button>
+    </div>
+  </div>`;
+}
+function amAssign(qlIdx,kidId){
+  const q=QL[qlIdx];if(!q)return;
+  if(!ST.chores.find(c=>c.assignee===kidId&&c.name===q.n)){
+    ST.chores.push({id:'ch'+Date.now(),name:q.n,desc:q.d,emoji:q.e,assignee:kidId,points:q.s,done:false});
+    save();
+  }
+  const btn=document.getElementById('am-'+kidId);
+  if(btn){
+    const k=ST.members.find(m=>m.id===kidId);
+    const kc=CLASSES[k.classId]||CLASSES.scout;
+    btn.classList.add('sel');btn.style.borderColor=kc.accent;
+    btn.querySelector('.ab-em').textContent='✓';
+    btn.onclick=null;
+  }
+  renderParent();
+}
+
+/* ── Add Chore Modal (per-kid) ────────────────────────────────────────── */
+const _CHORE_EMOJIS=['🧹','🍽️','🧺','🛁','🚽','🪣','🗑️','🛏️','🌿','🐾','📦','🧴','🪟','🧽','🍳','🥗','📚','📐','🎹','💝','🙏','✨','🎯','🏋️','🚴','🎨','🐕','🧸','🧪','🌻'];
+function openAddChoreModal(kidId){
+  const kid=ST.members.find(m=>m.id===kidId);if(!kid)return;
+  const age=calcAge(kid.dob);
+  let df='All';
+  if(age>=11)df='11–13';else if(age>=7)df='7–10';else if(age>=4)df='4–6';else if(age>=2)df='2–3';
+  window._acKidId=kidId;
+  window._acTab='lib';
+  window._acFilter=df;
+  window._acEmoji=null;window._acStars=1;
+  renderAddChoreModal();
+}
+function renderAddChoreModal(){
+  const kidId=window._acKidId;
+  const kid=ST.members.find(m=>m.id===kidId);if(!kid)return;
+  const cls=CLASSES[kid.classId]||CLASSES.scout;
+  const tab=window._acTab||'lib';
+  const flt=window._acFilter||'All';
+  const ages=['All','2–3','4–6','7–10','11–13'];
+  const ageOrder=['2–3','4–6','7–10','11–13'];
+  const filtered=flt==='All'?QL:QL.filter(q=>q.a===flt);
+  const grouped={};for(const q of filtered){if(!grouped[q.a])grouped[q.a]=[];grouped[q.a].push(q);}
+  let libContent='';
+  if(tab==='lib'){
+    for(const age of ageOrder){
+      if(!grouped[age])continue;
+      libContent+=`<div class="ql-ah" style="margin-top:10px;">Ages ${age}</div>`;
+      libContent+=grouped[age].map(q=>{
+        const absIdx=QL.indexOf(q);
+        const has=ST.chores.some(c=>c.assignee===kidId&&c.name===q.n);
+        return `<div class="ql-row">
+          <div class="ql-em">${q.e}</div>
+          <div class="ql-body"><div class="ql-name">${escHtml(q.n)}</div><div class="ql-desc">${escHtml(q.d)}</div></div>
+          <div class="ql-pts">★${q.s}</div>
+          <button id="ac-btn-${absIdx}" class="ql-addbtn${has?' cancel':''}" onclick="acAddChore(${absIdx})" style="${has?'background:rgba(0,200,120,0.15);border:1px solid #00c878;color:#00c878;':''}">
+            ${has?'✓ Added':'Add'}
+          </button>
+        </div>`;
+      }).join('');
+    }
+    if(ST.customChores&&ST.customChores.length){
+      libContent+=`<div class="ql-ah" style="margin-top:10px;color:var(--accent2);">⭐ My Custom Chores</div>`;
+      libContent+=ST.customChores.map((q,i)=>{
+        const has=ST.chores.some(c=>c.assignee===kidId&&c.name===q.n);
+        return `<div class="ql-row">
+          <div class="ql-em">${q.e}</div>
+          <div class="ql-body"><div class="ql-name">${escHtml(q.n)}</div><div class="ql-desc">${escHtml(q.d)}</div></div>
+          <div class="ql-pts">★${q.s}</div>
+          <button id="acC-btn-${i}" class="ql-addbtn${has?' cancel':''}" onclick="acAddCustomFromLib(${i})" style="${has?'background:rgba(0,200,120,0.15);border:1px solid #00c878;color:#00c878;':''}">
+            ${has?'✓ Added':'Add'}
+          </button>
+        </div>`;
+      }).join('');
+    }
+    if(!libContent)libContent='<div style="color:var(--text3);font-size:13px;padding:12px 0;">No chores for this age group.</div>';
+  }
+  const stars=window._acStars||1;
+  let customContent='';
+  if(tab==='custom'){
+    customContent=`<div style="margin-bottom:12px;">
+        <label class="fl">Emoji</label>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;">
+          ${_CHORE_EMOJIS.map(e=>`<div onclick="window._acEmoji='${e}';document.querySelectorAll('.ce-pick').forEach(x=>x.style.background='rgba(20,25,58,0.5)');this.style.background='rgba(0,229,255,0.2)';" class="ce-pick" style="font-size:18px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--border);cursor:pointer;background:rgba(20,25,58,0.5);">${e}</div>`).join('')}
+        </div>
+        <input id="ac-custom-emoji" type="text" placeholder="Or type emoji" maxlength="2" style="width:70px;padding:7px;text-align:center;font-size:18px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="fl">Chore Name *</label>
+        <input id="ac-name" type="text" placeholder="e.g. Clean your room" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;box-sizing:border-box;" onkeydown="if(event.key==='Enter')acSubmitCustom();">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="fl">Description (optional)</label>
+        <input id="ac-desc" type="text" placeholder="Short description" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="fl">Stars</label>
+        <div style="display:flex;gap:8px;">
+          ${[1,2,3].map(n=>`<button id="ac-s-${n}" onclick="window._acStars=${n};document.querySelectorAll('[id^=ac-s-]').forEach(x=>{x.style.background=x.id==='ac-s-${n}'?'rgba(255,200,0,0.2)':'rgba(20,25,58,0.5)';x.style.borderColor=x.id==='ac-s-${n}'?'var(--gold)':'var(--border)';});" style="flex:1;padding:9px;border-radius:8px;border:1px solid ${n===stars?'var(--gold)':'var(--border)'};background:${n===stars?'rgba(255,200,0,0.2)':'rgba(20,25,58,0.5)'};cursor:pointer;font-size:14px;font-weight:700;color:var(--gold);font-family:inherit;">★${n}</button>`).join('')}
+        </div>
+      </div>
+      <button onclick="acSubmitCustom()" style="width:100%;padding:11px;border-radius:8px;border:none;background:linear-gradient(135deg,#0891b2,var(--accent));color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">Add Custom Chore</button>`;
+  }
+  const host=document.getElementById('modal-host');
+  host.innerHTML=`<div class="modal-bg" onclick="if(event.target===this){window._acKidId=null;document.getElementById('modal-host').innerHTML='';}">
+    <div class="modal">
+      <div class="modal-title" style="color:${cls.accent};">${cls.glyph} Add Chores for ${escHtml(kid.name)}</div>
+      <div class="modal-sub">Add from the Quest Library or create a custom chore</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <button onclick="window._acTab='lib';renderAddChoreModal();" style="flex:1;padding:8px;border-radius:8px;border:1px solid ${tab==='lib'?'var(--accent)':'var(--border)'};background:${tab==='lib'?'rgba(0,229,255,0.12)':'rgba(20,25,58,0.5)'};color:${tab==='lib'?'var(--accent)':'var(--text2)'};font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📚 Quest Library</button>
+        <button onclick="window._acTab='custom';window._acStars=1;renderAddChoreModal();" style="flex:1;padding:8px;border-radius:8px;border:1px solid ${tab==='custom'?'var(--accent)':'var(--border)'};background:${tab==='custom'?'rgba(0,229,255,0.12)':'rgba(20,25,58,0.5)'};color:${tab==='custom'?'var(--accent)':'var(--text2)'};font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">✏️ Custom</button>
+      </div>
+      ${tab==='lib'?`
+        <div class="ql-fb">
+          ${ages.map(a=>`<button class="${flt===a?'on':''}" onclick="window._acFilter='${a}';renderAddChoreModal();">${a}</button>`).join('')}
+        </div>
+        <div style="max-height:50vh;overflow-y:auto;padding-right:2px;">${libContent}</div>
+      `:`<div style="max-height:60vh;overflow-y:auto;padding-right:2px;">${customContent}</div>`}
+      <button style="width:100%;padding:9px;margin-top:12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;" onclick="window._acKidId=null;document.getElementById('modal-host').innerHTML='';">Close</button>
+    </div>
+  </div>`;
+}
+function acAddChore(qlIdx){
+  const kidId=window._acKidId;const q=QL[qlIdx];if(!q||!kidId)return;
+  if(!ST.chores.find(c=>c.assignee===kidId&&c.name===q.n)){
+    ST.chores.push({id:'ch'+Date.now(),name:q.n,desc:q.d,emoji:q.e,assignee:kidId,points:q.s,done:false});
+    save();
+  }
+  const btn=document.getElementById('ac-btn-'+qlIdx);
+  if(btn){btn.textContent='✓ Added';btn.classList.add('cancel');btn.style.cssText='background:rgba(0,200,120,0.15);border:1px solid #00c878;color:#00c878;font-size:11px;font-weight:600;cursor:default;padding:5px 11px;border-radius:6px;white-space:nowrap;flex-shrink:0;';btn.onclick=null;}
+  renderParent();
+}
+function acSubmitCustom(){
+  const kidId=window._acKidId;if(!kidId)return;
+  const name=(document.getElementById('ac-name')||{}).value?.trim()||'';
+  if(!name){alert('Please enter a chore name.');return;}
+  const desc=(document.getElementById('ac-desc')||{}).value?.trim()||'';
+  const customEmojiEl=document.getElementById('ac-custom-emoji');
+  const chars=[...(customEmojiEl?customEmojiEl.value.trim():'')];
+  const emoji=(chars.length>0?chars[0]:'')||window._acEmoji||'✅';
+  const stars=window._acStars||1;
+  const pts=Math.min(3,Math.max(1,stars));
+  ST.chores.push({id:'ch'+Date.now(),name,desc,emoji,assignee:kidId,points:pts,done:false});
+  if(!ST.customChores.find(c=>c.n===name)){
+    ST.customChores.push({e:emoji,n:name,d:desc,s:pts,a:'Custom'});
+  }
+  save();renderParent();
+  window._acKidId=null;window._acEmoji=null;window._acStars=null;
+  document.getElementById('modal-host').innerHTML='';
+}
+
+/* ── Quest Library Modal ──────────────────────────────────────────────── */
+function openQuestLibraryModal(){
+  window._qlmFilter='All';
+  renderQuestLibraryModal();
+}
+function renderQuestLibraryModal(){
+  const flt=window._qlmFilter||'All';
+  const ages=['All','2–3','4–6','7–10','11–13'];
+  const filtered=flt==='All'?QL:QL.filter(q=>q.a===flt);
+  const grouped={};
+  for(const q of filtered){if(!grouped[q.a])grouped[q.a]=[];grouped[q.a].push(q);}
+  const ageOrder=['2–3','4–6','7–10','11–13'];
+
+  let libHTML='';
+  for(const age of ageOrder){
+    if(!grouped[age])continue;
+    libHTML+=`<div class="ql-age">
+      <div class="ql-ah">Ages ${age}</div>
+      ${grouped[age].map(q=>{const absIdx=QL.indexOf(q);return `<div class="ql-row">
+        <div class="ql-em">${q.e}</div>
+        <div class="ql-body"><div class="ql-name">${escHtml(q.n)}</div><div class="ql-desc">${escHtml(q.d)}</div></div>
+        <div class="ql-pts">★${q.s}</div>
+        <button class="ql-addbtn" id="qlm-${absIdx}" onclick="qlmAssign(${absIdx},this)">Assign</button>
+      </div>`;}).join('')}
+    </div>`;
+  }
+  if(ST.customChores&&ST.customChores.length){
+    libHTML+=`<div class="ql-age">
+      <div class="ql-ah" style="color:var(--accent2);">⭐ My Custom Chores</div>
+      ${ST.customChores.map((q,i)=>`<div class="ql-row">
+        <div class="ql-em">${q.e}</div>
+        <div class="ql-body"><div class="ql-name">${escHtml(q.n)}</div><div class="ql-desc">${escHtml(q.d)}</div></div>
+        <div class="ql-pts">★${q.s}</div>
+        <button class="ql-addbtn" id="qlmc-${i}" onclick="qlmAssignC(${i},this)">Assign</button>
+        <button onclick="if(confirm('Remove from library?')){deleteCustomChore(${i});renderQuestLibraryModal();}" style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(240,64,96,0.4);background:rgba(240,64,96,0.06);color:var(--red);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:4px;">×</button>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  const host=document.getElementById('modal-host');
+  host.innerHTML=`<div class="modal-bg" onclick="if(event.target===this)document.getElementById('modal-host').innerHTML='';">
+    <div class="modal" style="max-height:85vh;display:flex;flex-direction:column;">
+      <div class="modal-title">📚 Quest Library</div>
+      <div class="modal-sub">Tap Assign to add a quest to a child</div>
+      <div class="ql-fb" style="margin-bottom:12px;flex-shrink:0;">
+        ${ages.map(a=>`<button class="${flt===a?'on':''}" onclick="window._qlmFilter='${a}';renderQuestLibraryModal();">${a}</button>`).join('')}
+      </div>
+      <div style="overflow-y:auto;flex:1;min-height:0;">${libHTML||'<div style="color:var(--text3);font-size:12px;padding:8px 0;">No chores for this age group.</div>'}</div>
+      <div style="flex-shrink:0;padding-top:12px;border-top:1px solid var(--border);margin-top:12px;display:flex;gap:8px;">
+        <button onclick="document.getElementById('modal-host').innerHTML='';openCustomChoreModal();" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--accent);background:rgba(0,229,255,0.08);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">✏️ Create Custom Chore</button>
+        <button onclick="document.getElementById('modal-host').innerHTML='';" style="flex:1;padding:10px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;">Close</button>
+      </div>
+    </div>
+  </div>`;
+}
+function qlmAssign(qlIdx,btn){
+  const kids=ST.members.filter(m=>!m.isParent);
+  if(!kids.length){alert('No children added yet.');return;}
+  if(kids.length===1){
+    const kid=kids[0];const q=QL[qlIdx];
+    ST.chores.push({id:'ch'+Date.now(),name:q.n,desc:q.d,emoji:q.e,assignee:kid.id,points:q.s,done:false});
+    save();renderParent();
+    if(btn){btn.textContent='✓ Added';btn.disabled=true;}
+    return;
+  }
+  openAssignModal(qlIdx);
+}
+function qlmAssignC(idx,btn){
+  const kids=ST.members.filter(m=>!m.isParent);
+  if(!kids.length){alert('No children added yet.');return;}
+  if(kids.length===1){
+    const kid=kids[0];const q=ST.customChores[idx];
+    ST.chores.push({id:'ch'+Date.now(),name:q.n,desc:q.d,emoji:q.e,assignee:kid.id,points:q.s,done:false});
+    save();renderParent();
+    if(btn){btn.textContent='✓ Added';btn.disabled=true;}
+    return;
+  }
+  openAssignModalC(idx);
+}
+
+/* ── Custom Chore Modal (no kid pre-selected) ─────────────────────────── */
+function openCustomChoreModal(){
+  const kids=ST.members.filter(m=>!m.isParent);
+  if(!kids.length){alert('No children added yet. Add a child in the Family tab.');return;}
+  window._ccStars=1;window._ccEmoji=null;window._ccKidId=kids[0].id;
+  renderCustomChoreModal();
+}
+function renderCustomChoreModal(){
+  const kids=ST.members.filter(m=>!m.isParent);
+  const stars=window._ccStars||1;
+  const selKid=window._ccKidId||kids[0]?.id||'';
+  const host=document.getElementById('modal-host');
+  host.innerHTML=`<div class="modal-bg" onclick="if(event.target===this)document.getElementById('modal-host').innerHTML='';">
+    <div class="modal">
+      <div class="modal-title">✏️ Custom Chore</div>
+      <div class="modal-sub">Create a new chore and assign it to a hero</div>
+      <div style="margin-bottom:12px;">
+        <label class="fl">Emoji</label>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;">
+          ${_CHORE_EMOJIS.map(e=>`<div onclick="window._ccEmoji='${e}';document.querySelectorAll('.cc-pick').forEach(x=>x.style.background='rgba(20,25,58,0.5)');this.style.background='rgba(0,229,255,0.2)';" class="cc-pick" style="font-size:18px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--border);cursor:pointer;background:rgba(20,25,58,0.5);">${e}</div>`).join('')}
+        </div>
+        <input id="cc-custom-emoji" type="text" placeholder="Or type emoji" maxlength="2" style="width:70px;padding:7px;text-align:center;font-size:18px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="fl">Chore Name *</label>
+        <input id="cc-name" type="text" placeholder="e.g. Clean your room" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;box-sizing:border-box;" onkeydown="if(event.key==='Enter')ccSubmit();">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="fl">Description (optional)</label>
+        <input id="cc-desc" type="text" placeholder="Short description" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="fl">Stars</label>
+        <div style="display:flex;gap:8px;">
+          ${[1,2,3].map(n=>`<button id="cc-s-${n}" onclick="window._ccStars=${n};document.querySelectorAll('[id^=cc-s-]').forEach(x=>{x.style.background=x.id==='cc-s-${n}'?'rgba(255,200,0,0.2)':'rgba(20,25,58,0.5)';x.style.borderColor=x.id==='cc-s-${n}'?'var(--gold)':'var(--border)';});" style="flex:1;padding:9px;border-radius:8px;border:1px solid ${n===stars?'var(--gold)':'var(--border)'};background:${n===stars?'rgba(255,200,0,0.2)':'rgba(20,25,58,0.5)'};cursor:pointer;font-size:14px;font-weight:700;color:var(--gold);font-family:inherit;">★${n}</button>`).join('')}
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="fl">Assign To</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          ${kids.map(k=>{const kc=CLASSES[k.classId]||CLASSES.scout;const sel=k.id===selKid;return `<button id="cc-k-${k.id}" onclick="window._ccKidId='${k.id}';document.querySelectorAll('[id^=cc-k-]').forEach(x=>{x.style.borderColor=x.id==='cc-k-${k.id}'?'${kc.accent}':'var(--border)';x.style.background=x.id==='cc-k-${k.id}'?'rgba(0,229,255,0.12)':'rgba(20,25,58,0.5)';});" style="padding:8px 16px;border-radius:8px;border:1.5px solid ${sel?kc.accent:'var(--border)'};background:${sel?'rgba(0,229,255,0.12)':'rgba(20,25,58,0.5)'};color:${sel?kc.accent:'var(--text2)'};font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;">${kc.glyph} ${escHtml(k.name)}</button>`;}).join('')}
+        </div>
+      </div>
+      <button onclick="ccSubmit()" style="width:100%;padding:11px;border-radius:8px;border:none;background:linear-gradient(135deg,#0891b2,var(--accent));color:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">Add Chore</button>
+      <button style="width:100%;padding:9px;margin-top:10px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;" onclick="document.getElementById('modal-host').innerHTML='';">Cancel</button>
+    </div>
+  </div>`;
+}
+function ccSubmit(){
+  const name=(document.getElementById('cc-name')||{}).value?.trim()||'';
+  if(!name){alert('Please enter a chore name.');return;}
+  const kidId=window._ccKidId;if(!kidId)return;
+  const desc=(document.getElementById('cc-desc')||{}).value?.trim()||'';
+  const customEmojiEl=document.getElementById('cc-custom-emoji');
+  const chars=[...(customEmojiEl?customEmojiEl.value.trim():'')];
+  const emoji=(chars.length>0?chars[0]:'')||window._ccEmoji||'✅';
+  const stars=window._ccStars||1;
+  const pts=Math.min(3,Math.max(1,stars));
+  ST.chores.push({id:'ch'+Date.now(),name,desc,emoji,assignee:kidId,points:pts,done:false});
+  if(!ST.customChores.find(c=>c.n===name)){
+    ST.customChores.push({e:emoji,n:name,d:desc,s:pts,a:'Custom'});
+  }
+  save();renderParent();
+  window._ccKidId=null;window._ccEmoji=null;window._ccStars=null;
+  document.getElementById('modal-host').innerHTML='';
+}
+
+function togChore(choreId){
+  const c=ST.chores.find(x=>x.id===choreId);if(!c)return;
+  const m=ST.members.find(x=>x.id===c.assignee);if(!m)return;
+  if(!c.done){
+    c.done=true;
+    const oldLevel=levelFromXp(m.xp||0);
+    m.xp=(m.xp||0)+c.points;
+    const newLevel=levelFromXp(m.xp);
+    if(!ST.weeklyStars[c.assignee])ST.weeklyStars[c.assignee]=0;
+    ST.weeklyStars[c.assignee]+=c.points;
+    ST.monthlyStarsAccum=(ST.monthlyStarsAccum||0)+c.points;
+    ST.history.unshift({name:m.name,chore:c.name,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})});
+    if(ST.history.length>50)ST.history.pop();
+    playChime();
+    save();
+  } else {
+    c.done=false;
+    m.xp=Math.max(0,(m.xp||0)-c.points);
+    if(ST.weeklyStars[c.assignee])ST.weeklyStars[c.assignee]=Math.max(0,ST.weeklyStars[c.assignee]-c.points);
+    ST.monthlyStarsAccum=Math.max(0,(ST.monthlyStarsAccum||0)-c.points);
+    save();
+  }
+  renderParent();
+}
+
+function openCreator(id){
+  editingMemberId=id;
+  const kid=ST.members.find(m=>m.id===id);
+  if(!kid)return;
+  const cls=CLASSES[kid.classId]||CLASSES.scout;
+  const classKeys=Object.keys(CLASSES);
+  const petList=(PETS[kid.classId]||PETS.scout)||[];
+  const host=document.getElementById('modal-host');
+  host.innerHTML=`<div class="modal-bg" onclick="if(event.target===this){editingMemberId=null;host.innerHTML='';}">
+    <div class="modal">
+      <div class="modal-title">✎ Edit ${escHtml(kid.name)}</div>
+      <div class="modal-sub">${kid.isParent?'Parent account':'Child character'}</div>
+
+      <label class="fl">Name</label>
+      <input type="text" value="${escHtml(kid.name)}" onchange="ST.members.find(m=>m.id==='${id}').name=this.value;save();" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:14px;box-sizing:border-box;margin-bottom:14px;">
+
+      ${!kid.isParent?`
+      <label class="fl">Date of Birth</label>
+      <input type="date" value="${kid.dob||''}" onchange="ST.members.find(m=>m.id==='${id}').dob=this.value;save();" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;box-sizing:border-box;margin-bottom:16px;">
+      `:''}
+
+      ${!kid.isParent?`
+        <label class="fl">Class</label>
+        <div class="ep" style="margin-bottom:16px;">
+          ${classKeys.map(k=>{const c=CLASSES[k];return `<div class="eo ${k===kid.classId?'on':''}" onclick="ST.members.find(m=>m.id==='${id}').classId='${k}';save();openCreator('${id}');" title="${c.name}">${c.glyph}</div>`}).join('')}
+        </div>
+
+        <label class="fl">Hair Color (Hue)</label>
+        <input type="range" min="0" max="360" value="${kid.hue||0}" onchange="ST.members.find(m=>m.id==='${id}').hue=parseInt(this.value);save();openCreator('${id}');" class="hue-slider" style="margin-bottom:16px;">
+
+        <label class="fl">Skin Tone</label>
+        <div class="ep" style="margin-bottom:16px;">
+          ${SKIN_TONES.map((tone,i)=>`<div class="co" style="background:${tone};${i===kid.skin?'border-color:#fff;box-shadow:0 0 8px rgba(255,255,255,0.4);':''}" onclick="ST.members.find(m=>m.id==='${id}').skin=${i};save();openCreator('${id}');" title="Tone ${i+1}"></div>`).join('')}
+        </div>
+
+        <label class="fl">Pet Companion</label>
+        <div class="ep" style="margin-bottom:16px;">
+          ${petList.map(p=>`<div class="eo ${p.id===kid.petId?'on':''}" onclick="ST.members.find(m=>m.id==='${id}').petId='${p.id}';save();openCreator('${id}');" title="${p.name}">${p.stages[0]}</div>`).join('')}
+        </div>
+      `:''}
+
+      <label class="fl">Photo Avatar (optional)</label>
+      ${kid.photo?`
+        <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;">
+          <div style="flex-shrink:0;text-align:center;">
+            <div style="width:90px;height:90px;border-radius:50%;overflow:hidden;border:3px solid ${cls.accent};box-shadow:0 0 18px ${cls.accent}55;margin:0 auto 6px;">
+              <img src="${kid.photo}" style="width:100%;height:100%;object-fit:cover;object-position:center;">
+            </div>
+            <div style="font-size:10px;color:var(--text2);">Preview</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:11px;color:var(--green);font-weight:600;margin-bottom:8px;">✓ Photo uploaded</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:12px;">Drag or zoom tip: the image is cropped to a circle from center. Upload a portrait photo with your face centered for best results.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="bp" style="padding:6px 14px;font-size:11px;" onclick="document.getElementById('photo-upload-${id}').click();">📷 Change Photo</button>
+              <button class="bd" style="padding:6px 12px;font-size:11px;" onclick="ST.members.find(m=>m.id==='${id}').photo=null;save();openCreator('${id}');">Remove</button>
+            </div>
+          </div>
+        </div>
+      `:`
+        <div class="photo-drop" onclick="document.getElementById('photo-upload-${id}').click();" style="margin-bottom:12px;">
+          <div style="font-size:28px;margin-bottom:6px;">📤</div>
+          <div style="font-size:13px;font-weight:600;">Click to upload a photo</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;">Best results: portrait photo, face centered · JPG or PNG</div>
+        </div>
+      `}
+      <input type="file" id="photo-upload-${id}" accept="image/*" style="display:none;" onchange="if(this.files[0]){const r=new FileReader();r.onload=ev=>{ST.members.find(m=>m.id==='${id}').photo=ev.target.result;save();openCreator('${id}');};r.readAsDataURL(this.files[0]);}">
+
+      <div style="display:flex;gap:8px;margin-top:18px;">
+        <button class="bp" style="flex:1;" onclick="editingMemberId=null;document.getElementById('modal-host').innerHTML='';">✓ Done</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- 8. INIT ---------- */
+function makeStars(){const g=document.getElementById('stars');if(!g)return;for(let i=0;i<60;i++){const x=(i*73)%1200;const y=(i*47+13)%900;const r=(i%3)*0.4+0.4;const o=((i*7)%10)/10*0.6+0.2;const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',r);c.setAttribute('fill','#fff');c.setAttribute('opacity',o);g.appendChild(c);}}
+
+load();
+makeStars();
+chkWeek();chkMonth();
+if(window.speechSynthesis)loadVoices();
+show('home');
+</script>
+</body>
+</html>
