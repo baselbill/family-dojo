@@ -692,6 +692,7 @@ function ensureFields(){
   if(ST.soundEnabled===undefined)ST.soundEnabled=true;
   ST.customChores=ST.customChores||[];
   ST.rewardLibrary=ST.rewardLibrary||[];
+  ST.lastResetDay=ST.lastResetDay||'';
 }
 
 /* ---------- 3. HELPERS ---------- */
@@ -723,6 +724,7 @@ function nextUnlockFor(level){return UNLOCKS.find(u=>u.lvl>level);}
 
 function chkWeek(){const wk=weekKey();if(ST.currentWeek!==wk){ST.weeklyStars={};ST.currentWeek=wk;save();}}
 function chkMonth(){const now=new Date();const mk=now.getFullYear()+'-'+(now.getMonth()+1);if(ST.currentMonth!==mk){ST.monthlyStarsAccum=0;ST.currentMonth=mk;save();}}
+function chkDay(){const today=new Date().toDateString();if(ST.lastResetDay!==today){ST.chores.forEach(c=>c.done=false);ST.lastResetDay=today;save();}}
 function totalStars(){return Math.floor((ST.members||[]).filter(m=>!m.isParent).reduce((s,m)=>s+(m.xp||0),0));}
 function memberStars(id){const m=ST.members.find(x=>x.id===id);return m?m.xp||0:0;}
 
@@ -821,7 +823,7 @@ function confettiBurst(x,y){const em=['⭐','✨','🌟','💫','🎉','🏆','�
 
 /* ---------- 7a. HOME ---------- */
 function renderHome(){
-  chkWeek();chkMonth();
+  chkDay();chkWeek();chkMonth();
   const today=new Date();
   const dayName=today.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
   const total=ST.chores.length;
@@ -919,13 +921,11 @@ function renderHome(){
     const ws=(ST.weeklyStars||{})[m.id]||0;
     const p2=Math.round((ws/maxW)*100);
     const cls=CLASSES[m.classId]||CLASSES.scout;
-    const next=(ST.personalRewards||[]).filter(r=>r.memberId===m.id).find(r=>r.stars>(m.xp||0));
     personalHTML+=`<div class="wpr">
       <span class="wpr-name" style="color:${cls.accent};">${escHtml(m.name)}</span>
       <div class="wpr-track"><div class="wpr-fill" style="width:${p2}%;background:linear-gradient(90deg,${cls.accent2},${cls.accent});"></div></div>
       <span class="wpr-stars">★ ${ws}</span>
     </div>`;
-    if(next){personalHTML+=`<div class="wpr-hint">${next.stars-(m.xp||0)} more → ${escHtml(next.text)}</div>`;}
   }
 
   // Activity
@@ -1993,7 +1993,8 @@ function makeStars(){const g=document.getElementById('stars');if(!g)return;for(l
 
 load();
 makeStars();
-chkWeek();chkMonth();
+chkDay();chkWeek();chkMonth();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){chkDay();chkWeek();chkMonth();}});
 if(window.speechSynthesis)loadVoices();
 show('home');
 </script>
