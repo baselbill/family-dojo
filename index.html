@@ -276,7 +276,8 @@
   .level-up-unlock{margin-top:18px;padding:14px 22px;border:1px solid var(--gold);background:rgba(255,215,0,0.1);border-radius:var(--radius);font-size:14px;color:var(--gold);}
   .level-up-btn{margin-top:24px;padding:11px 28px;border-radius:999px;background:linear-gradient(135deg,#0891b2,var(--accent));color:#fff;border:none;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit;}
 
-  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#10b981,var(--green));color:#fff;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 24px rgba(52,211,153,0.4);}
+  .toast{position:fixed;top:24px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#10b981,var(--green));color:#fff;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 24px rgba(52,211,153,0.4);animation:toastIn 0.2s ease;}
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
   .cb{position:fixed;pointer-events:none;z-index:9999;font-size:24px;animation:confetti 1s forwards;}
 
   /* Photo upload */
@@ -818,6 +819,12 @@ function pp(v){if(v==='c')pinBuf='';else if(v==='d')pinBuf=pinBuf.slice(0,-1);el
 function updPD(){for(let i=0;i<4;i++){const el=document.getElementById('pd'+i);if(el)el.classList.toggle('on',i<pinBuf.length);}}
 
 function toast(msg){const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2400);}
+
+function showToast(msg,duration=2200){
+  const old=document.getElementById('app-toast');if(old)old.remove();
+  const t=document.createElement('div');t.id='app-toast';t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),duration);
+}
 
 function confettiBurst(x,y){const em=['⭐','✨','🌟','💫','🎉','🏆','⚔️','🐉','🌸'];for(let i=0;i<10;i++){const el=document.createElement('div');el.className='cb';el.textContent=em[Math.floor(Math.random()*em.length)];el.style.left=(x+(Math.random()-0.5)*100)+'px';el.style.top=(y+(Math.random()-0.5)*50)+'px';el.style.animationDelay=(Math.random()*0.35)+'s';document.body.appendChild(el);setTimeout(()=>el.remove(),1300);}}
 
@@ -1666,6 +1673,10 @@ function renderAddChoreModal(){
       }).join('');
     }
     if(!libContent)libContent='<div style="color:var(--text3);font-size:13px;padding:12px 0;">No chores for this age group.</div>';
+    // Check if every visible chore is already assigned
+    const visibleQL=flt==='All'?QL:QL.filter(q=>q.a===flt);
+    const allAssigned=visibleQL.length>0&&visibleQL.every(q=>ST.chores.some(c=>c.assignee===kidId&&c.name===q.n));
+    if(allAssigned){libContent='<div style="background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--green);margin-bottom:8px;">✓ All quests in this age group are already on '+escHtml(kid.name)+'\'s list. Try another age group or add a custom chore below.</div>'+libContent;}
   }
   const stars=window._acStars||1;
   let customContent='';
@@ -1714,9 +1725,12 @@ function renderAddChoreModal(){
 }
 function acAddChore(qlIdx){
   const kidId=window._acKidId;const q=QL[qlIdx];if(!q||!kidId)return;
-  if(!ST.chores.find(c=>c.assignee===kidId&&c.name===q.n)){
+  const isNew=!ST.chores.find(c=>c.assignee===kidId&&c.name===q.n);
+  if(isNew){
     ST.chores.push({id:'ch'+Date.now(),name:q.n,desc:q.d,emoji:q.e,assignee:kidId,points:q.s,done:false});
     save();
+    const kid=ST.members.find(m=>m.id===kidId);
+    showToast(`${q.e} ${q.n} added to ${kid?.name||'hero'}'s list`);
   }
   const btn=document.getElementById('ac-btn-'+qlIdx);
   if(btn){btn.textContent='✓ Added';btn.classList.add('cancel');btn.style.cssText='background:rgba(0,200,120,0.15);border:1px solid #00c878;color:#00c878;font-size:11px;font-weight:600;cursor:default;padding:5px 11px;border-radius:6px;white-space:nowrap;flex-shrink:0;';btn.onclick=null;}
