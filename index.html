@@ -393,6 +393,17 @@
   .tq-count{font-size:12px;color:var(--text2);flex-shrink:0;}
   /* Placeholder section */
   .profile-placeholder{padding:14px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.08);text-align:center;font-size:12px;color:var(--text3);}
+  /* ── Badge System (Phase 5) ────────────────────────────── */
+  .badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:6px;}
+  .badge-card{border-radius:11px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.04);padding:10px 4px 8px;text-align:center;transition:transform 0.15s;}
+  .badge-earned{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.18);box-shadow:0 0 10px rgba(255,255,255,0.05);}
+  .badge-locked .badge-icon{filter:brightness(0) opacity(0.22);}
+  .badge-locked .badge-card-name{opacity:0.25;}
+  .badge-icon{font-size:24px;line-height:1.3;display:block;}
+  .badge-card-name{font-size:8px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;color:var(--text2);line-height:1.3;margin-top:3px;word-break:break-word;}
+  /* Badge unlock overlay additions */
+  .badge-unlocked-label{font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;opacity:0.85;}
+  .badge-unlock-emoji{font-size:64px;line-height:1.1;margin:8px 0 12px;animation:float 2s ease-in-out infinite;}
   /* ── Treasure Chest (Phase 4) ──────────────────────────── */
   @keyframes chestShake{0%,100%{transform:translateX(0) rotate(0);}20%{transform:translateX(-7px) rotate(-5deg);}40%{transform:translateX(7px) rotate(5deg);}60%{transform:translateX(-4px) rotate(-2deg);}80%{transform:translateX(4px) rotate(2deg);}}
   @keyframes chestPulse{0%,100%{opacity:0.55;}50%{opacity:1;}}
@@ -540,6 +551,94 @@ const CHEST_TYPES=[
   {id:'legendary', name:'Legendary', color:'#c084fc', glow:'rgba(192,132,252,0.65)',stars:[65,120], weight:1},
 ];
 const CHEST_DROP_CHANCE=0.15;
+
+const BADGES=[
+  // ── Quest milestones ──
+  {id:'first_step',    name:'First Step',      emoji:'🌱', cat:'quests',
+   desc:'Complete your first quest',
+   check:id=>(ST.completedCount[id]||0)>=1,
+   verse:{t:'We are God\'s handiwork, created to do good works.',r:'Ephesians 2:10'}},
+  {id:'pathfinder',    name:'Pathfinder',      emoji:'🗺️',  cat:'quests',
+   desc:'Complete 10 quests',
+   check:id=>(ST.completedCount[id]||0)>=10,
+   verse:{t:'I will instruct you and teach you in the way you should go.',r:'Psalm 32:8'}},
+  {id:'adventurer',    name:'Adventurer',      emoji:'⚔️',  cat:'quests',
+   desc:'Complete 25 quests',
+   check:id=>(ST.completedCount[id]||0)>=25,
+   verse:{t:'Be strong and courageous. Do not be afraid.',r:'Joshua 1:9'}},
+  {id:'veteran',       name:'Veteran',         emoji:'🛡️',  cat:'quests',
+   desc:'Complete 50 quests',
+   check:id=>(ST.completedCount[id]||0)>=50,
+   verse:{t:'Let us not become weary in doing good.',r:'Galatians 6:9'}},
+  {id:'champion',      name:'Champion',        emoji:'🏆', cat:'quests',
+   desc:'Complete 100 quests',
+   check:id=>(ST.completedCount[id]||0)>=100,
+   verse:{t:'I can do all this through him who gives me strength.',r:'Philippians 4:13'}},
+  {id:'legend',        name:'Legend',          emoji:'🌠', cat:'quests',
+   desc:'Complete 250 quests',
+   check:id=>(ST.completedCount[id]||0)>=250,
+   verse:{t:'Well done, good and faithful servant!',r:'Matthew 25:23'}},
+  // ── Star milestones ──
+  {id:'stargazer',     name:'Stargazer',       emoji:'✨', cat:'stars',
+   desc:'Collect 50 stars',
+   check:id=>(ST.cumulativeStars[id]||0)>=50,
+   verse:{t:'Those who are wise will shine like the brightness of the heavens.',r:'Daniel 12:3'}},
+  {id:'star_keeper',   name:'Star Keeper',     emoji:'💫', cat:'stars',
+   desc:'Collect 200 stars',
+   check:id=>(ST.cumulativeStars[id]||0)>=200,
+   verse:{t:'Your light will shine like the dawn.',r:'Isaiah 58:8'}},
+  {id:'luminary',      name:'Luminary',        emoji:'🌟', cat:'stars',
+   desc:'Collect 500 stars',
+   check:id=>(ST.cumulativeStars[id]||0)>=500,
+   verse:{t:'You are the light of the world.',r:'Matthew 5:14'}},
+  {id:'constellation', name:'Constellation',   emoji:'🌌', cat:'stars',
+   desc:'Collect 1000 stars',
+   check:id=>(ST.cumulativeStars[id]||0)>=1000,
+   verse:{t:'He determines the number of the stars and calls them each by name.',r:'Psalm 147:4'}},
+  // ── Streak milestones ──
+  {id:'faithful',      name:'Faithful',        emoji:'🔥', cat:'streak',
+   desc:'Reach a 3-day streak',
+   check:id=>(ST.streaks[id]||{}).best>=3,
+   verse:{t:'Let us not become weary in doing good.',r:'Galatians 6:9'}},
+  {id:'devoted',       name:'Devoted',         emoji:'🔥', cat:'streak',
+   desc:'Reach a 7-day streak',
+   check:id=>(ST.streaks[id]||{}).best>=7,
+   verse:{t:'Work at it with all your heart, as working for the Lord.',r:'Colossians 3:23'}},
+  {id:'steadfast',     name:'Steadfast',       emoji:'⚡', cat:'streak',
+   desc:'Reach a 14-day streak',
+   check:id=>(ST.streaks[id]||{}).best>=14,
+   verse:{t:'Be strong and do not give up, for your work will be rewarded.',r:'2 Chronicles 15:7'}},
+  {id:'unwavering',    name:'Unwavering',      emoji:'💥', cat:'streak',
+   desc:'Reach a 30-day streak',
+   check:id=>(ST.streaks[id]||{}).best>=30,
+   verse:{t:'Blessed is the one who perseveres.',r:'James 1:12'}},
+  // ── Level milestones ──
+  {id:'awakened',      name:'Awakened',        emoji:'🌙', cat:'level',
+   desc:'Reach Level 5',
+   check:id=>{const m=ST.members.find(x=>x.id===id);return m&&levelFromXp(m.xp||0)>=5;},
+   verse:{t:'Those who hope in the Lord will renew their strength.',r:'Isaiah 40:31'}},
+  {id:'ascended',      name:'Ascended',        emoji:'⚡', cat:'level',
+   desc:'Reach Level 10',
+   check:id=>{const m=ST.members.find(x=>x.id===id);return m&&levelFromXp(m.xp||0)>=10;},
+   verse:{t:'He gives strength to the weary and increases the power of the weak.',r:'Isaiah 40:29'}},
+  {id:'exalted',       name:'Exalted',         emoji:'👑', cat:'level',
+   desc:'Reach Level 20',
+   check:id=>{const m=ST.members.find(x=>x.id===id);return m&&levelFromXp(m.xp||0)>=20;},
+   verse:{t:'I praise you because I am fearfully and wonderfully made.',r:'Psalm 139:14'}},
+  // ── Special ──
+  {id:'treasure_hunter',name:'Treasure Hunter',emoji:'📦', cat:'special',
+   desc:'Open your first treasure chest',
+   check:id=>(ST.chestsOpened[id]||0)>=1,
+   verse:{t:'Where your treasure is, there your heart will be also.',r:'Matthew 6:21'}},
+  {id:'consistent',    name:'Consistent',      emoji:'📅', cat:'special',
+   desc:'Complete quests on 7 different days',
+   check:id=>Object.keys(ST.dailyHistory[id]||{}).length>=7,
+   verse:{t:'This is the day the Lord has made; let us rejoice and be glad in it.',r:'Psalm 118:24'}},
+  {id:'month_hero',    name:'Month Hero',      emoji:'🗓️',  cat:'special',
+   desc:'Complete quests on 30 different days',
+   check:id=>Object.keys(ST.dailyHistory[id]||{}).length>=30,
+   verse:{t:'Let perseverance finish its work so that you may be mature and complete.',r:'James 1:4'}},
+];
 
 const SKIN_TONES=['#fce0c4','#e8b896','#c89674','#a06848'];
 
@@ -782,6 +881,7 @@ function defaultState(){
     dailyHistory:{},
     holidayMode:{active:false,endsOn:null},
     pendingChests:{},
+    chestsOpened:{},
   };
 }
 
@@ -821,6 +921,15 @@ function ensureFields(){
   ST.dailyHistory=ST.dailyHistory||{};
   ST.holidayMode=ST.holidayMode||{active:false,endsOn:null};
   ST.pendingChests=ST.pendingChests||{};
+  ST.chestsOpened=ST.chestsOpened||{};
+  // Silent badge migration: pre-grant earned badges for existing members so
+  // they don't receive a flood of overlays on first post-update quest
+  for(const m of (ST.members||[]).filter(x=>!x.isParent)){
+    if(!ST.badges[m.id]){
+      ST.badges[m.id]=[];
+      for(const b of BADGES){try{if(b.check(m.id))ST.badges[m.id].push(b.id);}catch(e){}}
+    }
+  }
 }
 
 /* ---------- 3. HELPERS ---------- */
@@ -1298,9 +1407,13 @@ function togQ(cid,e){
       if(!ST.pendingChests[curKid])ST.pendingChests[curKid]=[];
       ST.pendingChests[curKid].push(droppedChest);
     }
+    // Check badges (reads updated state; saves happen below)
+    checkBadges(curKid);
     save();
     if(newLevel>oldLevel){showLevelUp(m,newLevel,oldRank!==newRank?newRank:null);return;}
     if(droppedChest){showChestOverlay(m,droppedChest);return;}
+    drainBadgeQueue();
+    return;
   } else {
     c.done=false;
     m.xp=Math.max(0,(m.xp||0)-c.points);
@@ -1346,7 +1459,48 @@ function closeLevelUp(){
     const m=ST.members.find(x=>x.id===curKid);
     if(m){showChestOverlay(m,chests[chests.length-1]);return;}
   }
+  drainBadgeQueue();
+}
+
+/* ---------- 7b-badges. BADGE SYSTEM ---------- */
+function checkBadges(kidId){
+  if(!ST.badges[kidId])ST.badges[kidId]=[];
+  const earned=ST.badges[kidId];
+  const member=ST.members.find(x=>x.id===kidId);
+  if(!member)return;
+  if(!window._badgeQueue)window._badgeQueue=[];
+  for(const b of BADGES){
+    if(!earned.includes(b.id)){
+      try{
+        if(b.check(kidId)){earned.push(b.id);window._badgeQueue.push({member,badge:b});}
+      }catch(e){}
+    }
+  }
+}
+function drainBadgeQueue(){
+  if(window._badgeQueue&&window._badgeQueue.length){
+    const{member,badge}=window._badgeQueue.shift();
+    showBadgeOverlay(member,badge);
+    return;
+  }
   renderQuestView();
+}
+function showBadgeOverlay(member,badge){
+  const cls=CLASSES[member.classId]||CLASSES.scout;
+  document.getElementById('modal-host').innerHTML=`<div class="level-up-bg" id="badge-overlay">
+    <div class="level-up">
+      <div class="badge-unlocked-label" style="color:${cls.accent};">✦ Badge Unlocked ✦</div>
+      <div class="badge-unlock-emoji">${badge.emoji}</div>
+      <div class="level-up-title" style="color:${cls.accent};">${escHtml(badge.name)}</div>
+      <div class="level-up-sub" style="color:var(--text2);font-size:13px;margin-top:2px;">${escHtml(badge.desc)}</div>
+      <div class="verse-overlay" style="margin-top:18px;">
+        <div class="verse-overlay-text">"${escHtml(badge.verse.t)}"</div>
+        <div class="verse-overlay-ref">— ${escHtml(badge.verse.r)}</div>
+      </div>
+      <button class="level-up-btn" onclick="document.getElementById('modal-host').innerHTML='';drainBadgeQueue();">Continue</button>
+    </div>
+  </div>`;
+  playChime();
 }
 
 /* ---------- 7b-chest. TREASURE CHEST ---------- */
@@ -1450,12 +1604,15 @@ function collectChest(kidId,chestId,stars){
   if(!ST.weeklyStars[kidId])ST.weeklyStars[kidId]=0;
   ST.weeklyStars[kidId]+=stars;
   ST.monthlyStarsAccum=(ST.monthlyStarsAccum||0)+stars;
+  // Track for Treasure Hunter badge
+  ST.chestsOpened[kidId]=(ST.chestsOpened[kidId]||0)+1;
+  checkBadges(kidId);
   save();
   playChime();
   confettiBurst(window.innerWidth/2,window.innerHeight/3);
   document.getElementById('modal-host').innerHTML='';
   if(newLevel>oldLevel){showLevelUp(m,newLevel,oldRank!==newRank?newRank:null);return;}
-  renderQuestView();
+  drainBadgeQueue();
 }
 
 function showNextStreakMilestone(){
@@ -1825,7 +1982,7 @@ function factoryReset(){
   ST.rewards=[null,null,null];
   ST.monthlyRewards=[null,null,null];
   ST.grandRewards=[null,null,null];
-  ST.streaks={};ST.badges={};ST.cumulativeStars={};ST.completedCount={};ST.dailyHistory={};ST.pendingChests={};
+  ST.streaks={};ST.badges={};ST.cumulativeStars={};ST.completedCount={};ST.dailyHistory={};ST.pendingChests={};ST.chestsOpened={};
   save();renderParent();
 }
 
@@ -2462,6 +2619,15 @@ function renderHeroProfile(kidId){
   const doneCount=(ST.completedCount[kidId]||0);
   const kidChests=(ST.pendingChests[kidId]||[]);
   const verse=V[(dayOfYear()-1)%V.length];
+  // Badge grid
+  const earnedIds=ST.badges[kidId]||[];
+  const badgeGridHTML=BADGES.map(b=>{
+    const ok=earnedIds.includes(b.id);
+    return `<div class="badge-card ${ok?'badge-earned':'badge-locked'}" title="${escHtml(ok?b.name+' — '+b.desc:'Locked: '+b.desc)}">
+      <div class="badge-icon">${b.emoji}</div>
+      <div class="badge-card-name">${ok?escHtml(b.name):'???'}</div>
+    </div>`;
+  }).join('');
 
   // Top quests from history
   const myHistory=(ST.history||[]).filter(h=>h.kidId===kidId);
@@ -2565,11 +2731,11 @@ function renderHeroProfile(kidId){
         ${topQuestHTML}
       </div>
 
-      <!-- Badges (placeholder — Phase 5) -->
+      <!-- Badges -->
       <div class="profile-section" style="margin-bottom:32px;">
         <div class="profile-section-title">🏆 Badges</div>
-        <div class="profile-section-sub">Achievements you've unlocked</div>
-        <div class="profile-placeholder">✦ Badges coming soon — keep completing quests! ✦</div>
+        <div class="profile-section-sub">${earnedIds.length} / ${BADGES.length} unlocked</div>
+        <div class="badge-grid">${badgeGridHTML}</div>
       </div>
 
     </div>
