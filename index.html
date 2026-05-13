@@ -357,6 +357,42 @@
   .streak-big{font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:700;line-height:1;background:linear-gradient(135deg,#ff6b35,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
   /* ── Holiday mode badge ─────────────────────────────────── */
   .holiday-ribbon{position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,rgba(0,229,255,0.15),rgba(52,211,153,0.15));border-bottom:1px solid rgba(0,229,255,0.3);font-size:10px;font-weight:700;color:var(--accent);text-align:center;padding:3px;letter-spacing:1px;z-index:2;}
+  /* ── Hero Profile Modal ─────────────────────────────────── */
+  @keyframes profileIn{from{opacity:0;transform:scale(0.97) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);}}
+  .profile-bg{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:2000;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;backdrop-filter:blur(10px);animation:profileIn 0.28s ease;}
+  .profile-modal{width:100%;max-width:460px;min-height:100vh;background:linear-gradient(180deg,#14193a 0%,#0a0e1f 40%,#050818 100%);position:relative;}
+  .profile-close-btn{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:rgba(0,0,0,0.45);color:var(--text2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:5;line-height:1;}
+  .profile-banner{padding:28px 20px 22px;text-align:center;position:relative;}
+  .profile-pet-display{font-size:60px;line-height:1;margin-bottom:14px;animation:float 2.5s ease-in-out infinite;display:inline-block;}
+  .profile-hero-name{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;line-height:1.1;margin-bottom:10px;}
+  .profile-rank-row{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:5px;}
+  .profile-rank-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+  .profile-rank-dec{font-size:10px;opacity:0.6;}
+  .profile-next-rank{font-size:11px;color:var(--text2);letter-spacing:0.5px;margin-bottom:14px;}
+  .profile-xp-bar{height:4px;border-radius:999px;background:rgba(0,0,0,0.5);overflow:hidden;margin:0 32px 18px;border:1px solid rgba(255,255,255,0.06);}
+  .profile-xp-fill{height:100%;border-radius:999px;transition:width 0.5s;}
+  .profile-quest-btn{display:block;width:calc(100% - 48px);margin:0 24px;padding:13px;border-radius:999px;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.5px;}
+  /* Stats strip */
+  .profile-stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:16px 16px 0;}
+  .profile-stat-pill{background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:10px 6px;text-align:center;}
+  .psp-val{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;line-height:1.1;}
+  .psp-lbl{font-size:9px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-top:3px;}
+  /* Profile sections */
+  .profile-section{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.05);}
+  .profile-section-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;margin-bottom:3px;display:flex;justify-content:space-between;align-items:baseline;}
+  .profile-section-sub{font-size:11px;color:var(--text3);font-style:italic;margin-bottom:12px;}
+  /* Starfield */
+  .starfield-wrap{overflow-x:auto;padding-bottom:4px;}
+  .sf-legend{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:10px;color:var(--text3);}
+  .sf-legend-dot{width:10px;height:10px;border-radius:2px;display:inline-block;}
+  /* Top quests */
+  .tq-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .tq-row:last-child{border-bottom:none;}
+  .tq-medal{font-size:16px;width:24px;text-align:center;flex-shrink:0;}
+  .tq-name{flex:1;font-size:13px;font-weight:600;}
+  .tq-count{font-size:12px;color:var(--text2);flex-shrink:0;}
+  /* Placeholder section */
+  .profile-placeholder{padding:14px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.08);text-align:center;font-size:12px;color:var(--text3);}
 </style>
 </head>
 <body>
@@ -713,6 +749,7 @@ function defaultState(){
     streaks:{},
     badges:{},
     cumulativeStars:{},
+    completedCount:{},
     dailyHistory:{},
     holidayMode:{active:false,endsOn:null},
   };
@@ -744,7 +781,13 @@ function ensureFields(){
   ST.lastResetDay=ST.lastResetDay||'';
   ST.streaks=ST.streaks||{};
   ST.badges=ST.badges||{};
-  ST.cumulativeStars=ST.cumulativeStars||{};
+  if(!ST.cumulativeStars){ST.cumulativeStars={};}
+  if(!ST.completedCount){ST.completedCount={};}
+  // Seed cumulative stars and completed count from XP for existing members (one-time migration)
+  for(const m of (ST.members||[]).filter(x=>!x.isParent)){
+    if(ST.cumulativeStars[m.id]===undefined)ST.cumulativeStars[m.id]=m.xp||0;
+    if(ST.completedCount[m.id]===undefined)ST.completedCount[m.id]=Math.round((m.xp||0)/1.5);
+  }
   ST.dailyHistory=ST.dailyHistory||{};
   ST.holidayMode=ST.holidayMode||{active:false,endsOn:null};
 }
@@ -1011,7 +1054,7 @@ function renderHome(){
     const rank=rankFor(kid.classId,prog.level);
     const streak=(ST.streaks[kid.id]||{}).current||0;
     const isHoliday=ST.holidayMode?.active;
-    heroHTML+=`<div class="hero-card" style="border-color:${cls.accent}40;${bday?'box-shadow:0 0 24px rgba(255,61,110,0.4);border-color:var(--pink);':''}" onclick="openQuests('${kid.id}')">
+    heroHTML+=`<div class="hero-card" style="border-color:${cls.accent}40;${bday?'box-shadow:0 0 24px rgba(255,61,110,0.4);border-color:var(--pink);':''}" onclick="openHeroProfile('${kid.id}')">
       ${isHoliday?'<div class="holiday-ribbon">🌴 HOLIDAY</div>':''}
       <div class="hero-card-glow" style="background:linear-gradient(90deg,transparent,${cls.accent},transparent);"></div>
       <button class="hero-edit" style="border:1px solid ${cls.accent}40;color:${cls.accent2};" onclick="event.stopPropagation();openCreator('${kid.id}')" title="Customize">✎</button>
@@ -1207,6 +1250,9 @@ function togQ(cid,e){
     // Cumulative stars (never resets)
     if(!ST.cumulativeStars[curKid])ST.cumulativeStars[curKid]=0;
     ST.cumulativeStars[curKid]+=c.points;
+    // Total quests completed counter (never resets)
+    if(!ST.completedCount[curKid])ST.completedCount[curKid]=0;
+    ST.completedCount[curKid]++;
     ST.history.unshift({name:m.name,chore:c.name,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),kidId:curKid,date:tod});
     if(ST.history.length>100)ST.history.pop();
     playChime();
@@ -1619,7 +1665,7 @@ function factoryReset(){
   ST.rewards=[null,null,null];
   ST.monthlyRewards=[null,null,null];
   ST.grandRewards=[null,null,null];
-  ST.streaks={};ST.badges={};ST.cumulativeStars={};ST.dailyHistory={};
+  ST.streaks={};ST.badges={};ST.cumulativeStars={};ST.completedCount={};ST.dailyHistory={};
   save();renderParent();
 }
 
@@ -2099,6 +2145,8 @@ function togChore(choreId){
     ST.dailyHistory[c.assignee][tod2]=(ST.dailyHistory[c.assignee][tod2]||0)+1;
     if(!ST.cumulativeStars[c.assignee])ST.cumulativeStars[c.assignee]=0;
     ST.cumulativeStars[c.assignee]+=c.points;
+    if(!ST.completedCount[c.assignee])ST.completedCount[c.assignee]=0;
+    ST.completedCount[c.assignee]++;
     ST.history.unshift({name:m.name,chore:c.name,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),kidId:c.assignee,date:tod2});
     if(ST.history.length>100)ST.history.pop();
     playChime();
@@ -2184,6 +2232,182 @@ function openCreator(id){
       <div style="display:flex;gap:8px;margin-top:18px;">
         <button class="bp" style="flex:1;" onclick="editingMemberId=null;document.getElementById('modal-host').innerHTML='';">✓ Done</button>
       </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- 7g. HERO PROFILE ---------- */
+function openHeroProfile(kidId){
+  curKid=kidId;
+  renderHeroProfile(kidId);
+}
+function closeHeroProfile(){
+  document.getElementById('modal-host').innerHTML='';
+}
+
+function buildStarfield(kidId,clsAccent,weeks){
+  weeks=weeks||8;
+  const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const today=new Date();
+  // Align to Monday of current week
+  const dow=(today.getDay()+6)%7; // 0=Mon…6=Sun
+  const mondayThisWeek=new Date(today);
+  mondayThisWeek.setDate(today.getDate()-dow);
+  mondayThisWeek.setHours(12,0,0,0);
+  // Start Monday (weeks-1) weeks ago
+  const startDate=new Date(mondayThisWeek);
+  startDate.setDate(mondayThisWeek.getDate()-(weeks-1)*7);
+  const todayNoon=new Date();todayNoon.setHours(23,59,59,0);
+
+  let html='<div class="starfield-wrap"><div style="display:flex;flex-direction:column;gap:3px;">';
+  for(let d=0;d<7;d++){
+    html+='<div style="display:flex;align-items:center;gap:3px;">';
+    html+=`<span style="font-size:9px;color:var(--text3);width:22px;text-align:right;flex-shrink:0;font-weight:600;">${DAYS[d]}</span>`;
+    for(let w=0;w<weeks;w++){
+      const cellDate=new Date(startDate);
+      cellDate.setDate(startDate.getDate()+w*7+d);
+      const ds=dateStr(cellDate);
+      const isFuture=cellDate>todayNoon;
+      const count=isFuture?-1:((ST.dailyHistory[kidId]||{})[ds]||0);
+      let bg,shadow,ttip;
+      if(isFuture){bg='rgba(255,255,255,0.02)';shadow='none';ttip='';}
+      else if(count===0){bg='rgba(255,255,255,0.06)';shadow='none';ttip=ds+': no quests';}
+      else if(count===1){bg=clsAccent+'66';shadow='0 0 5px '+clsAccent+'44';ttip=ds+': 1 quest';}
+      else if(count<=3){bg=clsAccent+'aa';shadow='0 0 7px '+clsAccent+'66';ttip=ds+': '+count+' quests';}
+      else{bg=clsAccent+'ee';shadow='0 0 10px '+clsAccent+'99';ttip=ds+': '+count+' quests!';}
+      html+=`<div style="width:12px;height:12px;border-radius:3px;flex-shrink:0;background:${bg};box-shadow:${shadow};" title="${ttip}"></div>`;
+    }
+    html+='</div>';
+  }
+  html+='</div>';
+  // Legend
+  html+=`<div class="sf-legend">
+    <div style="display:flex;align-items:center;gap:4px;"><div class="sf-legend-dot" style="background:rgba(255,255,255,0.08);"></div><span>None</span></div>
+    <div style="display:flex;align-items:center;gap:4px;"><div class="sf-legend-dot" style="background:${clsAccent}66;box-shadow:0 0 4px ${clsAccent}44;"></div><span>1</span></div>
+    <div style="display:flex;align-items:center;gap:4px;"><div class="sf-legend-dot" style="background:${clsAccent}aa;box-shadow:0 0 6px ${clsAccent}66;"></div><span>2–3</span></div>
+    <div style="display:flex;align-items:center;gap:4px;"><div class="sf-legend-dot" style="background:${clsAccent}ee;box-shadow:0 0 8px ${clsAccent}99;"></div><span>4+</span></div>
+  </div></div>`;
+  return html;
+}
+
+function renderHeroProfile(kidId){
+  const kid=ST.members.find(m=>m.id===kidId);if(!kid)return;
+  const cls=CLASSES[kid.classId]||CLASSES.scout;
+  const prog=xpProgress(kid.xp||0);
+  const rank=rankFor(kid.classId,prog.level);
+  const petIcon=petDisplay(kid);
+  const streak=(ST.streaks[kidId]||{}).current||0;
+  const bestStreak=(ST.streaks[kidId]||{}).best||0;
+  const cumStars=(ST.cumulativeStars[kidId]||0);
+  const doneCount=(ST.completedCount[kidId]||0);
+  const verse=V[(dayOfYear()-1)%V.length];
+
+  // Top quests from history
+  const myHistory=(ST.history||[]).filter(h=>h.kidId===kidId);
+  const choreCounts={};
+  const choreEmoji={};
+  for(const h of myHistory){
+    choreCounts[h.chore]=(choreCounts[h.chore]||0)+1;
+    if(!choreEmoji[h.chore]){
+      const ch=ST.chores.find(c=>c.assignee===kidId&&c.name===h.chore);
+      if(ch)choreEmoji[h.chore]=ch.emoji;
+    }
+  }
+  const topQuests=Object.entries(choreCounts).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const medals=['🥇','🥈','🥉'];
+  const topQuestHTML=topQuests.length
+    ?topQuests.map(([name,cnt],i)=>`<div class="tq-row">
+      <span class="tq-medal">${medals[i]||'•'}</span>
+      <span style="font-size:16px;flex-shrink:0;">${choreEmoji[name]||'✅'}</span>
+      <span class="tq-name">${escHtml(name)}</span>
+      <span class="tq-count">${cnt}×</span>
+    </div>`).join('')
+    :`<div style="font-size:12px;color:var(--text3);padding:6px 0;">Complete some quests and they'll appear here!</div>`;
+
+  const starfield=buildStarfield(kidId,cls.accent,8);
+
+  const host=document.getElementById('modal-host');
+  host.innerHTML=`<div class="profile-bg" onclick="if(event.target.classList.contains('profile-bg'))closeHeroProfile();">
+    <div class="profile-modal">
+
+      <!-- Close -->
+      <button class="profile-close-btn" onclick="closeHeroProfile();">✕</button>
+
+      <!-- Banner -->
+      <div class="profile-banner" style="background:linear-gradient(180deg,${cls.accent}28 0%,${cls.accent}08 60%,transparent 100%);">
+        <div class="profile-pet-display">${petIcon}</div>
+        <div class="profile-hero-name" style="color:${cls.accent2};">${escHtml(kid.name)}</div>
+        <div class="profile-rank-row">
+          <span class="profile-rank-dec" style="color:${cls.accent};">✦ ✦</span>
+          <span class="profile-rank-text" style="color:${cls.accent};">${rank.name.toUpperCase()}</span>
+          <span class="profile-rank-dec" style="color:${cls.accent};">✦ ✦</span>
+        </div>
+        <div class="profile-next-rank">
+          ${rank.next
+            ?`Level ${prog.level} · Next rank: <span style="color:${cls.accent};">${escHtml(rank.next)}</span> at Lv.${rank.nextLvl}`
+            :`<span style="color:${cls.accent};">✦ Maximum Rank Achieved ✦</span>`}
+        </div>
+        <div class="profile-xp-bar">
+          <div class="profile-xp-fill" style="width:${prog.pct}%;background:linear-gradient(90deg,${cls.accent2},${cls.accent});box-shadow:0 0 8px ${cls.accent};"></div>
+        </div>
+        <button class="profile-quest-btn" style="background:linear-gradient(135deg,${cls.accent2},${cls.accent});color:#0a0e1f;box-shadow:0 0 20px ${cls.accent}66;" onclick="closeHeroProfile();openQuests('${kidId}');">
+          ▶ Start Today's Quests
+        </button>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="profile-stat-strip">
+        <div class="profile-stat-pill">
+          <div class="psp-val" style="color:var(--gold);">★ ${cumStars}</div>
+          <div class="psp-lbl">Total Stars</div>
+        </div>
+        <div class="profile-stat-pill">
+          <div class="psp-val" style="color:#ff9944;">${streak>0?'🔥'+streak:'—'}</div>
+          <div class="psp-lbl">Streak${bestStreak>0?' · Best '+bestStreak:''}</div>
+        </div>
+        <div class="profile-stat-pill">
+          <div class="psp-val" style="color:${cls.accent};">🏆 ${prog.level}</div>
+          <div class="psp-lbl">Level</div>
+        </div>
+        <div class="profile-stat-pill">
+          <div class="psp-val" style="color:var(--green);">✅ ${doneCount}</div>
+          <div class="psp-lbl">Done</div>
+        </div>
+      </div>
+
+      <!-- Scripture of the Day -->
+      <div class="profile-section">
+        <div class="profile-section-title">✝ Today's Word</div>
+        <div class="verse-overlay" style="margin-top:8px;">
+          <div class="verse-overlay-text">"${escHtml(verse.t)}"</div>
+          <div class="verse-overlay-ref">— ${escHtml(verse.r)}</div>
+        </div>
+      </div>
+
+      <!-- The Starfield -->
+      <div class="profile-section">
+        <div class="profile-section-title">
+          <span>✦ The Starfield</span>
+          <span style="font-size:10px;color:var(--text3);font-family:'Inter',sans-serif;">Last 8 weeks</span>
+        </div>
+        <div class="profile-section-sub">Every quest lights a star</div>
+        ${starfield}
+      </div>
+
+      <!-- Top Quests -->
+      <div class="profile-section">
+        <div class="profile-section-title">🏅 Top Quests</div>
+        <div class="profile-section-sub">Your most-completed missions</div>
+        ${topQuestHTML}
+      </div>
+
+      <!-- Badges (placeholder — Phase 5) -->
+      <div class="profile-section" style="margin-bottom:32px;">
+        <div class="profile-section-title">🏆 Badges</div>
+        <div class="profile-section-sub">Achievements you've unlocked</div>
+        <div class="profile-placeholder">✦ Badges coming soon — keep completing quests! ✦</div>
+      </div>
+
     </div>
   </div>`;
 }
