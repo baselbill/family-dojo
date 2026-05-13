@@ -393,6 +393,27 @@
   .tq-count{font-size:12px;color:var(--text2);flex-shrink:0;}
   /* Placeholder section */
   .profile-placeholder{padding:14px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.08);text-align:center;font-size:12px;color:var(--text3);}
+  /* ── Treasure Chest (Phase 4) ──────────────────────────── */
+  @keyframes chestShake{0%,100%{transform:translateX(0) rotate(0);}20%{transform:translateX(-7px) rotate(-5deg);}40%{transform:translateX(7px) rotate(5deg);}60%{transform:translateX(-4px) rotate(-2deg);}80%{transform:translateX(4px) rotate(2deg);}}
+  @keyframes chestPulse{0%,100%{opacity:0.55;}50%{opacity:1;}}
+  @keyframes starBurst{0%{opacity:1;transform:translate(0,0) scale(1.2);}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0.2);}}
+  @keyframes rewardReveal{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+  .chest-bg{position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:3000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(14px);animation:profileIn 0.28s ease;}
+  .chest-modal{display:flex;flex-direction:column;align-items:center;gap:18px;padding:36px 24px;max-width:340px;width:100%;}
+  .chest-type-badge{font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:5px 18px;border:1px solid;border-radius:999px;opacity:0.9;}
+  .chest-art-wrap{position:relative;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px 28px;}
+  .chest-art-wrap.chest-shaking{animation:chestShake 0.42s ease;}
+  .chest-tap-hint{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);animation:chestPulse 1.6s ease-in-out infinite;}
+  .star-particles{position:absolute;inset:0;pointer-events:none;overflow:visible;}
+  .star-particle{position:absolute;top:50%;left:50%;margin:-10px 0 0 -10px;font-size:20px;font-weight:700;animation:starBurst 0.95s ease-out var(--delay,0s) both;}
+  .chest-reward-reveal{text-align:center;}
+  .chest-stars-text{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:700;line-height:1;letter-spacing:-1px;}
+  .chest-reward-sub{font-size:12px;color:rgba(255,255,255,0.38);margin-top:6px;letter-spacing:1px;text-transform:uppercase;}
+  .chest-collect-btn{margin-top:22px;padding:15px 40px;border:none;border-radius:999px;font-size:15px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:#07090f;font-family:'Rajdhani',sans-serif;display:block;width:100%;}
+  /* Chest pill on hero cards */
+  .chest-card-pill{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(255,165,0,0.18);border:1px solid rgba(255,165,0,0.5);color:#ffd700;animation:chestPulse 1.6s ease-in-out infinite;}
+  /* Chest button on profile page */
+  .profile-chest-btn{display:block;width:calc(100% - 48px);margin:8px 24px 0;padding:13px;border-radius:999px;border:2px solid;background:rgba(255,215,0,0.08);color:#ffd700;font-size:14px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;letter-spacing:1.5px;text-transform:uppercase;animation:chestPulse 1.6s ease-in-out infinite;}
 </style>
 </head>
 <body>
@@ -511,6 +532,14 @@ const LEVEL_VERSES=[
   {text:"I can do all this through him who gives me strength.",ref:"Philippians 4:13"},
   {text:"Well done, good and faithful servant!",ref:"Matthew 25:23"},
 ];
+
+const CHEST_TYPES=[
+  {id:'common',    name:'Common',    color:'#cd8f3a', glow:'rgba(205,143,58,0.55)',  stars:[5,15],   weight:70},
+  {id:'rare',      name:'Rare',      color:'#7ec8e3', glow:'rgba(126,200,227,0.55)', stars:[15,35],  weight:22},
+  {id:'epic',      name:'Epic',      color:'#ffd700', glow:'rgba(255,215,0,0.65)',   stars:[35,65],  weight:7},
+  {id:'legendary', name:'Legendary', color:'#c084fc', glow:'rgba(192,132,252,0.65)',stars:[65,120], weight:1},
+];
+const CHEST_DROP_CHANCE=0.15;
 
 const SKIN_TONES=['#fce0c4','#e8b896','#c89674','#a06848'];
 
@@ -752,6 +781,7 @@ function defaultState(){
     completedCount:{},
     dailyHistory:{},
     holidayMode:{active:false,endsOn:null},
+    pendingChests:{},
   };
 }
 
@@ -790,6 +820,7 @@ function ensureFields(){
   }
   ST.dailyHistory=ST.dailyHistory||{};
   ST.holidayMode=ST.holidayMode||{active:false,endsOn:null};
+  ST.pendingChests=ST.pendingChests||{};
 }
 
 /* ---------- 3. HELPERS ---------- */
@@ -880,6 +911,7 @@ function dateStr(d){d=d||new Date();return d.toISOString().slice(0,10);}
 function yesterdayStr(){const d=new Date();d.setDate(d.getDate()-1);return dateStr(d);}
 function daysBetween(a,b){return Math.round((b-a)/(1000*60*60*24));}
 function rankFor(classId,level){const ranks=CLASS_RANKS[classId]||CLASS_RANKS.scout;let idx=0;for(let i=0;i<RANK_LEVELS.length;i++){if(level>=RANK_LEVELS[i])idx=i;}return{name:ranks[idx],next:ranks[idx+1]||null,nextLvl:RANK_LEVELS[idx+1]||null};}
+function rollChest(){let roll=Math.random()*100,acc=0;for(const t of CHEST_TYPES){acc+=t.weight;if(roll<acc){const lo=t.stars[0],hi=t.stars[1];const stars=lo+Math.floor(Math.random()*(hi-lo+1));return{id:'c'+Date.now()+'_'+Math.floor(Math.random()*9999),type:t.id,stars};}}return{id:'c'+Date.now(),type:'common',stars:10};}
 
 /* ---------- 4. PORTRAIT (SVG anime hero) ---------- */
 function heroPortraitSVG(member,size){
@@ -1054,6 +1086,7 @@ function renderHome(){
     const rank=rankFor(kid.classId,prog.level);
     const streak=(ST.streaks[kid.id]||{}).current||0;
     const isHoliday=ST.holidayMode?.active;
+    const chestCount=(ST.pendingChests[kid.id]||[]).length;
     heroHTML+=`<div class="hero-card" style="border-color:${cls.accent}40;${bday?'box-shadow:0 0 24px rgba(255,61,110,0.4);border-color:var(--pink);':''}" onclick="openHeroProfile('${kid.id}')">
       ${isHoliday?'<div class="holiday-ribbon">🌴 HOLIDAY</div>':''}
       <div class="hero-card-glow" style="background:linear-gradient(90deg,transparent,${cls.accent},transparent);"></div>
@@ -1079,6 +1112,7 @@ function renderHome(){
       <div class="hero-stars">
         <span class="today">★ ${todayStars} today</span>
         <span class="total">${myDone}/${myCh.length} ${tw().toLowerCase()}s</span>
+        ${chestCount>0?`<span class="chest-card-pill" style="margin-left:auto;">📦${chestCount>1?' ×'+chestCount:''}</span>`:''}
       </div>
     </div>`;
   }
@@ -1257,8 +1291,16 @@ function togQ(cid,e){
     if(ST.history.length>100)ST.history.pop();
     playChime();
     if(e&&e.clientX)confettiBurst(e.clientX,e.clientY);
+    // Chest drop roll
+    let droppedChest=null;
+    if(Math.random()<CHEST_DROP_CHANCE){
+      droppedChest=rollChest();
+      if(!ST.pendingChests[curKid])ST.pendingChests[curKid]=[];
+      ST.pendingChests[curKid].push(droppedChest);
+    }
     save();
     if(newLevel>oldLevel){showLevelUp(m,newLevel,oldRank!==newRank?newRank:null);return;}
+    if(droppedChest){showChestOverlay(m,droppedChest);return;}
   } else {
     c.done=false;
     m.xp=Math.max(0,(m.xp||0)-c.points);
@@ -1296,7 +1338,125 @@ function showLevelUp(member,level,newRank){
     </div>
   </div>`;
 }
-function closeLevelUp(){document.getElementById('modal-host').innerHTML='';renderQuestView();}
+function closeLevelUp(){
+  document.getElementById('modal-host').innerHTML='';
+  // Show any pending chest that dropped alongside this level-up
+  const chests=ST.pendingChests[curKid]||[];
+  if(chests.length){
+    const m=ST.members.find(x=>x.id===curKid);
+    if(m){showChestOverlay(m,chests[chests.length-1]);return;}
+  }
+  renderQuestView();
+}
+
+/* ---------- 7b-chest. TREASURE CHEST ---------- */
+function chestSVG(type,isOpen){
+  const t=CHEST_TYPES.find(x=>x.id===type)||CHEST_TYPES[0];
+  const c=t.color;
+  const lidTransform=isOpen?'rotate(-50,70,58)':'';
+  return `<svg width="140" height="120" viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="70" cy="117" rx="52" ry="5" fill="rgba(0,0,0,0.35)"/>
+    <rect x="10" y="57" width="120" height="58" rx="7" fill="#2a1405"/>
+    <rect x="10" y="57" width="120" height="58" rx="7" fill="none" stroke="${c}" stroke-width="2.5"/>
+    <rect x="10" y="74" width="120" height="10" fill="#1a0c03"/>
+    <rect x="10" y="74" width="120" height="10" fill="none" stroke="${c}" stroke-width="1" stroke-opacity="0.5"/>
+    <rect x="53" y="69" width="34" height="20" rx="5" fill="${c}" opacity="0.9"/>
+    <rect x="59" y="74" width="22" height="11" rx="3" fill="#1a0c03"/>
+    <rect x="16" y="53" width="18" height="9" rx="3" fill="${c}" opacity="0.8"/>
+    <rect x="106" y="53" width="18" height="9" rx="3" fill="${c}" opacity="0.8"/>
+    <g transform="${lidTransform}" style="transform-origin:70px 58px;">
+      <rect x="10" y="10" width="120" height="50" rx="7" fill="#3d1f08"/>
+      <rect x="10" y="10" width="120" height="50" rx="7" fill="none" stroke="${c}" stroke-width="2.5"/>
+      <rect x="10" y="40" width="120" height="10" fill="#2a1405"/>
+      <rect x="10" y="40" width="120" height="10" fill="none" stroke="${c}" stroke-width="1" stroke-opacity="0.5"/>
+      <circle cx="70" cy="30" r="12" fill="${c}" opacity="0.9"/>
+      <circle cx="70" cy="30" r="8" fill="#1a0c03"/>
+      <circle cx="70" cy="30" r="3.5" fill="${c}" opacity="0.7"/>
+    </g>
+    ${isOpen?`<ellipse cx="70" cy="58" rx="38" ry="12" fill="${c}" opacity="0.35"/>
+    <text x="70" y="50" text-anchor="middle" font-size="22" fill="${c}" opacity="0.8">✦</text>`:''}
+  </svg>`;
+}
+function showChestOverlay(member,chest){
+  if(!member||!chest)return;
+  const t=CHEST_TYPES.find(x=>x.id===chest.type)||CHEST_TYPES[0];
+  const cls=CLASSES[member.classId]||CLASSES.scout;
+  document.getElementById('modal-host').innerHTML=`<div class="chest-bg">
+    <div class="chest-modal">
+      <div class="chest-type-badge" style="color:${t.color};border-color:${t.color}40;">✦ ${t.name} Chest ✦</div>
+      <div class="chest-art-wrap" id="chest-art-wrap" onclick="triggerChestOpen('${member.id}','${chest.id}')">
+        <div class="chest-art" id="chest-art">${chestSVG(chest.type,false)}</div>
+        <div class="chest-tap-hint" id="chest-tap-hint">TAP TO OPEN</div>
+        <div class="star-particles" id="chest-particles"></div>
+      </div>
+      <div class="chest-reward-reveal" id="chest-reward" style="display:none;">
+        <div class="chest-stars-text" style="color:${t.color};">+${chest.stars} ★</div>
+        <div class="chest-reward-sub">Stars added to your adventure!</div>
+        <button class="chest-collect-btn" style="background:linear-gradient(135deg,${t.color},${cls.accent});box-shadow:0 0 24px ${t.glow};" onclick="collectChest('${member.id}','${chest.id}',${chest.stars})">✦ Collect ✦</button>
+      </div>
+    </div>
+  </div>`;
+}
+function triggerChestOpen(kidId,chestId){
+  const wrap=document.getElementById('chest-art-wrap');
+  if(!wrap||wrap.dataset.opening)return;
+  wrap.dataset.opening='1';
+  wrap.style.cursor='default';
+  wrap.onclick=null;
+  const chestList=ST.pendingChests[kidId]||[];
+  const chest=chestList.find(x=>x.id===chestId);
+  if(!chest)return;
+  const t=CHEST_TYPES.find(x=>x.id===chest.type)||CHEST_TYPES[0];
+  // Shake
+  wrap.classList.add('chest-shaking');
+  setTimeout(()=>{
+    wrap.classList.remove('chest-shaking');
+    // Swap to open SVG
+    document.getElementById('chest-art').innerHTML=chestSVG(chest.type,true);
+    document.getElementById('chest-tap-hint').style.display='none';
+    // Spawn star particles
+    const pc=document.getElementById('chest-particles');
+    if(pc){
+      const n=Math.min(16,chest.stars);
+      let pHTML='';
+      for(let i=0;i<n;i++){
+        const angle=(i/n)*360;
+        const dist=50+Math.random()*40;
+        const tx=Math.cos(angle*Math.PI/180)*dist;
+        const ty=Math.sin(angle*Math.PI/180)*dist-30;
+        const delay=(Math.random()*0.35).toFixed(2);
+        pHTML+=`<span class="star-particle" style="--tx:${tx.toFixed(0)}px;--ty:${ty.toFixed(0)}px;--delay:${delay}s;color:${t.color};">★</span>`;
+      }
+      pc.innerHTML=pHTML;
+    }
+    playChime();
+    setTimeout(()=>{
+      const rew=document.getElementById('chest-reward');
+      if(rew){rew.style.display='';rew.style.animation='rewardReveal 0.4s ease';}
+    },700);
+  },420);
+}
+function collectChest(kidId,chestId,stars){
+  const m=ST.members.find(x=>x.id===kidId);if(!m)return;
+  // Remove chest from pending
+  if(ST.pendingChests[kidId])ST.pendingChests[kidId]=ST.pendingChests[kidId].filter(c=>c.id!==chestId);
+  // Award stars
+  const oldLevel=levelFromXp(m.xp||0);
+  const oldRank=rankFor(m.classId,oldLevel).name;
+  m.xp=(m.xp||0)+stars;
+  const newLevel=levelFromXp(m.xp);
+  const newRank=rankFor(m.classId,newLevel).name;
+  ST.cumulativeStars[kidId]=(ST.cumulativeStars[kidId]||0)+stars;
+  if(!ST.weeklyStars[kidId])ST.weeklyStars[kidId]=0;
+  ST.weeklyStars[kidId]+=stars;
+  ST.monthlyStarsAccum=(ST.monthlyStarsAccum||0)+stars;
+  save();
+  playChime();
+  confettiBurst(window.innerWidth/2,window.innerHeight/3);
+  document.getElementById('modal-host').innerHTML='';
+  if(newLevel>oldLevel){showLevelUp(m,newLevel,oldRank!==newRank?newRank:null);return;}
+  renderQuestView();
+}
 
 function showNextStreakMilestone(){
   if(!window._streakMilestoneQueue||!window._streakMilestoneQueue.length)return;
@@ -1665,7 +1825,7 @@ function factoryReset(){
   ST.rewards=[null,null,null];
   ST.monthlyRewards=[null,null,null];
   ST.grandRewards=[null,null,null];
-  ST.streaks={};ST.badges={};ST.cumulativeStars={};ST.completedCount={};ST.dailyHistory={};
+  ST.streaks={};ST.badges={};ST.cumulativeStars={};ST.completedCount={};ST.dailyHistory={};ST.pendingChests={};
   save();renderParent();
 }
 
@@ -2300,6 +2460,7 @@ function renderHeroProfile(kidId){
   const bestStreak=(ST.streaks[kidId]||{}).best||0;
   const cumStars=(ST.cumulativeStars[kidId]||0);
   const doneCount=(ST.completedCount[kidId]||0);
+  const kidChests=(ST.pendingChests[kidId]||[]);
   const verse=V[(dayOfYear()-1)%V.length];
 
   // Top quests from history
@@ -2353,6 +2514,9 @@ function renderHeroProfile(kidId){
         <button class="profile-quest-btn" style="background:linear-gradient(135deg,${cls.accent2},${cls.accent});color:#0a0e1f;box-shadow:0 0 20px ${cls.accent}66;" onclick="closeHeroProfile();openQuests('${kidId}');">
           ▶ Start Today's Quests
         </button>
+        ${kidChests.length?`<button class="profile-chest-btn" style="border-color:${CHEST_TYPES.find(x=>x.id===kidChests[kidChests.length-1].type).color}55;" onclick="closeHeroProfile();const m=ST.members.find(x=>x.id==='${kidId}');if(m)showChestOverlay(m,ST.pendingChests['${kidId}'][ST.pendingChests['${kidId}'].length-1]);">
+          📦 Open ${kidChests.length===1?'Your Chest':'Chests ('+kidChests.length+')'}!
+        </button>`:''}
       </div>
 
       <!-- Stats strip -->
