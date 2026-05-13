@@ -342,6 +342,21 @@
     .modal{padding:20px 16px;}
     .af{padding:14px;}
   }
+  /* ── Rank ribbon on hero cards ──────────────────────────── */
+  .hero-rank-ribbon{display:flex;align-items:center;justify-content:center;gap:5px;margin:5px -16px 2px;padding:5px 8px;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;position:relative;overflow:hidden;}
+  .hero-rank-ribbon::before{content:'';position:absolute;inset:0;background:inherit;opacity:0.12;}
+  .hero-rank-name{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:700;letter-spacing:1.5px;background:linear-gradient(135deg,currentColor,rgba(255,255,255,0.8));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .hero-rank-dec{font-size:8px;opacity:0.7;}
+  .hero-streak-pill{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(0,0,0,0.35);border:1px solid rgba(255,165,0,0.3);}
+  @keyframes rankShimmer{0%{background-position:-200% center;}100%{background-position:200% center;}}
+  /* ── Scripture verse block (overlays) ───────────────────── */
+  .verse-overlay{margin-top:16px;padding:14px 18px;border-left:2px solid var(--gold);background:linear-gradient(90deg,rgba(255,215,0,0.08),transparent);border-radius:0 8px 8px 0;text-align:left;}
+  .verse-overlay-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#f0eccc;line-height:1.5;margin-bottom:6px;}
+  .verse-overlay-ref{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1px;}
+  /* ── Streak overlay large number ────────────────────────── */
+  .streak-big{font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:700;line-height:1;background:linear-gradient(135deg,#ff6b35,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  /* ── Holiday mode badge ─────────────────────────────────── */
+  .holiday-ribbon{position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,rgba(0,229,255,0.15),rgba(52,211,153,0.15));border-bottom:1px solid rgba(0,229,255,0.3);font-size:10px;font-weight:700;color:var(--accent);text-align:center;padding:3px;letter-spacing:1px;z-index:2;}
 </style>
 </head>
 <body>
@@ -431,6 +446,34 @@ const UNLOCKS=[
   {lvl:15,name:'Companion Form',desc:'Your pet has taken its true form',icon:'🌟'},
   {lvl:25,name:'Mythic Glow',desc:'Stars trail behind your pet',icon:'⭐'},
   {lvl:50,name:'Awakened',desc:'Your pet has fully awakened',icon:'✦'},
+];
+
+/* ── Class-specific rank titles ── */
+const CLASS_RANKS={
+  sword:   ['Initiate','Squire','Knight','Champion','Hero','Paladin','Grand Paladin'],
+  mage:    ['Initiate','Acolyte','Scholar','Wizard','Archmage','Sage','Grand Magus'],
+  healer:  ['Initiate','Helper','Caregiver','Healer','Saint','Blessed','Radiant'],
+  archer:  ['Initiate','Cadet','Ranger','Huntress','Sharpshooter','Marksman','Hawkeye'],
+  scout:   ['Initiate','Rogue','Infiltrator','Phantom','Specter','Shade','Wraith'],
+  guardian:['Initiate','Sentinel','Defender','Protector','Warden','Bulwark','Iron Wall'],
+};
+const RANK_LEVELS=[1,3,5,10,15,25,50];
+const STREAK_MILESTONES=[3,7,14,30,60,100];
+const STREAK_VERSES={
+  3: {text:"Let us not become weary in doing good.",ref:"Galatians 6:9"},
+  7: {text:"Work at it with all your heart, as working for the Lord.",ref:"Colossians 3:23"},
+  14:{text:"Be strong and do not give up, for your work will be rewarded.",ref:"2 Chronicles 15:7"},
+  30:{text:"Blessed is the one who perseveres.",ref:"James 1:12"},
+  60:{text:"I can do all this through him who gives me strength.",ref:"Philippians 4:13"},
+  100:{text:"Well done, good and faithful servant!",ref:"Matthew 25:23"},
+};
+const LEVEL_VERSES=[
+  {text:"All hard work brings a profit.",ref:"Proverbs 14:23"},
+  {text:"Those who hope in the Lord will renew their strength.",ref:"Isaiah 40:31"},
+  {text:"Be strong and do not give up, for your work will be rewarded.",ref:"2 Chronicles 15:7"},
+  {text:"Whatever you do, work at it with all your heart.",ref:"Colossians 3:23"},
+  {text:"I can do all this through him who gives me strength.",ref:"Philippians 4:13"},
+  {text:"Well done, good and faithful servant!",ref:"Matthew 25:23"},
 ];
 
 const SKIN_TONES=['#fce0c4','#e8b896','#c89674','#a06848'];
@@ -667,6 +710,11 @@ function defaultState(){
       {id:'pr3',memberId:'christian',text:'Choose a bedtime story',stars:10},
       {id:'pr4',memberId:'constance',text:'Extra cuddle time',stars:8},
     ],
+    streaks:{},
+    badges:{},
+    cumulativeStars:{},
+    dailyHistory:{},
+    holidayMode:{active:false,endsOn:null},
   };
 }
 
@@ -694,6 +742,11 @@ function ensureFields(){
   ST.customChores=ST.customChores||[];
   ST.rewardLibrary=ST.rewardLibrary||[];
   ST.lastResetDay=ST.lastResetDay||'';
+  ST.streaks=ST.streaks||{};
+  ST.badges=ST.badges||{};
+  ST.cumulativeStars=ST.cumulativeStars||{};
+  ST.dailyHistory=ST.dailyHistory||{};
+  ST.holidayMode=ST.holidayMode||{active:false,endsOn:null};
 }
 
 /* ---------- 3. HELPERS ---------- */
@@ -725,9 +778,65 @@ function nextUnlockFor(level){return UNLOCKS.find(u=>u.lvl>level);}
 
 function chkWeek(){const wk=weekKey();if(ST.currentWeek!==wk){ST.weeklyStars={};ST.currentWeek=wk;save();}}
 function chkMonth(){const now=new Date();const mk=now.getFullYear()+'-'+(now.getMonth()+1);if(ST.currentMonth!==mk){ST.monthlyStarsAccum=0;ST.currentMonth=mk;save();}}
-function chkDay(){const today=new Date().toDateString();if(ST.lastResetDay!==today){ST.chores.forEach(c=>c.done=false);ST.lastResetDay=today;save();}}
+function chkDay(){
+  const today=new Date().toDateString();
+  if(ST.lastResetDay===today)return;
+  // Auto-deactivate holiday mode if end date passed
+  if(ST.holidayMode?.active&&ST.holidayMode.endsOn&&new Date()>new Date(ST.holidayMode.endsOn)){
+    ST.holidayMode.active=false;
+  }
+  // Process streaks before resetting chores
+  const yest=yesterdayStr();
+  const lastDay=ST.lastResetDay?new Date(ST.lastResetDay):null;
+  const today2=new Date();
+  const gapDays=lastDay?daysBetween(lastDay,today2):99;
+  const kids=(ST.members||[]).filter(m=>!m.isParent);
+  const pendingMilestones=[];
+  for(const kid of kids){
+    if(!ST.streaks[kid.id])ST.streaks[kid.id]={current:0,best:0,lastDay:''};
+    const str=ST.streaks[kid.id];
+    if(ST.holidayMode?.active){
+      // Holiday: freeze streaks, don't break them
+    } else if(gapDays>1){
+      // Missed multiple days — reset streak
+      str.current=0;
+    } else {
+      // Normal day transition — check if yesterday had activity
+      const didAnything=((ST.dailyHistory[kid.id]||{})[yest]||0)>0;
+      if(didAnything){
+        str.current=(str.current||0)+1;
+        if(str.current>(str.best||0))str.best=str.current;
+        if(STREAK_MILESTONES.includes(str.current)){
+          pendingMilestones.push({kid,streak:str.current});
+        }
+      } else {
+        str.current=0;
+      }
+      str.lastDay=yest;
+    }
+  }
+  // Prune dailyHistory older than 365 days
+  const cutoff=new Date();cutoff.setDate(cutoff.getDate()-365);
+  const cutoffStr=dateStr(cutoff);
+  for(const kidId of Object.keys(ST.dailyHistory||{})){
+    for(const d of Object.keys(ST.dailyHistory[kidId]||{})){
+      if(d<cutoffStr)delete ST.dailyHistory[kidId][d];
+    }
+  }
+  ST.chores.forEach(c=>c.done=false);
+  ST.lastResetDay=today;
+  save();
+  if(pendingMilestones.length){
+    window._streakMilestoneQueue=[...pendingMilestones];
+    setTimeout(()=>showNextStreakMilestone(),800);
+  }
+}
 function totalStars(){return Math.floor((ST.members||[]).filter(m=>!m.isParent).reduce((s,m)=>s+(m.xp||0),0));}
 function memberStars(id){const m=ST.members.find(x=>x.id===id);return m?m.xp||0:0;}
+function dateStr(d){d=d||new Date();return d.toISOString().slice(0,10);}
+function yesterdayStr(){const d=new Date();d.setDate(d.getDate()-1);return dateStr(d);}
+function daysBetween(a,b){return Math.round((b-a)/(1000*60*60*24));}
+function rankFor(classId,level){const ranks=CLASS_RANKS[classId]||CLASS_RANKS.scout;let idx=0;for(let i=0;i<RANK_LEVELS.length;i++){if(level>=RANK_LEVELS[i])idx=i;}return{name:ranks[idx],next:ranks[idx+1]||null,nextLvl:RANK_LEVELS[idx+1]||null};}
 
 /* ---------- 4. PORTRAIT (SVG anime hero) ---------- */
 function heroPortraitSVG(member,size){
@@ -899,20 +1008,30 @@ function renderHome(){
     const bday=isBday(kid.dob);
     const petIcon=petDisplay(kid);
     const pet=getPet(kid);
+    const rank=rankFor(kid.classId,prog.level);
+    const streak=(ST.streaks[kid.id]||{}).current||0;
+    const isHoliday=ST.holidayMode?.active;
     heroHTML+=`<div class="hero-card" style="border-color:${cls.accent}40;${bday?'box-shadow:0 0 24px rgba(255,61,110,0.4);border-color:var(--pink);':''}" onclick="openQuests('${kid.id}')">
+      ${isHoliday?'<div class="holiday-ribbon">🌴 HOLIDAY</div>':''}
       <div class="hero-card-glow" style="background:linear-gradient(90deg,transparent,${cls.accent},transparent);"></div>
       <button class="hero-edit" style="border:1px solid ${cls.accent}40;color:${cls.accent2};" onclick="event.stopPropagation();openCreator('${kid.id}')" title="Customize">✎</button>
-      <div class="hero-tier" style="border:1px solid ${cls.accent}30;color:${cls.accent2};">${tier.mark} ${tier.name}</div>
+      <div class="hero-tier" style="border:1px solid ${cls.accent}30;color:${cls.accent2};">L${prog.level}</div>
       <div class="hero-portrait-wrap">${heroPortraitSVG(kid,110)}</div>
       <div class="hero-name">${escHtml(kid.name)}${bday?' 🎂':''}</div>
+      <div class="hero-rank-ribbon" style="color:${cls.accent};border-top:1px solid ${cls.accent}30;border-bottom:1px solid ${cls.accent}30;background:linear-gradient(90deg,transparent,${cls.accent}18,transparent);">
+        <span class="hero-rank-dec">✦</span>
+        <span class="hero-rank-name" style="color:${cls.accent};">${rank.name.toUpperCase()}</span>
+        <span class="hero-rank-dec">✦</span>
+      </div>
       <div class="hero-class" style="color:${cls.accent2};">${cls.name}</div>
       <div class="hero-level-row">
-        <span class="hero-level-num">L${prog.level}</span>
+        <span class="hero-level-num">XP ${prog.inLevel}/${prog.needed}</span>
         <div class="bar-track" style="flex:1;border-color:${cls.accent}25;"><div class="bar-fill" style="width:${prog.pct}%;background:linear-gradient(90deg,${cls.accent2},${cls.accent});box-shadow:0 0 8px ${cls.accent};"></div></div>
       </div>
       <div class="hero-pet">
         <span class="hero-pet-icon">${petIcon}</span>
         <span class="hero-pet-name">${escHtml(pet.name)}</span>
+        ${streak>0?`<span class="hero-streak-pill" style="margin-left:auto;border-color:${streak>=7?'rgba(255,165,0,0.5)':'rgba(255,165,0,0.25)'};">🔥${streak}</span>`:''}
       </div>
       <div class="hero-stars">
         <span class="today">★ ${todayStars} today</span>
@@ -1011,6 +1130,7 @@ function renderQuestView(){
   const cls=CLASSES[m.classId]||CLASSES.scout;
   const prog=xpProgress(m.xp||0);
   const tier=tierFor(prog.level);
+  const rank2=rankFor(m.classId,prog.level);
   const young=isYoung(curKid);
   const myCh=ST.chores.filter(c=>c.assignee===curKid);
   const todayStars=myCh.filter(c=>c.done).reduce((s,c)=>s+c.points,0);
@@ -1043,7 +1163,7 @@ function renderQuestView(){
       <div class="qhdr-info">
         <div class="qhdr-name-row">
           <span class="qhdr-name">${escHtml(m.name)}</span>
-          <span class="qhdr-class" style="color:${cls.accent2};">${tier.name} · ${cls.name}</span>
+          <span class="qhdr-class" style="color:${cls.accent2};">${rank2.name} · ${cls.name}</span>
         </div>
         <div class="qhdr-level-row">
           <span class="qhdr-level">Level ${prog.level}</span>
@@ -1073,17 +1193,26 @@ function togQ(cid,e){
   if(!c.done){
     c.done=true;
     const oldLevel=levelFromXp(m.xp||0);
+    const oldRank=rankFor(m.classId,oldLevel).name;
     m.xp=(m.xp||0)+c.points;
     const newLevel=levelFromXp(m.xp);
+    const newRank=rankFor(m.classId,newLevel).name;
     if(!ST.weeklyStars[curKid])ST.weeklyStars[curKid]=0;
     ST.weeklyStars[curKid]+=c.points;
     ST.monthlyStarsAccum=(ST.monthlyStarsAccum||0)+c.points;
-    ST.history.unshift({name:m.name,chore:c.name,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})});
-    if(ST.history.length>50)ST.history.pop();
+    // Track per-day history for Starfield and streaks
+    const tod=dateStr();
+    if(!ST.dailyHistory[curKid])ST.dailyHistory[curKid]={};
+    ST.dailyHistory[curKid][tod]=(ST.dailyHistory[curKid][tod]||0)+1;
+    // Cumulative stars (never resets)
+    if(!ST.cumulativeStars[curKid])ST.cumulativeStars[curKid]=0;
+    ST.cumulativeStars[curKid]+=c.points;
+    ST.history.unshift({name:m.name,chore:c.name,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),kidId:curKid,date:tod});
+    if(ST.history.length>100)ST.history.pop();
     playChime();
     if(e&&e.clientX)confettiBurst(e.clientX,e.clientY);
     save();
-    if(newLevel>oldLevel){showLevelUp(m,newLevel);return;}
+    if(newLevel>oldLevel){showLevelUp(m,newLevel,oldRank!==newRank?newRank:null);return;}
   } else {
     c.done=false;
     m.xp=Math.max(0,(m.xp||0)-c.points);
@@ -1094,26 +1223,61 @@ function togQ(cid,e){
   renderQuestView();
 }
 
-function showLevelUp(member,level){
+function showLevelUp(member,level,newRank){
   const cls=CLASSES[member.classId]||CLASSES.scout;
   const tier=tierFor(level);
   const unlock=UNLOCKS.find(u=>u.lvl===level);
   const newPet=unlock?petDisplay(member):'';
+  const verse=LEVEL_VERSES[level%LEVEL_VERSES.length];
   const host=document.getElementById('modal-host');
   host.innerHTML=`<div class="level-up-bg" id="level-up-overlay">
     <div class="level-up">
       <div class="level-up-glow">L${level}</div>
       <div class="level-up-title" style="color:${cls.accent};">${escHtml(member.name)} levelled up!</div>
-      <div class="level-up-sub">${tier.name} · ${cls.name}</div>
+      ${newRank?`<div style="margin:10px auto;padding:8px 20px;border:1px solid ${cls.accent};border-radius:999px;background:${cls.accent}20;display:inline-block;">
+        <span style="font-size:10px;letter-spacing:2px;font-weight:700;color:${cls.accent}80;text-transform:uppercase;">New Title</span>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:${cls.accent};letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;">✦ ${escHtml(newRank)} ✦</div>
+      </div>`:`<div class="level-up-sub">${tier.name} · ${cls.name}</div>`}
       ${unlock?`<div class="level-up-unlock">
         ${newPet?`<div style="font-size:48px;margin-bottom:8px;animation:float 2s ease-in-out infinite;">${newPet}</div>`:''}
         <span style="font-size:20px;">${unlock.icon}</span> <strong>${escHtml(unlock.name)}</strong> — ${escHtml(unlock.desc)}
       </div>`:''}
+      <div class="verse-overlay" style="margin-top:${unlock?'12px':'18px'};">
+        <div class="verse-overlay-text">"${escHtml(verse.text)}"</div>
+        <div class="verse-overlay-ref">— ${escHtml(verse.ref)}</div>
+      </div>
       <button class="level-up-btn" onclick="closeLevelUp()">Continue</button>
     </div>
   </div>`;
 }
 function closeLevelUp(){document.getElementById('modal-host').innerHTML='';renderQuestView();}
+
+function showNextStreakMilestone(){
+  if(!window._streakMilestoneQueue||!window._streakMilestoneQueue.length)return;
+  const {kid,streak}=window._streakMilestoneQueue.shift();
+  showStreakOverlay(kid,streak);
+}
+function showStreakOverlay(member,streak){
+  const cls=CLASSES[member.classId]||CLASSES.scout;
+  const verse=STREAK_VERSES[streak]||{text:"Well done, good and faithful servant!",ref:"Matthew 25:23"};
+  const flameCount=streak<=3?1:streak<=7?2:streak<=14?3:streak<=30?4:5;
+  const flames='🔥'.repeat(flameCount);
+  const host=document.getElementById('modal-host');
+  host.innerHTML=`<div class="level-up-bg" id="streak-overlay">
+    <div class="level-up">
+      <div style="font-size:36px;margin-bottom:4px;">${flames}</div>
+      <div class="streak-big">${streak}</div>
+      <div class="level-up-title" style="color:${cls.accent};">${escHtml(member.name)}</div>
+      <div class="level-up-sub">DAY STREAK · PERSEVERANCE</div>
+      <div class="verse-overlay">
+        <div class="verse-overlay-text">"${escHtml(verse.text)}"</div>
+        <div class="verse-overlay-ref">— ${escHtml(verse.ref)}</div>
+      </div>
+      <button class="level-up-btn" onclick="document.getElementById('modal-host').innerHTML='';showNextStreakMilestone();">Continue</button>
+    </div>
+  </div>`;
+  playChime();
+}
 
 /* ---------- 7c. PIN ---------- */
 function renderPin(){
@@ -1389,6 +1553,22 @@ function renderParentFamily(){
     </div>
 
     <div class="af">
+      <div class="af-title">🌴 Holiday Mode</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">When active, daily streaks are frozen so heroes don't lose their progress during holidays. Daily chores are still shown but optional.</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;">
+          <input type="checkbox" ${ST.holidayMode?.active?'checked':''} onchange="ST.holidayMode.active=this.checked;if(!this.checked)ST.holidayMode.endsOn=null;save();renderParent();" style="width:18px;height:18px;cursor:pointer;">
+          Holiday Mode ${ST.holidayMode?.active?'<span style=\'color:var(--green);\'>● Active</span>':'<span style=\'color:var(--text3);\'>○ Off</span>'}
+        </label>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
+        <label style="color:var(--text2);font-weight:600;flex-shrink:0;">Auto-ends on:</label>
+        <input type="date" value="${ST.holidayMode?.endsOn||''}" onchange="ST.holidayMode.endsOn=this.value||null;save();" style="flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:12px;" ${!ST.holidayMode?.active?'disabled':''}>
+        <span style="font-size:11px;color:var(--text3);">(optional)</span>
+      </div>
+    </div>
+
+    <div class="af">
       <div class="af-title">🔄 Reset & New Season</div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">Use these when starting a new week, month, or fresh school year. Individual hero XP can be reset using the ↺ XP button next to each child above.</div>
 
@@ -1439,6 +1619,7 @@ function factoryReset(){
   ST.rewards=[null,null,null];
   ST.monthlyRewards=[null,null,null];
   ST.grandRewards=[null,null,null];
+  ST.streaks={};ST.badges={};ST.cumulativeStars={};ST.dailyHistory={};
   save();renderParent();
 }
 
@@ -1913,8 +2094,13 @@ function togChore(choreId){
     if(!ST.weeklyStars[c.assignee])ST.weeklyStars[c.assignee]=0;
     ST.weeklyStars[c.assignee]+=c.points;
     ST.monthlyStarsAccum=(ST.monthlyStarsAccum||0)+c.points;
-    ST.history.unshift({name:m.name,chore:c.name,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})});
-    if(ST.history.length>50)ST.history.pop();
+    const tod2=dateStr();
+    if(!ST.dailyHistory[c.assignee])ST.dailyHistory[c.assignee]={};
+    ST.dailyHistory[c.assignee][tod2]=(ST.dailyHistory[c.assignee][tod2]||0)+1;
+    if(!ST.cumulativeStars[c.assignee])ST.cumulativeStars[c.assignee]=0;
+    ST.cumulativeStars[c.assignee]+=c.points;
+    ST.history.unshift({name:m.name,chore:c.name,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),kidId:c.assignee,date:tod2});
+    if(ST.history.length>100)ST.history.pop();
     playChime();
     save();
   } else {
