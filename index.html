@@ -393,6 +393,29 @@
   .tq-count{font-size:12px;color:var(--text2);flex-shrink:0;}
   /* Placeholder section */
   .profile-placeholder{padding:14px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.08);text-align:center;font-size:12px;color:var(--text3);}
+  /* ── Parent chore accordion & chips ────────────────────── */
+  .kid-acc{border-radius:10px;overflow:hidden;background:rgba(255,255,255,0.025);}
+  .kid-acc-hdr{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;user-select:none;}
+  .kid-acc-hdr:hover{background:rgba(255,255,255,0.04);}
+  .kid-acc-body{padding:0 8px 8px;}
+  .cc-add-btn{margin-left:auto;padding:3px 10px;border-radius:999px;background:rgba(0,229,255,0.08);border:1px solid var(--accent);color:var(--accent);font-size:10px;font-weight:700;cursor:pointer;}
+  .cc-row{padding:7px 8px;gap:8px;}
+  .cc-name{font-size:12px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cc-name-done{text-decoration:line-through;color:var(--text3);}
+  .cc-chips{display:flex;gap:4px;margin-top:3px;}
+  .cc{padding:2px 7px;border-radius:999px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:var(--text3);transition:all 0.15s;white-space:nowrap;}
+  .cc:hover{background:rgba(255,255,255,0.1);}
+  .cc-am{background:rgba(255,200,50,0.12);border-color:rgba(255,200,50,0.35);color:#ffc832;}
+  .cc-pm{background:rgba(130,100,255,0.15);border-color:rgba(130,100,255,0.4);color:#b09fff;}
+  .cc-school{background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.35);color:#34d399;}
+  .cc-noschool{background:rgba(251,191,36,0.12);border-color:rgba(251,191,36,0.35);color:#fbbf24;}
+  .cc-pts{font-size:11px;color:var(--gold);font-weight:700;flex-shrink:0;}
+  .cc-del{width:24px;height:24px;border-radius:50%;border:1px solid rgba(240,64,96,0.35);background:rgba(240,64,96,0.06);color:var(--red);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  /* ── Quest view section headers ─────────────────────────── */
+  .qs-hdr{display:flex;align-items:center;gap:8px;padding:10px 16px 4px;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);}
+  .qs-hdr::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06);}
+  .qs-hdr span{white-space:nowrap;}
+  .qs-hidden-note{margin:12px 16px 4px;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.08);font-size:11px;color:var(--text3);text-align:center;}
   /* ── Badge System (Phase 5) ────────────────────────────── */
   .badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:6px;}
   .badge-card{border-radius:11px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.04);padding:10px 4px 8px;text-align:center;transition:transform 0.15s;}
@@ -920,6 +943,11 @@ function ensureFields(){
   }
   ST.dailyHistory=ST.dailyHistory||{};
   ST.holidayMode=ST.holidayMode||{active:false,endsOn:null};
+  // Migrate existing chores with new scheduling fields
+  for(const c of (ST.chores||[])){
+    if(!c.timeTag)c.timeTag='any';
+    if(c.schoolDay===undefined)c.schoolDay=null;
+  }
   ST.pendingChests=ST.pendingChests||{};
   ST.chestsOpened=ST.chestsOpened||{};
   // Silent badge migration: pre-grant earned badges for existing members so
@@ -1020,6 +1048,27 @@ function dateStr(d){d=d||new Date();return d.toISOString().slice(0,10);}
 function yesterdayStr(){const d=new Date();d.setDate(d.getDate()-1);return dateStr(d);}
 function daysBetween(a,b){return Math.round((b-a)/(1000*60*60*24));}
 function rankFor(classId,level){const ranks=CLASS_RANKS[classId]||CLASS_RANKS.scout;let idx=0;for(let i=0;i<RANK_LEVELS.length;i++){if(level>=RANK_LEVELS[i])idx=i;}return{name:ranks[idx],next:ranks[idx+1]||null,nextLvl:RANK_LEVELS[idx+1]||null};}
+function isSchoolDay(){
+  if(ST.holidayMode?.active)return false;
+  const d=new Date().getDay();return d>=1&&d<=5;
+}
+function cycleChoreTime(id){
+  const c=ST.chores.find(x=>x.id===id);if(!c)return;
+  const seq=['any','morning','evening'];
+  c.timeTag=seq[(seq.indexOf(c.timeTag||'any')+1)%seq.length];
+  save();renderParent();
+}
+function cycleChoreSchool(id){
+  const c=ST.chores.find(x=>x.id===id);if(!c)return;
+  // null → true → false → null
+  c.schoolDay=c.schoolDay===null?true:c.schoolDay===true?false:null;
+  save();renderParent();
+}
+function toggleKidSection(kidId){
+  if(!window._kExp)window._kExp={};
+  window._kExp[kidId]=window._kExp[kidId]===false?true:false;
+  renderParent();
+}
 function rollChest(){let roll=Math.random()*100,acc=0;for(const t of CHEST_TYPES){acc+=t.weight;if(roll<acc){const lo=t.stars[0],hi=t.stars[1];const stars=lo+Math.floor(Math.random()*(hi-lo+1));return{id:'c'+Date.now()+'_'+Math.floor(Math.random()*9999),type:t.id,stars};}}return{id:'c'+Date.now(),type:'common',stars:10};}
 
 /* ---------- 4. PORTRAIT (SVG anime hero) ---------- */
@@ -1318,27 +1367,53 @@ function renderQuestView(){
   const tier=tierFor(prog.level);
   const rank2=rankFor(m.classId,prog.level);
   const young=isYoung(curKid);
-  const myCh=ST.chores.filter(c=>c.assignee===curKid);
+  const schoolDay=isSchoolDay();
+  const allCh=ST.chores.filter(c=>c.assignee===curKid);
+  // Filter by school-day context
+  const myCh=allCh.filter(c=>{
+    if(c.schoolDay===true&&!schoolDay)return false;
+    if(c.schoolDay===false&&schoolDay)return false;
+    return true;
+  });
+  const hiddenCount=allCh.length-myCh.length;
   const todayStars=myCh.filter(c=>c.done).reduce((s,c)=>s+c.points,0);
   const totalP=myCh.reduce((s,c)=>s+c.points,0);
   const pctDone=totalP?(todayStars/totalP)*100:0;
+
+  const renderQI=c=>{
+    const de=(c.desc||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"');
+    return `<div class="qi ${c.done?'done':''}" id="qi-${c.id}" style="border-left:3px solid ${c.done?'#34d399':cls.accent};">
+      <div class="qi-emoji">${c.emoji}</div>
+      <div class="qi-body">
+        <div class="qi-name">${escHtml(c.name)}</div>
+        <div class="qi-desc">${escHtml(c.desc||'')}</div>
+        <div class="qi-pts">+${c.points} ★ XP</div>
+      </div>
+      <button class="qi-audio" onclick="speak('${escHtml(c.name)}. ${de}',${young})" title="Read aloud">🔊</button>
+      <button class="qi-check ${c.done?'on':''}" onclick="togQ('${c.id}',event)">${c.done?'✓':''}</button>
+    </div>`;
+  };
+  const morning=myCh.filter(c=>c.timeTag==='morning');
+  const evening=myCh.filter(c=>c.timeTag==='evening');
+  const anytime=myCh.filter(c=>!c.timeTag||c.timeTag==='any');
+  const multiSection=((morning.length>0)+(anytime.length>0)+(evening.length>0))>1;
 
   let questsHTML='';
   if(myCh.length===0){
     questsHTML=`<div style="text-align:center;padding:60px;font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--text2);">No ${tw().toLowerCase()}s today! 🎉</div>`;
   } else {
-    for(const c of myCh){
-      const de=c.desc.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"');
-      questsHTML+=`<div class="qi ${c.done?'done':''}" id="qi-${c.id}" style="border-left:3px solid ${c.done?'#34d399':cls.accent};">
-        <div class="qi-emoji">${c.emoji}</div>
-        <div class="qi-body">
-          <div class="qi-name">${escHtml(c.name)}</div>
-          <div class="qi-desc">${escHtml(c.desc)}</div>
-          <div class="qi-pts">+${c.points} ★ XP</div>
-        </div>
-        <button class="qi-audio" onclick="speak('${escHtml(c.name)}. ${de}',${young})" title="Read aloud">🔊</button>
-        <button class="qi-check ${c.done?'on':''}" onclick="togQ('${c.id}',event)">${c.done?'✓':''}</button>
-      </div>`;
+    if(morning.length){
+      questsHTML+=`<div class="qs-hdr">☀️ <span>Morning</span></div>${morning.map(renderQI).join('')}`;
+    }
+    if(anytime.length){
+      if(multiSection)questsHTML+=`<div class="qs-hdr">📋 <span>Anytime</span></div>`;
+      questsHTML+=anytime.map(renderQI).join('');
+    }
+    if(evening.length){
+      questsHTML+=`<div class="qs-hdr">🌙 <span>Evening</span></div>${evening.map(renderQI).join('')}`;
+    }
+    if(hiddenCount>0){
+      questsHTML+=`<div class="qs-hidden-note">${schoolDay?'🏖️':'🏫'} ${hiddenCount} quest${hiddenCount>1?'s':''} hidden — not for ${schoolDay?'school days':'today'}</div>`;
     }
   }
 
@@ -1704,29 +1779,42 @@ function renderParent(){
 function renderParentWeek(kids,total,done,pct){
   const weeklyStarsTotal=Object.values(ST.weeklyStars||{}).reduce((s,v)=>s+v,0);
 
-  // ── Per-kid assigned chore lists ──────────────────────────────────
+  // ── Per-kid assigned chore lists (accordion) ─────────────────────
+  if(!window._kExp)window._kExp={};
   let kidChoreHTML='';
   for(const kid of kids){
     const cls=CLASSES[kid.classId]||CLASSES.scout;
     const myChores=ST.chores.filter(c=>c.assignee===kid.id);
     const myDone=myChores.filter(c=>c.done).length;
-    kidChoreHTML+=`<div style="margin-bottom:14px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-        <div style="width:10px;height:10px;border-radius:50%;background:${cls.accent};flex-shrink:0;"></div>
-        <span style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:${cls.accent};">${escHtml(kid.name)}</span>
-        <span style="font-size:11px;color:var(--text2);">${myDone}/${myChores.length} done</span>
-        <button onclick="openAddChoreModal('${kid.id}')" style="margin-left:auto;padding:4px 12px;border-radius:999px;background:rgba(0,229,255,0.1);border:1px solid var(--accent);color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;">+ Add</button>
+    // Default: expanded
+    const expanded=window._kExp[kid.id]!==false;
+    const timeLabel=t=>t==='morning'?'☀️ AM':t==='evening'?'🌙 PM':'⏰';
+    const schoolLabel=s=>s===true?'🏫':s===false?'🏖️':'📅';
+    const timeCls=t=>t==='morning'?'cc-am':t==='evening'?'cc-pm':'';
+    const schoolCls=s=>s===true?'cc-school':s===false?'cc-noschool':'';
+    kidChoreHTML+=`<div class="kid-acc" style="border-left:3px solid ${cls.accent}30;margin-bottom:6px;">
+      <div class="kid-acc-hdr" onclick="toggleKidSection('${kid.id}')">
+        <div style="width:8px;height:8px;border-radius:50%;background:${cls.accent};flex-shrink:0;"></div>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:700;color:${cls.accent};">${escHtml(kid.name)}</span>
+        <span style="font-size:10px;color:var(--text3);background:rgba(255,255,255,0.06);padding:2px 7px;border-radius:999px;">${myDone}/${myChores.length}</span>
+        <button onclick="event.stopPropagation();openAddChoreModal('${kid.id}')" class="cc-add-btn">+ Add</button>
+        <span style="font-size:11px;color:var(--text3);margin-left:2px;transition:transform 0.2s;${expanded?'':'transform:rotate(-90deg)'};">▾</span>
       </div>
-      ${myChores.length===0?'<div style="font-size:12px;color:var(--text3);padding:4px 0 6px;">No chores yet — use + Add or 📚 Quest Library</div>':''}
-      ${myChores.map(c=>`<div class="li" style="border-left:3px solid ${cls.accent}${c.done?';opacity:0.55':''};">
-        <span style="font-size:20px;">${c.emoji}</span>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:13px;font-weight:600;${c.done?'text-decoration:line-through;color:var(--text2);':''}">${escHtml(c.name)}</div>
-          <div style="font-size:11px;color:var(--text3);">${c.desc?escHtml(c.desc):''}</div>
-        </div>
-        <span style="font-size:11px;color:var(--gold);font-weight:700;flex-shrink:0;">★${c.points}</span>
-        <button onclick="removeChore('${c.id}')" style="width:26px;height:26px;border-radius:50%;border:1px solid rgba(240,64,96,0.4);background:rgba(240,64,96,0.06);color:var(--red);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">×</button>
-      </div>`).join('')}
+      ${expanded?`<div class="kid-acc-body">
+        ${myChores.length===0?`<div style="font-size:12px;color:var(--text3);padding:6px 12px 8px;">No chores yet — use + Add or 📚 Quest Library</div>`:''}
+        ${myChores.map(c=>`<div class="li cc-row${c.done?' cc-done':''}" style="border-left:3px solid ${cls.accent}${c.done?'40':'88'};">
+          <span style="font-size:18px;flex-shrink:0;">${c.emoji}</span>
+          <div style="flex:1;min-width:0;">
+            <div class="cc-name${c.done?' cc-name-done':''}">${escHtml(c.name)}</div>
+            <div class="cc-chips">
+              <button class="cc ${timeCls(c.timeTag)}" onclick="event.stopPropagation();cycleChoreTime('${c.id}')" title="Time of day">${timeLabel(c.timeTag)}</button>
+              <button class="cc ${schoolCls(c.schoolDay)}" onclick="event.stopPropagation();cycleChoreSchool('${c.id}')" title="School day filter">${schoolLabel(c.schoolDay)}</button>
+            </div>
+          </div>
+          <span class="cc-pts">★${c.points}</span>
+          <button onclick="removeChore('${c.id}')" class="cc-del">×</button>
+        </div>`).join('')}
+      </div>`:''}
     </div>`;
   }
 
