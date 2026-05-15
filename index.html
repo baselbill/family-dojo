@@ -1006,7 +1006,7 @@ function chkDay(){
       if(d<cutoffStr)delete ST.dailyHistory[kidId][d];
     }
   }
-  ST.chores.forEach(c=>c.done=false);
+  ST.chores.forEach(c=>{c.done=false;c.chestRolled=false;});
   ST.lastResetDay=today;
   save();
   if(pendingMilestones.length){
@@ -1400,13 +1400,14 @@ function togQ(cid,e){
     if(ST.history.length>100)ST.history.pop();
     playChime();
     if(e&&e.clientX)confettiBurst(e.clientX,e.clientY);
-    // Chest drop roll
+    // Chest drop roll — only once per chore per day (chestRolled flag prevents re-roll exploit)
     let droppedChest=null;
-    if(Math.random()<CHEST_DROP_CHANCE){
+    if(!c.chestRolled&&Math.random()<CHEST_DROP_CHANCE){
       droppedChest=rollChest();
       if(!ST.pendingChests[curKid])ST.pendingChests[curKid]=[];
       ST.pendingChests[curKid].push(droppedChest);
     }
+    c.chestRolled=true;
     // Check badges (reads updated state; saves happen below)
     checkBadges(curKid);
     save();
@@ -1912,7 +1913,7 @@ function renderParentFamily(){
         ${voices.map((v,i)=>`<option value="${i}" ${selVoice===v?'selected':''}>${v.name}</option>`).join('')}
       </select>
 
-      <button class="bd" style="width:100%;margin-top:12px;" onclick="if(confirm('Reset all chores to not done today?')){ST.chores.forEach(c=>c.done=false);save();renderParent();}">🔄 Reset Today's Chores</button>
+      <button class="bd" style="width:100%;margin-top:12px;" onclick="if(confirm('Reset all chores to not done today?')){ST.chores.forEach(c=>{c.done=false;c.chestRolled=false;});save();renderParent();}">🔄 Reset Today's Chores</button>
     </div>
 
     <div class="af">
