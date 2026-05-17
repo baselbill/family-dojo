@@ -416,6 +416,15 @@
   .cc-move-col{display:flex;flex-direction:column;gap:1px;flex-shrink:0;}
   .cc-move{width:18px;height:12px;border-radius:3px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:var(--text3);cursor:pointer;font-size:7px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
   .cc-move:hover{background:rgba(255,255,255,0.12);color:var(--text);}
+  /* ── Holiday Quest Mode ─────────────────────────────────── */
+  .hq-banner{display:flex;align-items:center;gap:10px;padding:10px 16px;margin:0 0 4px;background:linear-gradient(90deg,rgba(251,191,36,0.12),rgba(251,146,60,0.08),transparent);border-left:3px solid rgba(251,191,36,0.6);border-radius:0 8px 8px 0;}
+  .hq-banner-name{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:#fbbf24;flex:1;}
+  .hq-banner-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+  .hq-verse{font-size:10px;color:var(--text3);font-style:italic;padding:0 16px 8px;text-align:right;}
+  .hq-cat-btn{padding:5px 12px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text3);font-family:inherit;transition:all 0.15s;}
+  .hq-cat-btn.on{border-color:rgba(251,191,36,0.5);background:rgba(251,191,36,0.12);color:#fbbf24;}
+  .hq-qpd-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+  .hq-qpd-btn.on{border-color:rgba(251,191,36,0.5);background:rgba(251,191,36,0.12);color:#fbbf24;}
   /* ── Quest view section headers ─────────────────────────── */
   .qs-hdr{display:flex;align-items:center;gap:8px;padding:10px 16px 4px;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);}
   .qs-hdr::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06);}
@@ -579,6 +588,87 @@ const CHEST_TYPES=[
   {id:'legendary', name:'Legendary', color:'#c084fc', glow:'rgba(192,132,252,0.65)',stars:[65,120], weight:1},
 ];
 const CHEST_DROP_CHANCE=0.15;
+
+/* ── Holiday Quest Categories ─────────────────────────────────────────── */
+const HOLIDAY_CATS=[
+  {id:'servant',name:"The Servant's Heart",emoji:'🛠️',
+   verse:{t:"Serve one another humbly in love.",r:"Galatians 5:13"},
+   quests:[
+    {id:'door_holder',e:'🚪',n:'The Door Holder',d:'Be the first to hold the door open for the rest of the family.'},
+    {id:'burden_bearer',e:'🎒',n:'The Burden Bearer',d:'Carry one bag or item for a sibling or parent without being asked.'},
+    {id:'cup_carrier',e:'🥤',n:'The Cup Carrier',d:'Collect all empty bottles or cups from the car or table and bring them to the bin.'},
+    {id:'peace_maker',e:'🕊️',n:'The Peace Maker',d:'Be the first to say sorry or I forgive you if a small argument happens.'},
+    {id:'encouragement_note',e:'💌',n:'The Encouragement Note',d:'Leave a small thank-you note or drawing for a housekeeper or waiter.'},
+    {id:'compliment_fire',e:'✨',n:'The Compliment Quick-Fire',d:'Tell a family member one thing they are doing great today.'},
+    {id:'blessing_spotter',e:'👀',n:'The Blessing Spotter',d:'Find someone outside the family doing something kind and point it out.'},
+    {id:'family_photo',e:'📸',n:'The Family Photographer',d:'Offer to take a photo for a family member so they can be in the shot.'},
+    {id:'name_learner',e:'👋',n:'The Name Learner',d:'Learn the name of the waiter, hotel staffer, or driver and use it when talking to them.'},
+    {id:'tired_spotter',e:'😌',n:'The Tired Spotter',d:'Notice when a parent looks worn out and offer to help with one task without being asked.'},
+    {id:'listening_ear',e:'👂',n:'The Listening Ear',d:'Let someone finish their whole story without interrupting once.'},
+    {id:'surprise_tidy',e:'🧹',n:'The Surprise Tidy',d:"Quietly tidy a sibling's bunk, seat, or bag while they are away as a surprise."},
+    {id:'seat_giver',e:'💺',n:'The Seat Giver',d:'Offer your seat to someone older or a younger sibling in a bus, café, or waiting area.'},
+    {id:'dish_carrier',e:'🍽️',n:'The Dish Carrier',d:'Collect plates or cups and carry them to the counter or bin at a café or food court.'},
+  ]},
+  {id:'stewards',name:'Faithful Stewards',emoji:'🎒',
+   verse:{t:"Whoever can be trusted with very little can also be trusted with much.",r:"Luke 16:10"},
+   quests:[
+    {id:'gear_guard',e:'🔍',n:'The Gear Guard',d:'Double-check that no one left a water bottle or hat behind at the table or seat.'},
+    {id:'shoe_organizer',e:'👟',n:'The Shoe Organizer',d:"Line up everyone's shoes neatly by the door or in the car footwell."},
+    {id:'light_watchman',e:'💡',n:'The Light Watchman',d:'Be the one to turn off all the lights in the room before the family leaves.'},
+    {id:'litter_scout',e:'🗑️',n:'The Litter Scout',d:'Find three pieces of trash on the floor and put them in the bin.'},
+    {id:'leave_better',e:'🌿',n:'The Leave It Better Scan',d:'Pick up one piece of trash that is not yours at a park or rest stop.'},
+    {id:'hunger_hero',e:'😌',n:'The Hunger Hero',d:'Wait until everyone has their food before taking your first bite.'},
+    {id:'early_bird',e:'⏰',n:'The Early Bird',d:'Be the first child fully ready when the family needs to leave.'},
+    {id:'tech_rest',e:'📵',n:'The Tech Rest',d:'Go 30 minutes at a meal or activity with zero screen time. No counting down.'},
+    {id:'map_reader',e:'🗺️',n:'The Map Reader',d:'Follow the route and call out the next turn before the parent does.'},
+    {id:'budget_spy',e:'💰',n:'The Budget Spy',d:'Find the most affordable option on a menu or in a shop and report it to the family.'},
+    {id:'packer',e:'🧳',n:'The Packer',d:"Pack your own bag for tomorrow's outing without being reminded."},
+  ]},
+  {id:'explorer',name:"The Explorer's Eye",emoji:'🧐',
+   verse:{t:"The heavens declare the glory of God; the skies proclaim the work of his hands.",r:"Psalm 19:1"},
+   quests:[
+    {id:'date_finder',e:'🏛️',n:'The Date Finder',d:'Find a year written on a building, plaque, or coin.'},
+    {id:'statue_mimic',e:'🗿',n:'The Statue Mimic',d:'Find a statue and strike the exact same pose for a 5-second photo.'},
+    {id:'flag_spotter',e:'🚩',n:'The Flag Spotter',d:'Spot a local or national flag flying somewhere.'},
+    {id:'creation_detail',e:'🌱',n:'The Creation Detail',d:'Find one tiny thing in nature and name one cool detail God designed into it.'},
+    {id:'landmark_sketch',e:'✏️',n:'The Landmark Sketch',d:'Spend 2 minutes drawing a quick sketch of the coolest thing you see.'},
+    {id:'tribe_portrait',e:'📸',n:'The Tribe Portrait',d:'Organise everyone together and take a family photo with a timer or by asking for help.'},
+    {id:'language_learner',e:'🗣️',n:'The Language Learner',d:'Say thank you in the local language to at least one person today.'},
+    {id:'sound_collector',e:'👂',n:'The Sound Collector',d:'Close your eyes for 30 seconds and name 5 different sounds you hear.'},
+    {id:'sky_watcher',e:'☁️',n:'The Sky Watcher',d:'Find a shape in the clouds and describe it to the family.'},
+    {id:'food_adventurer',e:'🍜',n:'The Food Adventurer',d:'Order or taste one food you have never tried before.'},
+    {id:'oldest_thing',e:'🏺',n:'The Oldest Thing',d:'Find the oldest-looking object, building, or tree nearby and guess how old it is.'},
+    {id:'height_hunter',e:'🏢',n:'The Height Hunter',d:'Find the tallest thing you can see and estimate how many storeys or metres high it is.'},
+    {id:'market_scout',e:'🛍️',n:'The Market Scout',d:'Find one item in a market or shop you have never seen before and describe it.'},
+  ]},
+  {id:'daily',name:'The Daily Walk',emoji:'🙏',
+   verse:{t:"Give thanks in all circumstances.",r:"1 Thessalonians 5:18"},
+   quests:[
+    {id:'prayer_leader',e:'🙏',n:'The Prayer Leader',d:'Volunteer to say a 20-second grace before lunch or dinner.'},
+    {id:'gratefulness',e:'💛',n:'Gratefulness',d:'Share one specific thing you are grateful for today.'},
+    {id:'learner',e:'💡',n:'Learner',d:'Share one interesting thing you learned today.'},
+  ]},
+  {id:'brave',name:'The Brave Heart',emoji:'💪',
+   verse:{t:"Be strong and courageous.",r:"Joshua 1:9"},
+   quests:[
+    {id:'first_try',e:'🌟',n:'The First Try',d:'Say yes to one new activity or experience you would normally skip.'},
+    {id:'solo_order',e:'🍔',n:'The Solo Order',d:'Order your own food or drink at a café or counter without any help from a parent.'},
+    {id:'ask_local',e:'🗺️',n:'The Ask a Local',d:'Ask a local person (not a parent) one genuine question — directions, a recommendation, anything.'},
+    {id:'local_greeter',e:'👋',n:'The Local Greeter',d:'Greet someone in the local language who is not family.'},
+    {id:'compliment_stranger',e:'🌸',n:'The Compliment Stranger',d:'Give a genuine compliment to someone you do not know.'},
+    {id:'swap',e:'🔄',n:'The Swap',d:'Trade a task with a sibling today and complete theirs cheerfully.'},
+  ]},
+  {id:'storyteller',name:'The Storyteller',emoji:'✍️',
+   verse:{t:"Write these things down.",r:"Habakkuk 2:2"},
+   quests:[
+    {id:'caption',e:'📝',n:'The Caption',d:'Write one sentence for the best moment of today, like a photo caption.'},
+    {id:'ten_word_view',e:'🔭',n:'The Ten-Word View',d:'Describe the scene in front of you in exactly 10 words.'},
+    {id:'memory_sketch',e:'🎨',n:'The Memory Sketch',d:'Before bed, draw or write one moment from today you want to remember.'},
+    {id:'family_interview',e:'🎙️',n:'The Family Interview',d:'Ask one parent a question you have never asked before. Really listen to the answer.'},
+    {id:'highlight_reel',e:'🌅',n:'The Highlight Reel',d:'At dinner, share your single favourite moment from today in 3 sentences or less.'},
+    {id:'postcard',e:'💌',n:'The Postcard',d:'Write a 3-sentence postcard to someone at home describing where you are.'},
+  ]},
+];
 
 const BADGES=[
   // ── Quest milestones ──
@@ -948,6 +1038,11 @@ function ensureFields(){
   }
   ST.dailyHistory=ST.dailyHistory||{};
   ST.holidayMode=ST.holidayMode||{active:false,endsOn:null};
+  if(!ST.holidayMode.tripName)ST.holidayMode.tripName='';
+  if(!ST.holidayMode.categories)ST.holidayMode.categories=HOLIDAY_CATS.map(c=>c.id);
+  if(!ST.holidayMode.questsPerDay)ST.holidayMode.questsPerDay=3;
+  ST.holidayQuests=ST.holidayQuests||[];
+  ST.holidayQuestDate=ST.holidayQuestDate||'';
   // Migrate existing chores with new scheduling fields
   for(const c of (ST.chores||[])){
     if(!c.timeTag)c.timeTag='any';
@@ -989,6 +1084,43 @@ function petStage(level){
   return 6; // awakened
 }
 function getPet(member){const list=PETS[member.classId]||PETS.scout;return list.find(p=>p.id===member.petId)||list[0];}
+
+/* ── Holiday Quest helpers ─────────────────────────────────────────────── */
+function simpleHash(str){let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h)^str.charCodeAt(i);return h>>>0;}
+function seededShuffle(arr,seed){
+  const a=[...arr];let s=seed;
+  const rand=()=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s/0x100000000;};
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function generateHolidayQuests(){
+  const kids=ST.members.filter(m=>!m.isParent);
+  const today=dateStr();
+  const qpd=Math.max(1,ST.holidayMode.questsPerDay||3);
+  const activeCatIds=ST.holidayMode.categories||HOLIDAY_CATS.map(c=>c.id);
+  const pool=[];
+  for(const cat of HOLIDAY_CATS){
+    if(!activeCatIds.includes(cat.id))continue;
+    for(const q of cat.quests)pool.push({...q,catId:cat.id,catEmoji:cat.emoji});
+  }
+  if(!pool.length){ST.holidayQuests=[];ST.holidayQuestDate=today;return;}
+  const quests=[];
+  for(const kid of kids){
+    const seed=simpleHash(today+kid.id);
+    const selected=seededShuffle(pool,seed).slice(0,Math.min(qpd,pool.length));
+    for(const q of selected){
+      quests.push({id:'hq_'+kid.id+'_'+q.id,name:q.n,desc:q.d,emoji:q.e,catId:q.catId,catEmoji:q.catEmoji,assignee:kid.id,points:3,done:false,hq:true,chestRolled:false});
+    }
+  }
+  ST.holidayQuests=quests;
+  ST.holidayQuestDate=today;
+}
+function ensureHolidayQuests(){
+  if(!ST.holidayMode?.active){if((ST.holidayQuests||[]).length){ST.holidayQuests=[];ST.holidayQuestDate='';save();}return;}
+  const today=dateStr();
+  if(ST.holidayQuestDate===today&&(ST.holidayQuests||[]).length>0)return;
+  generateHolidayQuests();save();
+}
 function unlocksFor(level){return UNLOCKS.filter(u=>level>=u.lvl);}
 function nextUnlockFor(level){return UNLOCKS.find(u=>u.lvl>level);}
 
@@ -1040,6 +1172,8 @@ function chkDay(){
     }
   }
   ST.chores.forEach(c=>{c.done=false;c.chestRolled=false;});
+  if(ST.holidayMode?.active)generateHolidayQuests();
+  else{ST.holidayQuests=[];ST.holidayQuestDate='';}
   ST.lastResetDay=today;
   save();
   if(pendingMilestones.length){
@@ -1056,6 +1190,18 @@ function rankFor(classId,level){const ranks=CLASS_RANKS[classId]||CLASS_RANKS.sc
 function isSchoolDay(){
   if(ST.holidayMode?.active)return false;
   const d=new Date().getDay();return d>=1&&d<=5;
+}
+function toggleHolidayCategory(catId){
+  const cats=ST.holidayMode.categories||HOLIDAY_CATS.map(c=>c.id);
+  const idx=cats.indexOf(catId);
+  if(idx>=0){if(cats.length<=1){alert('At least one category must be active.');return;}cats.splice(idx,1);}
+  else cats.push(catId);
+  ST.holidayMode.categories=cats;
+  generateHolidayQuests();save();renderParent();
+}
+function setHolidayQPD(n){
+  ST.holidayMode.questsPerDay=n;
+  generateHolidayQuests();save();renderParent();
 }
 function cycleChoreTime(id){
   const c=ST.chores.find(x=>x.id===id);if(!c)return;
@@ -1365,6 +1511,7 @@ function renderHome(){
 /* ---------- 7b. QUEST + PARENT ---------- */
 function openQuests(kidId){curKid=kidId;show('quests');}
 function renderQuestView(){
+  ensureHolidayQuests();
   const m=ST.members.find(x=>x.id===curKid);
   if(!m){show('home');return;}
   const cls=CLASSES[m.classId]||CLASSES.scout;
@@ -1381,8 +1528,11 @@ function renderQuestView(){
     return true;
   });
   const hiddenCount=allCh.length-myCh.length;
-  const todayStars=myCh.filter(c=>c.done).reduce((s,c)=>s+c.points,0);
-  const totalP=myCh.reduce((s,c)=>s+c.points,0);
+  const myHQ=ST.holidayMode?.active?(ST.holidayQuests||[]).filter(q=>q.assignee===curKid):[];
+  const choreDone=myCh.filter(c=>c.done).reduce((s,c)=>s+c.points,0);
+  const hqDone=myHQ.filter(q=>q.done).reduce((s,q)=>s+q.points,0);
+  const todayStars=choreDone+hqDone;
+  const totalP=myCh.reduce((s,c)=>s+c.points,0)+myHQ.reduce((s,q)=>s+q.points,0);
   const pctDone=totalP?(todayStars/totalP)*100:0;
 
   const renderQI=c=>{
@@ -1398,13 +1548,26 @@ function renderQuestView(){
       <button class="qi-check ${c.done?'on':''}" onclick="togQ('${c.id}',event)">${c.done?'✓':''}</button>
     </div>`;
   };
+  const renderHQ=q=>{
+    const de=(q.desc||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"');
+    return `<div class="qi ${q.done?'done':''}" id="qi-${q.id}" style="border-left:3px solid ${q.done?'#34d399':'#fbbf24'};">
+      <div class="qi-emoji">${q.emoji}</div>
+      <div class="qi-body">
+        <div class="qi-name">${escHtml(q.name)}</div>
+        <div class="qi-desc">${escHtml(q.desc||'')}</div>
+        <div class="qi-pts" style="color:#fbbf24;">+3 ★ XP &nbsp;<span style="opacity:0.6;font-size:9px;">${q.catEmoji}</span></div>
+      </div>
+      <button class="qi-audio" onclick="speak('${escHtml(q.name)}. ${de}',${young})" title="Read aloud">🔊</button>
+      <button class="qi-check ${q.done?'on':''}" onclick="togQ('${q.id}',event)">${q.done?'✓':''}</button>
+    </div>`;
+  };
   const morning=myCh.filter(c=>c.timeTag==='morning');
   const evening=myCh.filter(c=>c.timeTag==='evening');
   const anytime=myCh.filter(c=>!c.timeTag||c.timeTag==='any');
   const multiSection=((morning.length>0)+(anytime.length>0)+(evening.length>0))>1;
 
   let questsHTML='';
-  if(myCh.length===0){
+  if(myCh.length===0&&myHQ.length===0){
     questsHTML=`<div style="text-align:center;padding:60px;font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--text2);">No ${tw().toLowerCase()}s today! 🎉</div>`;
   } else {
     if(morning.length){
@@ -1419,6 +1582,21 @@ function renderQuestView(){
     }
     if(hiddenCount>0){
       questsHTML+=`<div class="qs-hidden-note">${schoolDay?'🏖️':'🏫'} ${hiddenCount} quest${hiddenCount>1?'s':''} hidden — not for ${schoolDay?'school days':'today'}</div>`;
+    }
+    if(myHQ.length>0){
+      const tripName=ST.holidayMode.tripName||'Holiday';
+      // Group holiday quests by category for display
+      const catOrder=HOLIDAY_CATS.map(c=>c.id);
+      const byCat={};
+      for(const q of myHQ){if(!byCat[q.catId])byCat[q.catId]=[];byCat[q.catId].push(q);}
+      let hqHTML='';
+      for(const catId of catOrder){
+        if(!byCat[catId])continue;
+        const cat=HOLIDAY_CATS.find(c=>c.id===catId);
+        hqHTML+=`<div class="hq-banner"><div><div class="hq-banner-name">${cat.emoji} ${escHtml(cat.name)}</div><div class="hq-banner-sub" style="font-style:italic;margin-top:2px;">"${escHtml(cat.verse.t)}" — ${escHtml(cat.verse.r)}</div></div></div>`;
+        hqHTML+=byCat[catId].map(renderHQ).join('');
+      }
+      questsHTML+=`<div class="qs-hdr" style="color:#fbbf24;">🌴 <span>${escHtml(tripName)}</span></div>${hqHTML}`;
     }
   }
 
@@ -1444,8 +1622,8 @@ function renderQuestView(){
     </div>
     <div class="quest-progress">
       <div class="quest-progress-row">
-        <span>${young?"Today's Missions":"Today's Quests"}</span>
-        <span>${myCh.filter(c=>c.done).length} of ${myCh.length} complete</span>
+        <span>${young?"Today's Missions":"Today's Quests"}${myHQ.length?` + 🌴 ${myHQ.length}`:''}</span>
+        <span>${myCh.filter(c=>c.done).length+myHQ.filter(q=>q.done).length} of ${myCh.length+myHQ.length} complete</span>
       </div>
       <div class="bar-track" style="height:4px;"><div class="bar-fill" style="width:${pctDone}%;background:linear-gradient(90deg,${cls.accent2},${cls.accent});"></div></div>
     </div>
@@ -1454,7 +1632,7 @@ function renderQuestView(){
 }
 
 function togQ(cid,e){
-  const c=ST.chores.find(x=>x.id===cid);if(!c)return;
+  const c=ST.chores.find(x=>x.id===cid)||(ST.holidayQuests||[]).find(x=>x.id===cid);if(!c)return;
   const m=ST.members.find(x=>x.id===curKid);if(!m)return;
   if(!c.done){
     c.done=true;
@@ -2020,18 +2198,43 @@ function renderParentFamily(){
 
     <div class="af">
       <div class="af-title">🌴 Holiday Mode</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">When active, daily streaks are frozen so heroes don't lose their progress during holidays. Daily chores are still shown but optional.</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Streaks are frozen, and each child gets a rotating set of Travel Quests from the categories you choose below.</div>
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;">
-          <input type="checkbox" ${ST.holidayMode?.active?'checked':''} onchange="ST.holidayMode.active=this.checked;if(!this.checked)ST.holidayMode.endsOn=null;save();renderParent();" style="width:18px;height:18px;cursor:pointer;">
-          Holiday Mode ${ST.holidayMode?.active?'<span style=\'color:var(--green);\'>● Active</span>':'<span style=\'color:var(--text3);\'>○ Off</span>'}
+          <input type="checkbox" ${ST.holidayMode?.active?'checked':''} onchange="ST.holidayMode.active=this.checked;if(!this.checked){ST.holidayMode.endsOn=null;ST.holidayQuests=[];ST.holidayQuestDate='';}else{generateHolidayQuests();}save();renderParent();" style="width:18px;height:18px;cursor:pointer;">
+          Holiday Mode ${ST.holidayMode?.active?'<span style=\'color:#fbbf24;\'>🌴 Active</span>':'<span style=\'color:var(--text3);\'>○ Off</span>'}
         </label>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
+      ${ST.holidayMode?.active?`
+      <div style="margin-bottom:14px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Trip Name</div>
+        <input type="text" value="${escHtml(ST.holidayMode.tripName||'')}" placeholder="e.g. Japan 2026" onchange="ST.holidayMode.tripName=this.value;save();" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;box-sizing:border-box;">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:12px;">
         <label style="color:var(--text2);font-weight:600;flex-shrink:0;">Auto-ends on:</label>
-        <input type="date" value="${ST.holidayMode?.endsOn||''}" onchange="ST.holidayMode.endsOn=this.value||null;save();" style="flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:12px;" ${!ST.holidayMode?.active?'disabled':''}>
+        <input type="date" value="${ST.holidayMode?.endsOn||''}" onchange="ST.holidayMode.endsOn=this.value||null;save();" style="flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:12px;">
         <span style="font-size:11px;color:var(--text3);">(optional)</span>
       </div>
+      <div style="margin-bottom:14px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Quests per child per day</div>
+        <div style="display:flex;gap:6px;">
+          ${[1,2,3,4,5,6].map(n=>`<button class="hq-qpd-btn${(ST.holidayMode.questsPerDay||3)===n?' on':''}" onclick="setHolidayQPD(${n})">${n}</button>`).join('')}
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Active Quest Categories</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${HOLIDAY_CATS.map(cat=>{const on=(ST.holidayMode.categories||[]).includes(cat.id);return `<button class="hq-cat-btn${on?' on':''}" onclick="toggleHolidayCategory('${cat.id}')">${cat.emoji} ${escHtml(cat.name)}</button>`;}).join('')}
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px;">Tap a category to toggle it. Changes take effect tomorrow or when you save.</div>
+        <button style="width:100%;margin-top:10px;padding:9px;border-radius:8px;border:1px solid rgba(251,191,36,0.4);background:rgba(251,191,36,0.08);color:#fbbf24;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;" onclick="generateHolidayQuests();save();renderParent();">🔄 Regenerate Today's Quests</button>
+      </div>
+      `:`
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-top:4px;">
+        <label style="color:var(--text2);font-weight:600;flex-shrink:0;">Auto-ends on:</label>
+        <input type="date" value="${ST.holidayMode?.endsOn||''}" onchange="ST.holidayMode.endsOn=this.value||null;save();" style="flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:12px;" disabled>
+        <span style="font-size:11px;color:var(--text3);">(optional)</span>
+      </div>`}
     </div>
 
     <div class="af">
@@ -2085,7 +2288,7 @@ function factoryReset(){
   ST.rewards=[null,null,null];
   ST.monthlyRewards=[null,null,null];
   ST.grandRewards=[null,null,null];
-  ST.streaks={};ST.badges={};ST.cumulativeStars={};ST.completedCount={};ST.dailyHistory={};ST.pendingChests={};ST.chestsOpened={};
+  ST.streaks={};ST.badges={};ST.cumulativeStars={};ST.completedCount={};ST.dailyHistory={};ST.pendingChests={};ST.chestsOpened={};ST.holidayQuests=[];ST.holidayQuestDate='';
   save();renderParent();
 }
 
