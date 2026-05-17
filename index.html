@@ -411,6 +411,11 @@
   .cc-noschool{background:rgba(251,191,36,0.12);border-color:rgba(251,191,36,0.35);color:#fbbf24;}
   .cc-pts{font-size:11px;color:var(--gold);font-weight:700;flex-shrink:0;}
   .cc-del{width:24px;height:24px;border-radius:50%;border:1px solid rgba(240,64,96,0.35);background:rgba(240,64,96,0.06);color:var(--red);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .cc-edit{width:24px;height:24px;border-radius:50%;border:1px solid rgba(0,229,255,0.3);background:rgba(0,229,255,0.06);color:var(--accent);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .cc-all{width:24px;height:24px;border-radius:50%;border:1px solid rgba(160,130,255,0.3);background:rgba(160,130,255,0.06);color:#c4b5fd;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .cc-move-col{display:flex;flex-direction:column;gap:1px;flex-shrink:0;}
+  .cc-move{width:18px;height:12px;border-radius:3px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:var(--text3);cursor:pointer;font-size:7px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
+  .cc-move:hover{background:rgba(255,255,255,0.12);color:var(--text);}
   /* ── Quest view section headers ─────────────────────────── */
   .qs-hdr{display:flex;align-items:center;gap:8px;padding:10px 16px 4px;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--text3);}
   .qs-hdr::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06);}
@@ -1803,6 +1808,10 @@ function renderParentWeek(kids,total,done,pct){
       ${expanded?`<div class="kid-acc-body">
         ${myChores.length===0?`<div style="font-size:12px;color:var(--text3);padding:6px 12px 8px;">No chores yet — use + Add or 📚 Quest Library</div>`:''}
         ${myChores.map(c=>`<div class="li cc-row${c.done?' cc-done':''}" style="border-left:3px solid ${cls.accent}${c.done?'40':'88'};">
+          <div class="cc-move-col">
+            <button class="cc-move" onclick="event.stopPropagation();moveChore('${c.id}',-1)" title="Move up">▲</button>
+            <button class="cc-move" onclick="event.stopPropagation();moveChore('${c.id}',1)" title="Move down">▼</button>
+          </div>
           <span style="font-size:18px;flex-shrink:0;">${c.emoji}</span>
           <div style="flex:1;min-width:0;">
             <div class="cc-name${c.done?' cc-name-done':''}">${escHtml(c.name)}</div>
@@ -1812,7 +1821,9 @@ function renderParentWeek(kids,total,done,pct){
             </div>
           </div>
           <span class="cc-pts">★${c.points}</span>
-          <button onclick="removeChore('${c.id}')" class="cc-del">×</button>
+          <button onclick="event.stopPropagation();editChoreModal('${c.id}')" class="cc-edit" title="Edit chore">✎</button>
+          ${kids.length>1?`<button onclick="event.stopPropagation();assignChoreToAll('${c.id}')" class="cc-all" title="Copy to all children">👥</button>`:''}
+          <button onclick="event.stopPropagation();removeChore('${c.id}')" class="cc-del">×</button>
         </div>`).join('')}
       </div>`:''}
     </div>`;
@@ -1993,7 +2004,10 @@ function renderParentFamily(){
       </div>
 
       <label class="fl">Change PIN</label>
-      <input type="text" value="${ST.pin}" maxlength="4" onchange="ST.pin=this.value;save();" class="fi" placeholder="4-digit PIN" style="margin-bottom:12px;">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+        <input id="pin-field" type="password" value="${ST.pin}" maxlength="4" onchange="ST.pin=this.value;save();" class="fi" style="flex:1;margin-bottom:0;" placeholder="4-digit PIN">
+        <button onclick="const f=document.getElementById('pin-field');f.type=f.type==='password'?'text':'password';this.textContent=f.type==='password'?'👁️ Show':'🙈 Hide';" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:rgba(20,25,58,0.5);color:var(--text2);cursor:pointer;font-size:12px;white-space:nowrap;flex-shrink:0;font-family:inherit;">👁️ Show</button>
+      </div>
 
       <label class="fl">Voice Selection</label>
       <select id="voice-sel" class="fs" onchange="selVoice=(voices[parseInt(this.value)]||null);localStorage.setItem('fdvoice',this.value);" style="margin-bottom:16px;">
@@ -2078,6 +2092,64 @@ function factoryReset(){
 function addKidModal(){const name=prompt('Child name:');if(!name)return;const id=name.toLowerCase().replace(/\s+/g,'');if(ST.members.find(m=>m.id===id)){alert('Name already used');return;}const dob=prompt('Birth date (YYYY-MM-DD):');if(!dob)return;ST.members.push({id,name,dob,classId:'scout',hue:0,skin:0,petId:'cat',xp:0,emoji:'⭐',color:'#a0a8c8',isParent:false,photo:null});save();renderParent();}
 
 function removeChore(id){ST.chores=ST.chores.filter(c=>c.id!==id);save();renderParent();}
+
+function editChoreModal(id){
+  const c=ST.chores.find(x=>x.id===id);if(!c)return;
+  document.getElementById('modal-host').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)document.getElementById('modal-host').innerHTML='';">
+    <div class="modal">
+      <div class="modal-title">✎ Edit Chore</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+        <input id="ec-emoji" type="text" value="${escHtml(c.emoji)}" placeholder="🌟" style="width:52px;padding:8px;text-align:center;font-size:20px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);">
+        <input id="ec-name" type="text" value="${escHtml(c.name)}" placeholder="Chore name" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;">
+      </div>
+      <input id="ec-desc" type="text" value="${escHtml(c.desc||'')}" placeholder="Description (optional)" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;margin-bottom:12px;box-sizing:border-box;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+        <label style="font-size:12px;font-weight:600;color:var(--text2);flex-shrink:0;">★ Stars:</label>
+        <input id="ec-pts" type="number" min="1" max="100" value="${c.points}" style="width:70px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;">
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="saveChoreEdit('${id}')" style="flex:1;padding:10px;border-radius:8px;border:none;background:linear-gradient(135deg,#0891b2,var(--accent));color:#fff;font-weight:700;font-size:13px;cursor:pointer;">Save</button>
+        <button onclick="document.getElementById('modal-host').innerHTML='';" style="padding:10px 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;">Cancel</button>
+      </div>
+    </div>
+  </div>`;
+}
+function saveChoreEdit(id){
+  const c=ST.chores.find(x=>x.id===id);if(!c)return;
+  const name=(document.getElementById('ec-name')?.value||'').trim();
+  if(!name){alert('Please enter a chore name.');return;}
+  const chars=[...(document.getElementById('ec-emoji')?.value.trim()||'')];
+  c.emoji=chars.length>0?chars[0]:c.emoji;
+  c.name=name;
+  c.desc=(document.getElementById('ec-desc')?.value||'').trim();
+  c.points=Math.max(1,parseInt(document.getElementById('ec-pts')?.value)||c.points);
+  save();document.getElementById('modal-host').innerHTML='';renderParent();
+}
+function assignChoreToAll(id){
+  const c=ST.chores.find(x=>x.id===id);if(!c)return;
+  const others=ST.members.filter(m=>!m.isParent&&m.id!==c.assignee);
+  if(!others.length){alert('No other children to assign to.');return;}
+  let added=0;
+  for(let i=0;i<others.length;i++){
+    const kid=others[i];
+    if(ST.chores.find(x=>x.assignee===kid.id&&x.name===c.name))continue;
+    ST.chores.push({id:'ch'+Date.now()+i+Math.random().toString(36).slice(2,6),name:c.name,desc:c.desc||'',emoji:c.emoji,assignee:kid.id,points:c.points,done:false,timeTag:c.timeTag||'any',schoolDay:c.schoolDay===undefined?null:c.schoolDay,chestRolled:false});
+    added++;
+  }
+  if(added===0){alert('All other children already have this chore.');return;}
+  save();renderParent();
+}
+function moveChore(id,dir){
+  const myIdx=ST.chores.findIndex(x=>x.id===id);if(myIdx<0)return;
+  const assignee=ST.chores[myIdx].assignee;
+  const kidIdx=ST.chores.map((x,i)=>x.assignee===assignee?i:-1).filter(i=>i>=0);
+  const pos=kidIdx.indexOf(myIdx);
+  const newPos=pos+dir;
+  if(newPos<0||newPos>=kidIdx.length)return;
+  const otherIdx=kidIdx[newPos];
+  [ST.chores[myIdx],ST.chores[otherIdx]]=[ST.chores[otherIdx],ST.chores[myIdx]];
+  save();renderParent();
+}
 
 /* ── Reward Picker Modal ─────────────────────────────────────────────── */
 function openRewardPicker(tier){
