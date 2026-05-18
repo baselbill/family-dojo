@@ -101,6 +101,31 @@
   .goal-meta{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:var(--text2);font-weight:600;}
   .goal-unlocked{margin-top:8px;padding:6px 10px;border-radius:8px;background:rgba(52,211,153,0.1);border:1px solid var(--green);font-size:11px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:6px;}
 
+  /* Lucky Draw card */
+  .goal.draw{border-color:rgba(255,107,53,0.3);}
+  .goal.draw::before{background:linear-gradient(90deg,transparent,#ff6b35,transparent);}
+  .goal.draw .goal-tag{color:#ff9966;}
+  .draw-pool{margin:8px 0 4px;display:flex;flex-direction:column;gap:3px;}
+  .draw-pool-row{display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:1px 0;}
+  .draw-pool-name{color:var(--text2);font-weight:600;}
+  .draw-pool-tickets{color:#ff9966;font-weight:700;}
+  /* Vote banner on weekly card */
+  .vote-banner{margin-top:8px;padding:5px 10px;border-radius:7px;background:rgba(168,155,255,0.1);border:1px solid rgba(168,155,255,0.25);font-size:10px;color:#a89bff;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
+  /* Quest view lucky draw panel */
+  .ld-panel{margin:0 32px 12px;padding:14px 16px;background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.25);border-radius:12px;}
+  .ld-panel-title{font-size:13px;font-weight:700;color:#ff9966;margin-bottom:4px;}
+  .ld-panel-meta{font-size:11px;color:var(--text2);margin-bottom:10px;}
+  .ld-submit{width:100%;padding:10px;border-radius:8px;border:none;background:linear-gradient(135deg,#ff6b35,#ff9966);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;}
+  /* Quest view vote panel */
+  .vote-panel{margin:0 32px 12px;padding:14px 16px;background:rgba(168,155,255,0.05);border:1px solid rgba(168,155,255,0.25);border-radius:12px;}
+  .vote-panel-title{font-size:13px;font-weight:700;color:#a89bff;margin-bottom:10px;}
+  .vote-opt-btn{width:100%;padding:11px 16px;border-radius:10px;border:1.5px solid rgba(168,155,255,0.3);background:rgba(20,25,58,0.6);cursor:pointer;display:flex;align-items:center;gap:10px;font-family:inherit;text-align:left;transition:all 0.15s;margin-bottom:7px;}
+  .vote-opt-btn:hover{border-color:#a89bff;background:rgba(168,155,255,0.1);}
+  .vote-opt-btn.voted{border-color:#a89bff;background:rgba(168,155,255,0.18);}
+  .vote-opt-emoji{font-size:22px;flex-shrink:0;}
+  .vote-opt-text{font-size:14px;font-weight:600;color:var(--text);flex:1;}
+  .vote-opt-check{font-size:16px;color:#a89bff;}
+
   /* Section labels */
   .sec-lbl{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin:18px 28px 10px;display:flex;align-items:center;gap:8px;}
   .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);}
@@ -945,10 +970,10 @@ function defaultState(){
     soundEnabled:true,
     selectedVoiceName:null,
     members:[
-      {id:'grace',name:'Grace',dob:'2012-07-14',classId:'mage',hue:280,skin:1,petId:'owl',xp:248,emoji:'⚔️',color:'#a78bfa',isParent:false,photo:null},
-      {id:'lauren',name:'Lauren',dob:'2013-03-22',classId:'archer',hue:38,skin:0,petId:'hawk',xp:196,emoji:'🌸',color:'#fbbf24',isParent:false,photo:null},
-      {id:'christian',name:'Christian',dob:'2019-05-07',classId:'sword',hue:0,skin:1,petId:'tiger',xp:84,emoji:'🐉',color:'#ff3d6e',isParent:false,photo:null},
-      {id:'constance',name:'Constance',dob:'2022-11-10',classId:'healer',hue:150,skin:0,petId:'bunny',xp:28,emoji:'🦊',color:'#34d399',isParent:false,photo:null},
+      {id:'grace',name:'Grace',dob:'2012-07-14',classId:'mage',hue:280,skin:1,petId:'owl',xp:248,emoji:'⚔️',color:'#a78bfa',isParent:false,photo:null,starBalance:18},
+      {id:'lauren',name:'Lauren',dob:'2013-03-22',classId:'archer',hue:38,skin:0,petId:'hawk',xp:196,emoji:'🌸',color:'#fbbf24',isParent:false,photo:null,starBalance:14},
+      {id:'christian',name:'Christian',dob:'2019-05-07',classId:'sword',hue:0,skin:1,petId:'tiger',xp:84,emoji:'🐉',color:'#ff3d6e',isParent:false,photo:null,starBalance:9},
+      {id:'constance',name:'Constance',dob:'2022-11-10',classId:'healer',hue:150,skin:0,petId:'bunny',xp:28,emoji:'🦊',color:'#34d399',isParent:false,photo:null,starBalance:5},
       {id:'bill',name:'Bill',dob:'1981-10-31',emoji:'🔥',color:'#3b9ef0',isParent:true},
       {id:'ying',name:'Ying',dob:'1981-03-31',emoji:'💫',color:'#f5c842',isParent:true},
     ],
@@ -970,12 +995,12 @@ function defaultState(){
       {id:'c15',name:'Pick up bears',desc:'Put them on the shelf',emoji:'🧸',assignee:'constance',points:1,done:false},
     ],
     rewards:[{text:'Family Movie Night',emoji:'🎬'},{text:'Pizza Friday',emoji:'🍕'},null],
-    monthlyRewards:[{text:'Theme park day',emoji:'🎢'},null,null],
     grandRewards:[{text:'Beach trip',emoji:'✈️'},{text:'3 nights away',emoji:'🏖'},null],
-    monthlyStarTarget:480,
     grandStarTarget:2000,
-    monthlyStarsAccum:156,
+    monthlyStarsAccum:0,
     currentMonth:'',
+    luckyDraw:{prizes:[{emoji:'🎳',text:'Bowling night out'},{emoji:'🍦',text:'Ice cream outing'},null],entries:{grace:5,lauren:3},history:[]},
+    weeklyVote:{options:[{emoji:'🎬',text:'Family Movie Night'},{emoji:'🍕',text:'Pizza Friday'},{emoji:'🎲',text:'Family Board Game Night'}],votes:{},active:true},
     currentWeek:weekKey(),
     weeklyStars:{grace:18,lauren:14,christian:9,constance:5},
     history:[
@@ -1013,9 +1038,16 @@ function ensureFields(){
   ST.members=ST.members||[];
   ST.chores=ST.chores||[];
   ST.rewards=ST.rewards||[null,null,null];
-  ST.monthlyRewards=ST.monthlyRewards||[null,null,null];
   ST.grandRewards=ST.grandRewards||[null,null,null];
   ST.weeklyStars=ST.weeklyStars||{};
+  if(!ST.luckyDraw)ST.luckyDraw={prizes:[null,null,null],entries:{},history:[]};
+  if(!ST.luckyDraw.prizes)ST.luckyDraw.prizes=[null,null,null];
+  if(!ST.luckyDraw.entries)ST.luckyDraw.entries={};
+  if(!ST.luckyDraw.history)ST.luckyDraw.history=[];
+  if(!ST.weeklyVote)ST.weeklyVote={options:[null,null,null],votes:{},active:false};
+  if(!ST.weeklyVote.options)ST.weeklyVote.options=[null,null,null];
+  if(!ST.weeklyVote.votes)ST.weeklyVote.votes={};
+  for(const m of (ST.members||[]).filter(x=>!x.isParent)){if(m.starBalance===undefined)m.starBalance=0;}
   ST.history=ST.history||[];
   ST.personalRewards=ST.personalRewards||[];
   ST.monthlyStarsAccum=ST.monthlyStarsAccum||0;
@@ -1124,7 +1156,7 @@ function ensureHolidayQuests(){
 function unlocksFor(level){return UNLOCKS.filter(u=>level>=u.lvl);}
 function nextUnlockFor(level){return UNLOCKS.find(u=>u.lvl>level);}
 
-function chkWeek(){const wk=weekKey();if(ST.currentWeek!==wk){ST.weeklyStars={};ST.currentWeek=wk;save();}}
+function chkWeek(){const wk=weekKey();if(ST.currentWeek!==wk){ST.weeklyStars={};ST.currentWeek=wk;if(ST.weeklyVote)ST.weeklyVote.votes={};save();}}
 function chkMonth(){const now=new Date();const mk=now.getFullYear()+'-'+(now.getMonth()+1);if(ST.currentMonth!==mk){ST.monthlyStarsAccum=0;ST.currentMonth=mk;save();}}
 function chkDay(){
   const today=new Date().toDateString();
@@ -1330,8 +1362,9 @@ function renderHome(){
   const done=ST.chores.filter(c=>c.done).length;
   const pct=total>0?Math.round((done/total)*100):0;
   const dow=today.getDay();
-  const monthlyStars=ST.monthlyStarsAccum||0;
   const grandStars=totalStars();
+  const drawEntries=ST.luckyDraw?.entries||{};
+  const totalTickets=Object.values(drawEntries).reduce((s,n)=>s+n,0);
 
   // Birthday detection
   let bdayHTML='';
@@ -1365,12 +1398,13 @@ function renderHome(){
   const weeklyR=(ST.rewards||[]).filter(r=>r);
   const weeklyRHTML=weeklyR.length?weeklyR.map(r=>`<span class="reward-chip">${r.emoji} ${escHtml(r.text)}</span>`).join(''):'<span style="font-size:11px;color:var(--text3);">No reward set</span>';
   const weeklyUnlocked=pct>=ST.threshold&&total>0;
+  const votingActive=ST.weeklyVote?.active&&(ST.weeklyVote?.options||[]).some(o=>o);
 
-  // Monthly rewards
-  const monthlyR=(ST.monthlyRewards||[]).filter(r=>r);
-  const monthlyRHTML=monthlyR.length?monthlyR.map(r=>`<span class="reward-chip" style="border-color:rgba(106,138,255,0.4);">${r.emoji} ${escHtml(r.text)}</span>`).join(''):'<span style="font-size:11px;color:var(--text3);">No monthly reward</span>';
-  const monthlyPct=ST.monthlyStarTarget>0?Math.min(100,Math.round((monthlyStars/ST.monthlyStarTarget)*100)):0;
-  const monthlyUnlocked=ST.monthlyStarTarget>0&&monthlyStars>=ST.monthlyStarTarget;
+  // Lucky draw card
+  const drawPrizes=(ST.luckyDraw?.prizes||[]).filter(p=>p);
+  const drawPrizesHTML=drawPrizes.length?drawPrizes.map(p=>`<span class="reward-chip" style="border-color:rgba(255,107,53,0.4);">${p.emoji} ${escHtml(p.text)}</span>`).join(''):'<span style="font-size:11px;color:var(--text3);">No prizes set</span>';
+  const kidsForDraw=ST.members.filter(m=>!m.isParent);
+  const drawPoolHTML=kidsForDraw.map(k=>`<div class="draw-pool-row"><span class="draw-pool-name">${escHtml(k.name)}</span><span class="draw-pool-tickets">🎟 ${drawEntries[k.id]||0} · ★ ${k.starBalance||0}</span></div>`).join('');
 
   // Grand rewards
   const grandR=(ST.grandRewards||[]).filter(r=>r);
@@ -1462,7 +1496,7 @@ function renderHome(){
         </div>
       </div>
       <div class="hdr-r">
-        <div class="star-badge"><span class="s">★</span><span class="v">${monthlyStars}</span><span class="l">family stars · this month</span></div>
+        <div class="star-badge"><span class="s">🎟</span><span class="v">${totalTickets}</span><span class="l">draw tickets in pool</span></div>
         <button class="btn-parents" onclick="showPin()">⚙ Parent Zone</button>
       </div>
     </div>
@@ -1481,13 +1515,13 @@ function renderHome(){
         <div class="bar-track"><div class="bar-fill" style="width:${pct}%;"></div></div>
         <div class="goal-meta"><span>${done} of ${total} done</span><span>${pct}% · need ${ST.threshold}%</span></div>
         ${weeklyUnlocked?'<div class="goal-unlocked">🎉 Weekly goal reached!</div>':''}
+        ${votingActive?'<div class="vote-banner">🗳️ Vote open — tap your hero to vote!</div>':''}
       </div>
-      <div class="goal monthly">
-        <div class="goal-tag">🌙 Monthly Mission</div>
-        <div class="goal-rewards">${monthlyRHTML}</div>
-        <div style="margin:10px 0 6px;"><div class="bar-track"><div class="bar-fill" style="width:${monthlyPct}%;"></div></div></div>
-        <div class="goal-meta"><span>${monthlyStars} stars</span><span>${ST.monthlyStarTarget>0?monthlyPct+'% of '+ST.monthlyStarTarget:'Set target'}</span></div>
-        ${monthlyUnlocked?'<div class="goal-unlocked">🌟 Monthly goal reached!</div>':''}
+      <div class="goal draw">
+        <div class="goal-tag">🎟️ Monthly Lucky Draw</div>
+        <div class="goal-rewards">${drawPrizesHTML}</div>
+        <div class="draw-pool">${drawPoolHTML}</div>
+        <div class="goal-meta"><span>${totalTickets} ticket${totalTickets!==1?'s':''} in pool</span><span>Earn ★ → buy tickets</span></div>
       </div>
       <div class="goal grand">
         <div class="goal-tag">👑 Grand Saga</div>
@@ -1627,7 +1661,38 @@ function renderQuestView(){
       </div>
       <div class="bar-track" style="height:4px;"><div class="bar-fill" style="width:${pctDone}%;background:linear-gradient(90deg,${cls.accent2},${cls.accent});"></div></div>
     </div>
+    ${(()=>{
+      const vActive=ST.weeklyVote?.active;
+      const vOpts=ST.weeklyVote?.options||[];
+      const myVote=(ST.weeklyVote?.votes||{})[curKid];
+      const hasOpts=vOpts.some(o=>o);
+      if(!vActive||!hasOpts)return '';
+      const optBtns=vOpts.map((o,i)=>o?`<button class="vote-opt-btn ${myVote===i?'voted':''}" onclick="castVote(${i})">
+        <span class="vote-opt-emoji">${o.emoji}</span><span class="vote-opt-text">${escHtml(o.text)}</span>
+        ${myVote===i?'<span class="vote-opt-check">✓ voted</span>':''}
+      </button>`:'').join('');
+      const note=myVote!==undefined?'<div style="font-size:11px;color:var(--text2);margin-top:4px;">Your vote is recorded ✓</div>':'<div style="font-size:11px;color:var(--text2);">Pick the reward you want this week!</div>';
+      return `<div class="vote-panel"><div class="vote-panel-title">🗳️ Vote for Weekly Reward</div>${note}${optBtns}</div>`;
+    })()}
     <div class="quest-list ${young?'young':''}">${questsHTML}</div>
+    ${(()=>{
+      const ldPrizes=(ST.luckyDraw?.prizes||[]).filter(p=>p);
+      if(!ldPrizes.length)return '';
+      const ldBalance=m.starBalance||0;
+      const ldTickets=(ST.luckyDraw?.entries||{})[curKid]||0;
+      const sliderPart=ldBalance>0?`<div style="font-size:11px;color:var(--text2);margin-bottom:8px;">Move the slider to choose how many stars to spend:</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+          <input type="range" id="ld-amount" min="1" max="${ldBalance}" value="1" style="flex:1;" oninput="document.getElementById('ld-val').textContent=this.value">
+          <span id="ld-val" style="color:#ff9966;font-weight:700;min-width:28px;">1</span><span style="font-size:11px;color:var(--text2);">★</span>
+        </div>
+        <button class="ld-submit" onclick="enterLuckyDraw(document.getElementById('ld-amount').value)">🎟️ Spend Stars → Enter Draw</button>`
+        :'<div style="font-size:12px;color:var(--text3);">Complete quests to earn stars you can spend on draw tickets!</div>';
+      return `<div class="ld-panel">
+        <div class="ld-panel-title">🎟️ Monthly Lucky Draw</div>
+        <div class="ld-panel-meta">★ ${ldBalance} available · 🎟 ${ldTickets} ticket${ldTickets!==1?'s':''} entered</div>
+        ${sliderPart}
+      </div>`;
+    })()}
   `;
 }
 
@@ -1639,6 +1704,7 @@ function togQ(cid,e){
     const oldLevel=levelFromXp(m.xp||0);
     const oldRank=rankFor(m.classId,oldLevel).name;
     m.xp=(m.xp||0)+c.points;
+    m.starBalance=(m.starBalance||0)+c.points;
     const newLevel=levelFromXp(m.xp);
     const newRank=rankFor(m.classId,newLevel).name;
     if(!ST.weeklyStars[curKid])ST.weeklyStars[curKid]=0;
@@ -1676,11 +1742,89 @@ function togQ(cid,e){
   } else {
     c.done=false;
     m.xp=Math.max(0,(m.xp||0)-c.points);
+    m.starBalance=Math.max(0,(m.starBalance||0)-c.points);
     if(ST.weeklyStars[curKid])ST.weeklyStars[curKid]=Math.max(0,ST.weeklyStars[curKid]-c.points);
     ST.monthlyStarsAccum=Math.max(0,(ST.monthlyStarsAccum||0)-c.points);
     save();
   }
   renderQuestView();
+}
+
+/* ---------- LUCKY DRAW ---------- */
+function enterLuckyDraw(amount){
+  const m=ST.members.find(x=>x.id===curKid);if(!m)return;
+  amount=parseInt(amount)||0;
+  if(amount<=0||amount>(m.starBalance||0)){toast('Not enough stars!');return;}
+  m.starBalance=Math.max(0,(m.starBalance||0)-amount);
+  if(!ST.luckyDraw.entries)ST.luckyDraw.entries={};
+  ST.luckyDraw.entries[curKid]=(ST.luckyDraw.entries[curKid]||0)+amount;
+  save();
+  renderQuestView();
+  toast('🎟️ '+(amount===1?'1 ticket':''+amount+' tickets')+' entered!');
+}
+function runLuckyDraw(){
+  const prizes=(ST.luckyDraw.prizes||[]).filter(p=>p);
+  if(!prizes.length){toast('Add at least one prize first!');return;}
+  const entries=ST.luckyDraw.entries||{};
+  const pool=[];
+  for(const[id,tickets]of Object.entries(entries)){for(let i=0;i<tickets;i++)pool.push(id);}
+  if(!pool.length){toast('No entries yet — kids need to spend stars!');return;}
+  const winnerId=pool[Math.floor(Math.random()*pool.length)];
+  const winner=ST.members.find(m=>m.id===winnerId);
+  const prize=prizes[Math.floor(Math.random()*prizes.length)];
+  if(!ST.luckyDraw.history)ST.luckyDraw.history=[];
+  ST.luckyDraw.history.unshift({date:new Date().toLocaleDateString(),winnerId,winnerName:winner?.name||'Unknown',prize,totalEntries:pool.length});
+  if(ST.luckyDraw.history.length>10)ST.luckyDraw.history.pop();
+  ST.luckyDraw.entries={};
+  save();
+  showDrawWinner(winner,prize);
+  renderParentGoals();
+}
+function showDrawWinner(member,prize){
+  const host=document.getElementById('modal-host');
+  host.innerHTML=`<div class="level-up-bg" onclick="closeDrawWinner()">
+    <div class="level-up" onclick="event.stopPropagation()">
+      <div class="level-up-glow" style="-webkit-text-fill-color:initial;background:none;color:#ff9966;">🎟️</div>
+      <div class="level-up-title" style="color:#ff9966;">Winner!</div>
+      <div class="level-up-sub">${escHtml(member?.name||'Unknown')}</div>
+      <div class="level-up-unlock" style="border-color:#ff9966;background:rgba(255,107,53,0.1);color:#ff9966;margin-top:20px;">
+        <div style="font-size:48px;margin-bottom:8px;animation:float 2s ease-in-out infinite;">${prize.emoji}</div>
+        <div style="font-size:18px;font-weight:700;">${escHtml(prize.text)}</div>
+      </div>
+      <button class="level-up-btn" style="background:linear-gradient(135deg,#ff6b35,#ff9966);" onclick="closeDrawWinner()">Celebrate! 🎊</button>
+    </div>
+  </div>`;
+  const cx=window.innerWidth/2,cy=window.innerHeight/3;
+  for(let i=0;i<6;i++)setTimeout(()=>confettiBurst(cx+(Math.random()-0.5)*200,cy),i*120);
+}
+function closeDrawWinner(){document.getElementById('modal-host').innerHTML='';renderParent();}
+
+/* ---------- WEEKLY VOTE ---------- */
+function castVote(optionIdx){
+  if(!ST.weeklyVote?.active){return;}
+  if(!ST.weeklyVote.votes)ST.weeklyVote.votes={};
+  ST.weeklyVote.votes[curKid]=optionIdx;
+  save();
+  renderQuestView();
+  toast('🗳️ Vote cast!');
+}
+function toggleVoting(){
+  ST.weeklyVote.active=!ST.weeklyVote.active;
+  save();
+  renderParentGoals();
+}
+function applyVoteWinner(){
+  const options=ST.weeklyVote?.options||[];
+  const votes=ST.weeklyVote?.votes||{};
+  const tally=[0,0,0];
+  for(const v of Object.values(votes)){if(v>=0&&v<3)tally[v]++;}
+  let maxIdx=0;for(let i=1;i<3;i++)if(tally[i]>tally[maxIdx])maxIdx=i;
+  const winner=options[maxIdx];
+  if(!winner){toast('No prize options set!');return;}
+  ST.rewards[0]=winner;
+  save();
+  renderParentGoals();
+  toast('🎉 '+winner.emoji+' '+winner.text+' is the weekly reward!');
 }
 
 function showLevelUp(member,level,newRank){
@@ -1857,6 +2001,7 @@ function collectChest(kidId,chestId,stars){
   const oldLevel=levelFromXp(m.xp||0);
   const oldRank=rankFor(m.classId,oldLevel).name;
   m.xp=(m.xp||0)+stars;
+  m.starBalance=(m.starBalance||0)+stars;
   const newLevel=levelFromXp(m.xp);
   const newRank=rankFor(m.classId,newLevel).name;
   ST.cumulativeStars[kidId]=(ST.cumulativeStars[kidId]||0)+stars;
@@ -2041,10 +2186,9 @@ function renderParentWeek(kids,total,done,pct){
 }
 
 function renderParentGoals(){
-  const monthlyStars=ST.monthlyStarsAccum||0;
   const grandStars=totalStars();
-  const monthlyPct=ST.monthlyStarTarget>0?Math.min(100,Math.round((monthlyStars/ST.monthlyStarTarget)*100)):0;
   const grandPct=ST.grandStarTarget>0?Math.min(100,Math.round((grandStars/ST.grandStarTarget)*100)):0;
+  const kids=ST.members.filter(m=>!m.isParent);
 
   // Weekly rewards
   let weeklyRewardHTML='';
@@ -2059,18 +2203,47 @@ function renderParentGoals(){
     </div>`;
   }
 
-  // Monthly rewards
-  let monthlyRewardHTML='';
+  // Lucky draw prizes
+  let drawPrizeHTML='';
   for(let i=0;i<3;i++){
-    const r=ST.monthlyRewards[i];
-    monthlyRewardHTML+=`<div class="reward-slot ${r?'filled':''}">
-      <div class="rs-num" style="background:rgba(106,138,255,0.2);color:#8aacff;">${i+1}</div>
+    const r=(ST.luckyDraw.prizes||[])[i];
+    drawPrizeHTML+=`<div class="reward-slot ${r?'filled':''}">
+      <div class="rs-num" style="background:rgba(255,107,53,0.2);color:#ff9966;">${i+1}</div>
       <div style="flex:1;min-width:0;">
         ${r?`<div style="font-weight:600;font-size:13px;">${r.emoji} ${escHtml(r.text)}</div>`:'<div style="color:var(--text3);font-size:12px;">Empty slot</div>'}
       </div>
-      ${r?`<button class="rs-clear" onclick="delReward('monthly',${i})">Clear</button>`:''}
+      ${r?`<button class="rs-clear" onclick="delReward('draw',${i})">Clear</button>`:''}
     </div>`;
   }
+  const drawEntries=ST.luckyDraw.entries||{};
+  const totalTickets=Object.values(drawEntries).reduce((s,n)=>s+n,0);
+  const drawPoolHTML=kids.map(k=>`<div class="li" style="padding:8px 12px;">
+    <div style="flex:1;"><div style="font-size:13px;font-weight:600;">${escHtml(k.name)}</div>
+    <div style="font-size:11px;color:var(--text2);">★ ${k.starBalance||0} available · 🎟 ${drawEntries[k.id]||0} tickets entered</div></div>
+  </div>`).join('');
+  const drawHistHTML=(ST.luckyDraw.history||[]).length?`<div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;">Draw History</div>`
+    +(ST.luckyDraw.history||[]).slice(0,5).map(h=>`<div class="li" style="padding:8px 12px;">
+    <div style="flex:1;"><div style="font-size:13px;font-weight:600;">🏆 ${escHtml(h.winnerName)} — ${h.prize.emoji} ${escHtml(h.prize.text)}</div>
+    <div style="font-size:11px;color:var(--text2);">${h.date} · ${h.totalEntries} total tickets</div></div></div>`).join(''):'';
+
+  // Weekly vote
+  const vOpts=ST.weeklyVote?.options||[null,null,null];
+  const vVotes=ST.weeklyVote?.votes||{};
+  const vTally=[0,0,0];
+  for(const v of Object.values(vVotes)){if(v>=0&&v<3)vTally[v]++;}
+  let voteOptionsHTML='';
+  for(let i=0;i<3;i++){
+    const o=vOpts[i];
+    voteOptionsHTML+=`<div class="reward-slot ${o?'filled':''}">
+      <div class="rs-num" style="background:rgba(168,155,255,0.2);color:#a89bff;">${i+1}</div>
+      <div style="flex:1;min-width:0;">
+        ${o?`<div style="font-weight:600;font-size:13px;">${o.emoji} ${escHtml(o.text)}</div>`:'<div style="color:var(--text3);font-size:12px;">Empty slot</div>'}
+      </div>
+      ${o?`<span style="font-size:13px;font-weight:700;color:#a89bff;min-width:40px;text-align:right;">${vTally[i]} vote${vTally[i]!==1?'s':''}</span><button class="rs-clear" style="margin-left:6px;" onclick="delReward('vote',${i})">Clear</button>`:''}
+    </div>`;
+  }
+  const vWhoVoted=kids.filter(k=>vVotes[k.id]!==undefined);
+  const vPending=kids.filter(k=>vVotes[k.id]===undefined);
 
   // Grand rewards
   let grandRewardHTML='';
@@ -2087,17 +2260,11 @@ function renderParentGoals(){
 
   return `<div class="ps" id="ps-goals">
     <div class="ptitle">🎁 Goals & Rewards</div>
-    <div class="psub">Set rewards for reaching milestones</div>
+    <div class="psub">Configure rewards, the lucky draw, and weekly voting</div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
-      <div>
-        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Weekly Target</div>
-        <div style="font-size:13px;margin-bottom:8px;display:flex;align-items:center;gap:8px;"><input type="number" value="${ST.threshold}" onchange="ST.threshold=parseInt(this.value);save();" style="width:60px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;"> % complete</div>
-      </div>
-      <div>
-        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Monthly Target</div>
-        <div style="font-size:13px;display:flex;align-items:center;gap:8px;"><input type="number" value="${ST.monthlyStarTarget}" onchange="ST.monthlyStarTarget=parseInt(this.value);save();" style="width:70px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;"> stars</div>
-      </div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Weekly Completion Target</div>
+      <div style="font-size:13px;display:flex;align-items:center;gap:8px;"><input type="number" value="${ST.threshold}" onchange="ST.threshold=parseInt(this.value);save();" style="width:60px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;"> % complete to unlock weekly reward</div>
     </div>
 
     <div class="af">
@@ -2107,21 +2274,46 @@ function renderParentGoals(){
     </div>
 
     <div class="af">
-      <div class="af-title" style="color:#8aacff;">🌙 Monthly Rewards (${monthlyPct}% • ${monthlyStars}/${ST.monthlyStarTarget}★)</div>
-      ${monthlyRewardHTML}
-      <button class="bp" style="width:100%;margin-top:10px;" onclick="openRewardPicker('monthly')">+ Add Reward</button>
+      <div class="af-title" style="color:#a89bff;">🗳️ Weekly Vote</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Set up to 3 options for kids to vote on from their quest screen. When votes are in, apply the winner as the weekly reward.</div>
+      ${voteOptionsHTML}
+      <button class="bp" style="width:100%;margin-top:10px;" onclick="openRewardPicker('vote')">+ Add Vote Option</button>
+      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:14px 0 6px;">Status</div>
+      ${vWhoVoted.length?`<div style="font-size:12px;color:var(--green);margin-bottom:4px;">✓ Voted: ${vWhoVoted.map(k=>escHtml(k.name)).join(', ')}</div>`:''}
+      ${vPending.length?`<div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Waiting: ${vPending.map(k=>escHtml(k.name)).join(', ')}</div>`:''}
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button onclick="toggleVoting()" style="flex:1;padding:9px;border-radius:8px;border:1px solid rgba(168,155,255,0.4);background:${ST.weeklyVote?.active?'rgba(168,155,255,0.15)':'rgba(168,155,255,0.05)'};color:#a89bff;font-weight:600;cursor:pointer;font-family:inherit;font-size:13px;">
+          ${ST.weeklyVote?.active?'⏹ Close Voting':'▶ Open Voting'}
+        </button>
+        <button onclick="applyVoteWinner()" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--green);background:rgba(52,211,153,0.08);color:var(--green);font-weight:600;cursor:pointer;font-family:inherit;font-size:13px;">
+          ✓ Apply Winner as Reward
+        </button>
+      </div>
+    </div>
+
+    <div class="af">
+      <div class="af-title" style="color:#ff9966;">🎟️ Monthly Lucky Draw</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Kids spend their earned star balance on tickets. More tickets = higher chance of winning. Stars are consumed when entering.</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Prizes (winner draws one at random)</div>
+      ${drawPrizeHTML}
+      <button class="bp" style="width:100%;margin-top:10px;" onclick="openRewardPicker('draw')">+ Add Prize</button>
+      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px;">Current Entry Pool (${totalTickets} total tickets)</div>
+      ${drawPoolHTML}
+      <button onclick="runLuckyDraw()" style="width:100%;padding:10px;border-radius:8px;border:none;background:linear-gradient(135deg,#ff6b35,#ff9966);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:14px;box-shadow:0 0 16px rgba(255,107,53,0.4);">🎰 Run the Draw!</button>
+      ${drawHistHTML}
     </div>
 
     <div class="af">
       <div class="af-title" style="color:var(--gold);">👑 Grand Rewards (${grandPct}% • ${grandStars}/${ST.grandStarTarget}★)</div>
       ${grandRewardHTML}
       <button class="bp" style="width:100%;margin-top:10px;" onclick="openRewardPicker('grand')">+ Add Reward</button>
+      <div style="font-size:11px;color:var(--text2);margin-top:8px;display:flex;align-items:center;gap:8px;">Grand target: <input type="number" value="${ST.grandStarTarget}" onchange="ST.grandStarTarget=parseInt(this.value);save();" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:rgba(20,25,58,0.6);color:var(--text);font-size:12px;"> cumulative XP</div>
     </div>
 
     <div class="af">
       <div class="af-title">📖 Reward Library</div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:10px;">Your saved custom rewards — pick from these when assigning rewards to tiers.</div>
-      ${(ST.rewardLibrary||[]).length===0?'<div style="color:var(--text3);font-size:12px;padding:4px 0;">No saved rewards yet. Add a custom reward using any "+ Add Reward" button above.</div>':''}
+      ${(ST.rewardLibrary||[]).length===0?'<div style="color:var(--text3);font-size:12px;padding:4px 0;">No saved rewards yet. Add a custom reward using any "+ Add" button above.</div>':''}
       ${(ST.rewardLibrary||[]).map((r,i)=>`<div class="reward-slot filled" style="margin-bottom:6px;">
         <div style="font-size:20px;flex-shrink:0;">${r.emoji}</div>
         <div style="flex:1;font-size:13px;font-weight:600;">${escHtml(r.text)}</div>
@@ -2256,7 +2448,7 @@ function renderParentFamily(){
   </div>`;
 }
 
-function delReward(tier,slot){if(!confirm('Remove this reward?'))return;const key=tier==='weekly'?'rewards':tier==='monthly'?'monthlyRewards':'grandRewards';ST[key][slot]=null;save();renderParent();}
+function delReward(tier,slot){if(!confirm('Remove this?'))return;const {obj,key}=_rpKey(tier);obj[key][slot]=null;save();renderParent();}
 function delKid(id){if(!confirm('Remove '+ST.members.find(m=>m.id===id).name+'?'))return;ST.members=ST.members.filter(m=>m.id!==id);ST.chores=ST.chores.filter(c=>c.assignee!==id);save();renderParent();}
 function editKid(id){openCreator(id);}
 
@@ -2286,13 +2478,15 @@ function factoryReset(){
   ST.monthlyStarsAccum=0;
   ST.history=[];
   ST.rewards=[null,null,null];
-  ST.monthlyRewards=[null,null,null];
   ST.grandRewards=[null,null,null];
+  ST.luckyDraw={prizes:[null,null,null],entries:{},history:[]};
+  ST.weeklyVote={options:[null,null,null],votes:{},active:false};
+  ST.members.filter(m=>!m.isParent).forEach(m=>{m.starBalance=0;});
   ST.streaks={};ST.badges={};ST.cumulativeStars={};ST.completedCount={};ST.dailyHistory={};ST.pendingChests={};ST.chestsOpened={};ST.holidayQuests=[];ST.holidayQuestDate='';
   save();renderParent();
 }
 
-function addKidModal(){const name=prompt('Child name:');if(!name)return;const id=name.toLowerCase().replace(/\s+/g,'');if(ST.members.find(m=>m.id===id)){alert('Name already used');return;}const dob=prompt('Birth date (YYYY-MM-DD):');if(!dob)return;ST.members.push({id,name,dob,classId:'scout',hue:0,skin:0,petId:'cat',xp:0,emoji:'⭐',color:'#a0a8c8',isParent:false,photo:null});save();renderParent();}
+function addKidModal(){const name=prompt('Child name:');if(!name)return;const id=name.toLowerCase().replace(/\s+/g,'');if(ST.members.find(m=>m.id===id)){alert('Name already used');return;}const dob=prompt('Birth date (YYYY-MM-DD):');if(!dob)return;ST.members.push({id,name,dob,classId:'scout',hue:0,skin:0,petId:'cat',xp:0,starBalance:0,emoji:'⭐',color:'#a0a8c8',isParent:false,photo:null});save();renderParent();}
 
 function removeChore(id){ST.chores=ST.chores.filter(c=>c.id!==id);save();renderParent();}
 
@@ -2355,9 +2549,10 @@ function moveChore(id,dir){
 }
 
 /* ── Reward Picker Modal ─────────────────────────────────────────────── */
+function _rpKey(tier){return tier==='weekly'?{obj:ST,key:'rewards'}:tier==='grand'?{obj:ST,key:'grandRewards'}:tier==='draw'?{obj:ST.luckyDraw,key:'prizes'}:tier==='vote'?{obj:ST.weeklyVote,key:'options'}:{obj:ST,key:'rewards'};}
 function openRewardPicker(tier){
-  const key=tier==='weekly'?'rewards':tier==='monthly'?'monthlyRewards':'grandRewards';
-  if((ST[key]||[]).every(r=>r!==null)){alert('All 3 reward slots are full. Clear one first.');return;}
+  const {obj,key}=_rpKey(tier);
+  if((obj[key]||[]).every(r=>r!==null)){alert('All 3 slots are full. Clear one first.');return;}
   window._rpTier=tier;
   if(!window._rpCat)window._rpCat='screen';
   renderRewardPicker();
@@ -2370,7 +2565,7 @@ function renderRewardPicker(){
   const cats=Object.keys(catLabels);
   const isLib=activeCat==='mylib';
   const sugs=isLib?(ST.rewardLibrary||[]).map(r=>({e:r.emoji,t:r.text})):(REWARD_SUGS[activeCat]||[]);
-  const title=tier==='weekly'?'⚡ Weekly Reward':tier==='monthly'?'🌙 Monthly Reward':'👑 Grand Reward';
+  const title=tier==='weekly'?'⚡ Weekly Reward':tier==='grand'?'👑 Grand Reward':tier==='draw'?'🎟️ Lucky Draw Prize':tier==='vote'?'🗳️ Vote Option':'⚡ Reward';
   const host=document.getElementById('modal-host');
   host.innerHTML=`<div class="modal-bg" onclick="if(event.target===this){window._rpTier=null;document.getElementById('modal-host').innerHTML='';}">
     <div class="modal">
@@ -2403,10 +2598,10 @@ function renderRewardPicker(){
 }
 function addRewardFromPicker(emoji,text){
   const tier=window._rpTier;if(!tier)return;
-  const key=tier==='weekly'?'rewards':tier==='monthly'?'monthlyRewards':'grandRewards';
-  for(let i=0;i<(ST[key]||[]).length;i++){if(!ST[key][i]){ST[key][i]={emoji,text};break;}}
+  const {obj,key}=_rpKey(tier);
+  for(let i=0;i<(obj[key]||[]).length;i++){if(!obj[key][i]){obj[key][i]={emoji,text};break;}}
   save();renderParent();
-  if((ST[key]||[]).every(r=>r!==null)){window._rpTier=null;document.getElementById('modal-host').innerHTML='';}
+  if((obj[key]||[]).every(r=>r!==null)){window._rpTier=null;document.getElementById('modal-host').innerHTML='';}
   else renderRewardPicker();
 }
 function addCustomReward(){
@@ -2414,14 +2609,14 @@ function addCustomReward(){
   const eIn=document.getElementById('rp-emoji');
   const tIn=document.getElementById('rp-text');
   const text=(tIn?tIn.value.trim():'');
-  if(!text){alert('Please enter a reward description.');return;}
+  if(!text){alert('Please enter a description.');return;}
   const chars=[...(eIn?eIn.value.trim():'')];
   const emoji=chars.length>0?chars[0]:'🎁';
-  const key=tier==='weekly'?'rewards':tier==='monthly'?'monthlyRewards':'grandRewards';
-  for(let i=0;i<(ST[key]||[]).length;i++){if(!ST[key][i]){ST[key][i]={emoji,text};break;}}
+  const {obj,key}=_rpKey(tier);
+  for(let i=0;i<(obj[key]||[]).length;i++){if(!obj[key][i]){obj[key][i]={emoji,text};break;}}
   if(!(ST.rewardLibrary||[]).find(r=>r.text===text)){ST.rewardLibrary.push({emoji,text});}
   save();renderParent();
-  if((ST[key]||[]).every(r=>r!==null)){window._rpTier=null;document.getElementById('modal-host').innerHTML='';}
+  if((obj[key]||[]).every(r=>r!==null)){window._rpTier=null;document.getElementById('modal-host').innerHTML='';}
   else renderRewardPicker();
 }
 function addToRewardLibOnly(){
@@ -2817,6 +3012,7 @@ function togChore(choreId){
     c.done=true;
     const oldLevel=levelFromXp(m.xp||0);
     m.xp=(m.xp||0)+c.points;
+    m.starBalance=(m.starBalance||0)+c.points;
     const newLevel=levelFromXp(m.xp);
     if(!ST.weeklyStars[c.assignee])ST.weeklyStars[c.assignee]=0;
     ST.weeklyStars[c.assignee]+=c.points;
@@ -2835,6 +3031,7 @@ function togChore(choreId){
   } else {
     c.done=false;
     m.xp=Math.max(0,(m.xp||0)-c.points);
+    m.starBalance=Math.max(0,(m.starBalance||0)-c.points);
     if(ST.weeklyStars[c.assignee])ST.weeklyStars[c.assignee]=Math.max(0,ST.weeklyStars[c.assignee]-c.points);
     ST.monthlyStarsAccum=Math.max(0,(ST.monthlyStarsAccum||0)-c.points);
     save();
