@@ -1095,7 +1095,7 @@ function seededShuffle(arr,seed){
 }
 function generateHolidayQuests(){
   const kids=ST.members.filter(m=>!m.isParent);
-  const today=dateStr();
+  const today=new Date().toDateString(); // local date — must match chkDay()
   const qpd=Math.max(1,ST.holidayMode.questsPerDay||3);
   const activeCatIds=ST.holidayMode.categories||HOLIDAY_CATS.map(c=>c.id);
   const pool=[];
@@ -1117,7 +1117,7 @@ function generateHolidayQuests(){
 }
 function ensureHolidayQuests(){
   if(!ST.holidayMode?.active){if((ST.holidayQuests||[]).length){ST.holidayQuests=[];ST.holidayQuestDate='';save();}return;}
-  const today=dateStr();
+  const today=new Date().toDateString(); // local date — must match chkDay()
   if(ST.holidayQuestDate===today&&(ST.holidayQuests||[]).length>0)return;
   generateHolidayQuests();save();
 }
