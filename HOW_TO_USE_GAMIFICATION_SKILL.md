@@ -6,17 +6,22 @@ Your gamification-system-designer skill is now ready to use! Here's how:
 
 ## Quick Start (2 minutes)
 
-### Step 1: Invoke the Skill
+### Current Method: Copy-Paste the Skill Prompt
 
-In any Claude Code session or conversation, type:
+Custom skills in Claude Code don't work as slash commands yet. Instead, follow this simple workaround:
 
-```
-/gamification-system-designer
-```
+**Step 1: Get the skill prompt**
+1. Open this file: `.claude/skills/gamification-system-designer.md`
+2. Copy the entire system prompt section (the "You are a gamification system designer..." paragraph that starts at line 62)
 
-### Step 2: Describe Your Use Case
+**Step 2: Paste in a new Claude Code session**
+1. Start a new Claude Code session or conversation
+2. Paste the system prompt you just copied
+3. Press Enter
 
-Paste your use case (one of the examples below):
+**Step 3: Describe your use case**
+
+Now Claude will activate the skill and ask clarifying questions. Paste your use case (one of the examples below):
 
 ```
 I'm building a [fitness app / learning platform / chores app / habit tracker].
@@ -27,7 +32,7 @@ Any constraints: [age-appropriate, no comparison, values-aligned, offline-first,
 What progression system and reward structure would you recommend?
 ```
 
-### Step 3: Follow the Conversation
+### What Happens Next
 
 The skill will:
 1. **Ask clarifying questions** (~2-3 min) to understand your vision
@@ -210,13 +215,15 @@ All of these are available when you use the skill.
 
 ## Troubleshooting
 
-### "The skill doesn't work"
+### "The /gamification-system-designer command doesn't work"
 
-The skill file is located at: `.claude/skills/gamification-system-designer.md`
+This is expected. Custom skills stored in `.claude/skills/` don't register as slash commands (unlike built-in Claude Code commands). 
 
-If the `/gamification-system-designer` command doesn't work:
-1. Try pasting the system prompt directly from that file into your conversation
-2. The skill should respond with clarifying questions
+**Solution**: Use the copy-paste method described in Quick Start:
+1. Open `.claude/skills/gamification-system-designer.md`
+2. Copy the system prompt section (from "You are a gamification system designer..." to the end)
+3. Paste it into a Claude Code session
+4. Describe your use case—the skill will activate immediately
 
 ### "The recommendations seem generic"
 
@@ -238,9 +245,24 @@ Share your specific numbers, and the skill will recalculate for your exact syste
 
 ---
 
+## Pro Tip: Bookmark the Skill File
+
+Since you'll need to copy-paste the skill prompt regularly, bookmark or pin this file:
+`.claude/skills/gamification-system-designer.md`
+
+Then copy-pasting becomes a 10-second operation.
+
+---
+
+## Future: Auto-Loading
+
+Once Claude Code supports automatic skill loading on session start, this copy-paste step will become unnecessary. For now, it's the most reliable way to use the skill.
+
+---
+
 ## Next Steps
 
-1. **Try it out** on your current project
+1. **Try it out** on your current project (copy-paste the skill prompt)
 2. **Iterate** with the skill's recommendations
 3. **Test** with real users (Phase 3)
 4. **Share your design** — show us what you built!
