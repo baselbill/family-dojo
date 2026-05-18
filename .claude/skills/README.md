@@ -76,6 +76,45 @@ The skill will:
 
 ---
 
+### faith-tech-product-builder
+
+**Purpose**: Build authentic faith-integrated products. Helps teams design apps that genuinely serve faith communities with integrity—combining product expertise with theological understanding and community strategy.
+
+**Invoke**: Copy-paste the system prompt from `faith-tech-product-builder.md`
+
+**Use cases**:
+- Build a prayer habit tracker (without legalism/shame)
+- Create a Bible reading app for families
+- Design a values-tracking app (virtue-focused)
+- Launch a devotional platform
+- Build a church app with community features
+- Integrate scripture authentically (not preachy)
+- Navigate sensitive topics (shame, doubt, abuse, LGBTQ+)
+- Plan marketing to faith communities
+
+**Example**:
+```
+We're building a prayer app for families (kids + parents, ages 8-14). 
+We want prayer to feel like natural rhythm, not checklist. 
+How do we design this so it doesn't become legalistic/shame-based?
+```
+
+The skill will:
+1. Ask clarifying questions about your product, audience, faith perspective, values
+2. Assess theological soundness (red flags: shame, legalism, exploitation?)
+3. Design mechanics that honor faith (grace, invitation, depth, community)
+4. Align with your faith tradition (Protestant, Catholic, Orthodox, interfaith)
+5. Plan community strategy (advisory board, beta testing, church partnerships)
+6. Handle sensitive topics (shame, doubt, spiritual abuse, LGBTQ+, grief)
+7. Provide implementation roadmap (MVP, phases, key partnerships, success metrics)
+
+**See also**:
+- `faith-tech-product-builder.md` - Full skill definition
+- `../HOW_TO_USE_FAITH_TECH_PRODUCT_BUILDER_SKILL.md` - User quick start
+- `../SKILL_KNOWLEDGE_BASE.md` - Knowledge base reference
+
+---
+
 ## How to Use Skills in Claude Code
 
 ### Current Method: Copy-Paste the System Prompt
@@ -216,6 +255,32 @@ manipulation? Are there real harms?
 
 ---
 
+### Faith-Tech Skill Examples
+
+**Example 1: Build a Prayer App**
+```
+We're building a prayer app for families (kids + parents, ages 8-14). 
+We want prayer to feel like a natural rhythm, not a checklist. 
+Our faith emphasizes that prayer is conversation, not performance. 
+How do we avoid legalism and shame if kids miss days?
+```
+
+**Example 2: Launch a Bible Reading App**
+```
+We want to create a Bible reading app for ages 11-16 with streak tracking 
+and community features. We're worried about making it feel grindy. 
+How do we integrate scripture authentically without being preachy?
+```
+
+**Example 3: Design a Values App**
+```
+We're designing a values-tracking app for families based on Christian virtues. 
+We want kids to reflect on living out values—NOT earn rewards. 
+How do we design this authentically?
+```
+
+---
+
 ## Deep Dive Resources
 
 ### Gamification System Designer
@@ -261,6 +326,24 @@ manipulation? Are there real harms?
   - Risk identification framework
   - Age-specific guidance
 
+### Faith-Tech Product Builder
+
+- **HOW_TO_USE_FAITH_TECH_PRODUCT_BUILDER_SKILL.md** (300 lines)
+  - Quick start guide
+  - 3 real examples (prayer app, Bible reader, values app)
+  - Key principles (theological humility, authenticity, community)
+  - Common concerns & answers
+  - Troubleshooting
+
+- **faith-tech-product-builder.md** (400 lines)
+  - Full system prompt
+  - 8-step design process (theology, mechanics, values, community, sensitive topics, roadmap)
+  - Red flags to avoid (shame, legalism, proof-texting, exploitation)
+  - Strengths to build on (grace, invitation, depth, community)
+  - Community strategy & advisory board structure
+  - Ethical monetization
+  - Metrics that matter
+
 ### Shared Knowledge Base
 
 - **SKILL_KNOWLEDGE_BASE.md** (3500 words)
@@ -268,7 +351,8 @@ manipulation? Are there real harms?
   - Reward structures (single, dual, tiered)
   - Achievement taxonomy (100+ badge ideas)
   - Psychological frameworks (SDT, growth mindset, developmental stages)
-  - Case studies (Family Dojo, Habitica, Duolingo, etc.)
+  - Faith-tech frameworks (theology, grace, legalism, shame, abuse)
+  - Case studies (Family Dojo, Habitica, Duolingo, Youversion, Pray, Nines, etc.)
   - Risk patterns & mitigations
 
 ---
@@ -296,7 +380,13 @@ Found an issue? Have a suggestion? Want to add a case study?
 - Status: Production-ready for immediate use
 - Ready for: Testing and validation
 
-Both skills are ready for copy-paste usage in Claude Code sessions.
+### faith-tech-product-builder
+- Phase 1 complete: Comprehensive skill for authentic faith-integrated product design
+- Status: Production-ready for immediate use
+- Based on: Family Dojo's faith-integrated mechanics + CEO's theological expertise
+- Ready for: Real-world faith-tech projects
+
+All three skills are ready for copy-paste usage in Claude Code sessions.
 
 ---
 
