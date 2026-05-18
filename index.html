@@ -106,7 +106,7 @@
   .goal.draw::before{background:linear-gradient(90deg,transparent,#ff6b35,transparent);}
   .goal.draw .goal-tag{color:#ff9966;}
   .draw-pool{margin:8px 0 4px;display:flex;flex-direction:column;gap:3px;}
-  .draw-pool-row{display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:1px 0;}
+  .draw-pool-row{display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:4px 0;}
   .draw-pool-name{color:var(--text2);font-weight:600;}
   .draw-pool-tickets{color:#ff9966;font-weight:700;}
   /* Vote banner on weekly card */
@@ -114,17 +114,19 @@
   /* Quest view lucky draw panel */
   .ld-panel{margin:0 32px 12px;padding:14px 16px;background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.25);border-radius:12px;}
   .ld-panel-title{font-size:13px;font-weight:700;color:#ff9966;margin-bottom:4px;}
-  .ld-panel-meta{font-size:11px;color:var(--text2);margin-bottom:10px;}
-  .ld-submit{width:100%;padding:10px;border-radius:8px;border:none;background:linear-gradient(135deg,#ff6b35,#ff9966);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;}
+  .ld-panel-meta{font-size:12px;color:var(--text2);margin-bottom:10px;}
+  .ld-submit{width:100%;padding:10px;border-radius:8px;border:none;background:linear-gradient(135deg,#ff6b35,#ff9966);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;transition:opacity 0.15s,box-shadow 0.15s;}
+  .ld-submit:hover{opacity:0.9;box-shadow:0 0 14px rgba(255,107,53,0.5);}
   /* Quest view vote panel */
   .vote-panel{margin:0 32px 12px;padding:14px 16px;background:rgba(168,155,255,0.05);border:1px solid rgba(168,155,255,0.25);border-radius:12px;}
   .vote-panel-title{font-size:13px;font-weight:700;color:#a89bff;margin-bottom:10px;}
   .vote-opt-btn{width:100%;padding:11px 16px;border-radius:10px;border:1.5px solid rgba(168,155,255,0.3);background:rgba(20,25,58,0.6);cursor:pointer;display:flex;align-items:center;gap:10px;font-family:inherit;text-align:left;transition:all 0.15s;margin-bottom:7px;}
   .vote-opt-btn:hover{border-color:#a89bff;background:rgba(168,155,255,0.1);}
-  .vote-opt-btn.voted{border-color:#a89bff;background:rgba(168,155,255,0.18);}
+  .vote-opt-btn:active{transform:scale(0.98);}
+  .vote-opt-btn.voted{border-color:#a89bff;background:rgba(168,155,255,0.2);box-shadow:0 0 10px rgba(168,155,255,0.2);}
   .vote-opt-emoji{font-size:22px;flex-shrink:0;}
   .vote-opt-text{font-size:14px;font-weight:600;color:var(--text);flex:1;}
-  .vote-opt-check{font-size:16px;color:#a89bff;}
+  .vote-opt-check{font-size:13px;font-weight:700;color:#a89bff;background:rgba(168,155,255,0.2);border:1px solid rgba(168,155,255,0.4);border-radius:999px;padding:2px 8px;white-space:nowrap;}
 
   /* Section labels */
   .sec-lbl{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin:18px 28px 10px;display:flex;align-items:center;gap:8px;}
@@ -353,6 +355,7 @@
     .qhdr{flex-wrap:wrap;padding:14px 18px;gap:10px;}
     .qhdr-bar{width:120px;}
     .quest-progress,.quest-list{padding-left:18px;padding-right:18px;}
+    .ld-panel,.vote-panel{margin-left:18px;margin-right:18px;}
     .p-nav{width:60px;}
     .p-nav-title,.pni{padding-left:10px;padding-right:10px;font-size:11px;}
     .p-content{padding:16px;}
@@ -1402,7 +1405,7 @@ function renderHome(){
 
   // Lucky draw card
   const drawPrizes=(ST.luckyDraw?.prizes||[]).filter(p=>p);
-  const drawPrizesHTML=drawPrizes.length?drawPrizes.map(p=>`<span class="reward-chip" style="border-color:rgba(255,107,53,0.4);">${p.emoji} ${escHtml(p.text)}</span>`).join(''):'<span style="font-size:11px;color:var(--text3);">No prizes set</span>';
+  const drawPrizesHTML=drawPrizes.length?drawPrizes.map(p=>`<span class="reward-chip" style="border-color:rgba(255,107,53,0.4);">${p.emoji} ${escHtml(p.text)}</span>`).join(''):'<span style="font-size:11px;color:var(--text2);font-style:italic;">No prizes set yet — add in Parent Zone</span>';
   const kidsForDraw=ST.members.filter(m=>!m.isParent);
   const drawPoolHTML=kidsForDraw.map(k=>`<div class="draw-pool-row"><span class="draw-pool-name">${escHtml(k.name)}</span><span class="draw-pool-tickets">🎟 ${drawEntries[k.id]||0} · ★ ${k.starBalance||0}</span></div>`).join('');
 
@@ -1682,11 +1685,11 @@ function renderQuestView(){
       const ldTickets=(ST.luckyDraw?.entries||{})[curKid]||0;
       const sliderPart=ldBalance>0?`<div style="font-size:11px;color:var(--text2);margin-bottom:8px;">Move the slider to choose how many stars to spend:</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
-          <input type="range" id="ld-amount" min="1" max="${ldBalance}" value="1" style="flex:1;" oninput="document.getElementById('ld-val').textContent=this.value">
+          <input type="range" id="ld-amount" min="1" max="${ldBalance}" value="1" style="flex:1;" aria-label="Stars to spend on draw tickets" oninput="document.getElementById('ld-val').textContent=this.value">
           <span id="ld-val" style="color:#ff9966;font-weight:700;min-width:28px;">1</span><span style="font-size:11px;color:var(--text2);">★</span>
         </div>
         <button class="ld-submit" onclick="enterLuckyDraw(document.getElementById('ld-amount').value)">🎟️ Spend Stars → Enter Draw</button>`
-        :'<div style="font-size:12px;color:var(--text3);">Complete quests to earn stars you can spend on draw tickets!</div>';
+        :'<div style="font-size:12px;color:var(--text2);font-style:italic;">Complete quests to earn stars — then spend them here as tickets!</div>';
       return `<div class="ld-panel">
         <div class="ld-panel-title">🎟️ Monthly Lucky Draw</div>
         <div class="ld-panel-meta">★ ${ldBalance} available · 🎟 ${ldTickets} ticket${ldTickets!==1?'s':''} entered</div>
@@ -1769,6 +1772,8 @@ function runLuckyDraw(){
   const pool=[];
   for(const[id,tickets]of Object.entries(entries)){for(let i=0;i<tickets;i++)pool.push(id);}
   if(!pool.length){toast('No entries yet — kids need to spend stars!');return;}
+  const entrantNames=Object.keys(entries).filter(id=>entries[id]>0).map(id=>{const m=ST.members.find(x=>x.id===id);return m?m.name:id;});
+  if(!confirm(`Run the lucky draw now?\n\n${pool.length} ticket${pool.length!==1?'s':''} in pool from: ${entrantNames.join(', ')}.\n\nThis will clear all entries and pick a winner. This cannot be undone.`))return;
   const winnerId=pool[Math.floor(Math.random()*pool.length)];
   const winner=ST.members.find(m=>m.id===winnerId);
   const prize=prizes[Math.floor(Math.random()*prizes.length)];
@@ -1816,15 +1821,25 @@ function toggleVoting(){
 function applyVoteWinner(){
   const options=ST.weeklyVote?.options||[];
   const votes=ST.weeklyVote?.votes||{};
+  const totalVotes=Object.keys(votes).length;
+  if(!totalVotes){toast('No votes cast yet!');return;}
   const tally=[0,0,0];
   for(const v of Object.values(votes)){if(v>=0&&v<3)tally[v]++;}
-  let maxIdx=0;for(let i=1;i<3;i++)if(tally[i]>tally[maxIdx])maxIdx=i;
+  // Find all options tied at max
+  const maxVotes=Math.max(...tally.filter((_,i)=>options[i]));
+  const tiedIdxs=tally.map((t,i)=>t===maxVotes&&options[i]?i:-1).filter(i=>i>=0);
+  // Break ties randomly so no option has structural advantage
+  const maxIdx=tiedIdxs[Math.floor(Math.random()*tiedIdxs.length)];
   const winner=options[maxIdx];
-  if(!winner){toast('No prize options set!');return;}
+  if(!winner){toast('No vote options set!');return;}
+  const isTie=tiedIdxs.length>1;
   ST.rewards[0]=winner;
   save();
   renderParentGoals();
-  toast('🎉 '+winner.emoji+' '+winner.text+' is the weekly reward!');
+  const msg=isTie
+    ?`🎉 Tie! ${winner.emoji} ${winner.text} picked at random (${maxVotes}–${maxVotes})`
+    :`🎉 ${winner.emoji} ${winner.text} wins with ${maxVotes} of ${totalVotes} votes!`;
+  toast(msg);
 }
 
 function showLevelUp(member,level,newRank){
