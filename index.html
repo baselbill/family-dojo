@@ -1068,6 +1068,7 @@ function tw(){return ST.taskWord||'Quest';}
 function dayOfYear(){const n=new Date();return Math.floor((n-new Date(n.getFullYear(),0,0))/86400000);}
 function weekKey(){const d=new Date(),day=d.getDay(),diff=d.getDate()-day+(day===0?-6:1);return new Date(new Date().setDate(diff)).toISOString().slice(0,10);}
 function escHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function escAttr(s){return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"');}
 
 // XP / level math
 function xpForLevel(level){return 4*level*(level-1);}
@@ -1095,7 +1096,7 @@ function seededShuffle(arr,seed){
 }
 function generateHolidayQuests(){
   const kids=ST.members.filter(m=>!m.isParent);
-  const today=new Date().toDateString(); // local date — must match chkDay()
+  const today=new Date().toDateString();
   const qpd=Math.max(1,ST.holidayMode.questsPerDay||3);
   const activeCatIds=ST.holidayMode.categories||HOLIDAY_CATS.map(c=>c.id);
   const pool=[];
@@ -1117,7 +1118,7 @@ function generateHolidayQuests(){
 }
 function ensureHolidayQuests(){
   if(!ST.holidayMode?.active){if((ST.holidayQuests||[]).length){ST.holidayQuests=[];ST.holidayQuestDate='';save();}return;}
-  const today=new Date().toDateString(); // local date — must match chkDay()
+  const today=new Date().toDateString();
   if(ST.holidayQuestDate===today&&(ST.holidayQuests||[]).length>0)return;
   generateHolidayQuests();save();
 }
@@ -1192,11 +1193,11 @@ function isSchoolDay(){
   const d=new Date().getDay();return d>=1&&d<=5;
 }
 function toggleHolidayCategory(catId){
-  const cats=ST.holidayMode.categories||HOLIDAY_CATS.map(c=>c.id);
+  if(!ST.holidayMode.categories)ST.holidayMode.categories=HOLIDAY_CATS.map(c=>c.id);
+  const cats=ST.holidayMode.categories;
   const idx=cats.indexOf(catId);
   if(idx>=0){if(cats.length<=1){alert('At least one category must be active.');return;}cats.splice(idx,1);}
   else cats.push(catId);
-  ST.holidayMode.categories=cats;
   generateHolidayQuests();save();renderParent();
 }
 function setHolidayQPD(n){
@@ -1535,30 +1536,19 @@ function renderQuestView(){
   const totalP=myCh.reduce((s,c)=>s+c.points,0)+myHQ.reduce((s,q)=>s+q.points,0);
   const pctDone=totalP?(todayStars/totalP)*100:0;
 
-  const renderQI=c=>{
-    const de=(c.desc||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"');
-    return `<div class="qi ${c.done?'done':''}" id="qi-${c.id}" style="border-left:3px solid ${c.done?'#34d399':cls.accent};">
+  const renderQI=(c,opts={})=>{
+    const accent=opts.accent||cls.accent;
+    const ptsHTML=opts.ptsHTML||`+${c.points} ★ XP`;
+    const ptsStyle=opts.ptsStyle||'';
+    return `<div class="qi ${c.done?'done':''}" id="qi-${c.id}" style="border-left:3px solid ${c.done?'#34d399':accent};">
       <div class="qi-emoji">${c.emoji}</div>
       <div class="qi-body">
         <div class="qi-name">${escHtml(c.name)}</div>
         <div class="qi-desc">${escHtml(c.desc||'')}</div>
-        <div class="qi-pts">+${c.points} ★ XP</div>
+        <div class="qi-pts"${ptsStyle}>${ptsHTML}</div>
       </div>
-      <button class="qi-audio" onclick="speak('${escHtml(c.name)}. ${de}',${young})" title="Read aloud">🔊</button>
+      <button class="qi-audio" onclick="speak('${escHtml(c.name)}. ${escAttr(c.desc)}',${young})" title="Read aloud">🔊</button>
       <button class="qi-check ${c.done?'on':''}" onclick="togQ('${c.id}',event)">${c.done?'✓':''}</button>
-    </div>`;
-  };
-  const renderHQ=q=>{
-    const de=(q.desc||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"');
-    return `<div class="qi ${q.done?'done':''}" id="qi-${q.id}" style="border-left:3px solid ${q.done?'#34d399':'#fbbf24'};">
-      <div class="qi-emoji">${q.emoji}</div>
-      <div class="qi-body">
-        <div class="qi-name">${escHtml(q.name)}</div>
-        <div class="qi-desc">${escHtml(q.desc||'')}</div>
-        <div class="qi-pts" style="color:#fbbf24;">+3 ★ XP &nbsp;<span style="opacity:0.6;font-size:9px;">${q.catEmoji}</span></div>
-      </div>
-      <button class="qi-audio" onclick="speak('${escHtml(q.name)}. ${de}',${young})" title="Read aloud">🔊</button>
-      <button class="qi-check ${q.done?'on':''}" onclick="togQ('${q.id}',event)">${q.done?'✓':''}</button>
     </div>`;
   };
   const morning=myCh.filter(c=>c.timeTag==='morning');
@@ -1585,7 +1575,6 @@ function renderQuestView(){
     }
     if(myHQ.length>0){
       const tripName=ST.holidayMode.tripName||'Holiday';
-      // Group holiday quests by category for display
       const catOrder=HOLIDAY_CATS.map(c=>c.id);
       const byCat={};
       for(const q of myHQ){if(!byCat[q.catId])byCat[q.catId]=[];byCat[q.catId].push(q);}
@@ -1594,7 +1583,7 @@ function renderQuestView(){
         if(!byCat[catId])continue;
         const cat=HOLIDAY_CATS.find(c=>c.id===catId);
         hqHTML+=`<div class="hq-banner"><div><div class="hq-banner-name">${cat.emoji} ${escHtml(cat.name)}</div><div class="hq-banner-sub" style="font-style:italic;margin-top:2px;">"${escHtml(cat.verse.t)}" — ${escHtml(cat.verse.r)}</div></div></div>`;
-        hqHTML+=byCat[catId].map(renderHQ).join('');
+        hqHTML+=byCat[catId].map(q=>renderQI(q,{accent:'#fbbf24',ptsHTML:`+3 ★ XP &nbsp;<span style="opacity:0.6;font-size:9px;">${q.catEmoji}</span>`,ptsStyle:' style="color:#fbbf24;"'})).join('');
       }
       questsHTML+=`<div class="qs-hdr" style="color:#fbbf24;">🌴 <span>${escHtml(tripName)}</span></div>${hqHTML}`;
     }
@@ -2226,7 +2215,7 @@ function renderParentFamily(){
         <div style="display:flex;flex-wrap:wrap;gap:6px;">
           ${HOLIDAY_CATS.map(cat=>{const on=(ST.holidayMode.categories||[]).includes(cat.id);return `<button class="hq-cat-btn${on?' on':''}" onclick="toggleHolidayCategory('${cat.id}')">${cat.emoji} ${escHtml(cat.name)}</button>`;}).join('')}
         </div>
-        <div style="font-size:11px;color:var(--text3);margin-top:8px;">Tap a category to toggle it. Changes take effect tomorrow or when you save.</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px;">Tap a category to toggle it. Quest list updates immediately.</div>
         <button style="width:100%;margin-top:10px;padding:9px;border-radius:8px;border:1px solid rgba(251,191,36,0.4);background:rgba(251,191,36,0.08);color:#fbbf24;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;" onclick="generateHolidayQuests();save();renderParent();">🔄 Regenerate Today's Quests</button>
       </div>
       `:`
@@ -2381,7 +2370,7 @@ function renderRewardPicker(){
       </div>
       <div>
         ${sugs.length===0?`<div style="color:var(--text3);font-size:13px;padding:10px 0;">No saved rewards yet. Add one below and it will appear here.</div>`:''}
-        ${sugs.map((s,i)=>{const se=s.e;const st=s.t.replace(/\\/g,'\\\\').replace(/'/g,"\\'");return `<div class="rsug" ${!isLib?`onclick="addRewardFromPicker('${se}','${st}')"`:''} style="${!isLib?'cursor:pointer;':''}">
+        ${sugs.map((s,i)=>{const se=s.e;const st=escAttr(s.t);return `<div class="rsug" ${!isLib?`onclick="addRewardFromPicker('${se}','${st}')"`:''} style="${!isLib?'cursor:pointer;':''}">
           <span style="font-size:20px;">${s.e}</span>
           <span style="font-size:13px;flex:1;">${escHtml(s.t)}</span>
           ${isLib?`
