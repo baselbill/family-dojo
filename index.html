@@ -1783,7 +1783,7 @@ function runLuckyDraw(){
   ST.luckyDraw.entries={};
   save();
   showDrawWinner(winner,prize);
-  renderParentGoals();
+  // renderParent() is called by closeDrawWinner() after the modal is dismissed
 }
 function showDrawWinner(member,prize){
   const host=document.getElementById('modal-host');
@@ -1816,7 +1816,7 @@ function castVote(optionIdx){
 function toggleVoting(){
   ST.weeklyVote.active=!ST.weeklyVote.active;
   save();
-  renderParentGoals();
+  renderParent();
 }
 function applyVoteWinner(){
   const options=ST.weeklyVote?.options||[];
@@ -1835,10 +1835,10 @@ function applyVoteWinner(){
   const isTie=tiedIdxs.length>1;
   ST.rewards[0]=winner;
   save();
-  renderParentGoals();
+  renderParent();
   const msg=isTie
-    ?`🎉 Tie! ${winner.emoji} ${winner.text} picked at random (${maxVotes}–${maxVotes})`
-    :`🎉 ${winner.emoji} ${winner.text} wins with ${maxVotes} of ${totalVotes} votes!`;
+    ?`🎉 Tie! ${winner.emoji} ${winner.text} picked at random (${maxVotes} vote${maxVotes!==1?'s':''} each)`
+    :`🎉 ${winner.emoji} ${winner.text} wins with ${maxVotes} of ${totalVotes} vote${totalVotes!==1?'s':''}!`;
   toast(msg);
 }
 
