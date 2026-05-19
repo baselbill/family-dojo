@@ -21,6 +21,55 @@ const consoleErrors = [];
 page.on('console', m => { if (m.type() === 'error') consoleErrors.push(m.text()); });
 page.on('pageerror', e => consoleErrors.push(e.message));
 
+// Inject demo state so test skips onboarding
+await page.addInitScript(() => {
+  const demo = {
+    pin:'1234', onboardingDone:true, threshold:80, taskWord:'Quest',
+    soundEnabled:true, selectedVoiceName:null,
+    members:[
+      {id:'grace',name:'Grace',dob:'2012-07-14',classId:'mage',hue:280,skin:1,petId:'owl',xp:248,isParent:false,photo:null,starBalance:18},
+      {id:'lauren',name:'Lauren',dob:'2013-03-22',classId:'archer',hue:38,skin:0,petId:'hawk',xp:196,isParent:false,photo:null,starBalance:14},
+      {id:'christian',name:'Christian',dob:'2019-05-07',classId:'sword',hue:0,skin:1,petId:'tiger',xp:84,isParent:false,photo:null,starBalance:9},
+      {id:'constance',name:'Constance',dob:'2022-11-10',classId:'healer',hue:150,skin:0,petId:'bunny',xp:28,isParent:false,photo:null,starBalance:5},
+    ],
+    chores:[
+      {id:'c1',name:'Make your bed',desc:'Pull up covers',emoji:'🛏️',assignee:'grace',points:1,done:true,timeTag:'any',schoolDay:null},
+      {id:'c2',name:'Reading practice',desc:'20 minutes',emoji:'📚',assignee:'grace',points:2,done:true,timeTag:'any',schoolDay:null},
+      {id:'c3',name:'Empty the dishwasher',desc:'Put everything away',emoji:'🍽️',assignee:'grace',points:2,done:false,timeTag:'any',schoolDay:null},
+      {id:'c4',name:'Tidy your room',desc:'Floor clear',emoji:'🧹',assignee:'grace',points:2,done:false,timeTag:'any',schoolDay:null},
+      {id:'c5',name:'Make your bed',desc:'Pull up covers',emoji:'🛏️',assignee:'lauren',points:1,done:true,timeTag:'any',schoolDay:null},
+      {id:'c6',name:'Brush teeth',desc:'2 full minutes',emoji:'🦷',assignee:'lauren',points:1,done:true,timeTag:'any',schoolDay:null},
+      {id:'c7',name:'Put away laundry',desc:'Drawer & closet',emoji:'🧺',assignee:'lauren',points:2,done:true,timeTag:'any',schoolDay:null},
+      {id:'c8',name:'Math practice',desc:'15 minutes',emoji:'📐',assignee:'lauren',points:2,done:false,timeTag:'any',schoolDay:null},
+      {id:'c9',name:'Make your bed',desc:'Pull covers',emoji:'🛏️',assignee:'christian',points:1,done:true,timeTag:'any',schoolDay:null},
+      {id:'c10',name:'Brush teeth',desc:'Top and bottom',emoji:'🦷',assignee:'christian',points:1,done:true,timeTag:'any',schoolDay:null},
+      {id:'c11',name:'Put on clothes',desc:'Pick from drawer',emoji:'👕',assignee:'christian',points:1,done:false,timeTag:'any',schoolDay:null},
+      {id:'c12',name:'Tidy toys',desc:'In the toy box',emoji:'🧸',assignee:'christian',points:1,done:false,timeTag:'any',schoolDay:null},
+      {id:'c13',name:'Brush teeth',desc:'With Mama or Dada',emoji:'🦷',assignee:'constance',points:1,done:true,timeTag:'any',schoolDay:null},
+      {id:'c14',name:'Find your shoes',desc:'By the door',emoji:'👟',assignee:'constance',points:1,done:false,timeTag:'any',schoolDay:null},
+      {id:'c15',name:'Pick up bears',desc:'Put on the shelf',emoji:'🧸',assignee:'constance',points:1,done:false,timeTag:'any',schoolDay:null},
+    ],
+    rewards:[{text:'Family Movie Night',emoji:'🎬'},{text:'Pizza Friday',emoji:'🍕'},null],
+    grandRewards:[{text:'Beach trip',emoji:'✈️'},{text:'3 nights away',emoji:'🏖'},null],
+    grandStarTarget:2000, monthlyStarsAccum:0, currentMonth:'',
+    luckyDraw:{prizes:[{emoji:'🎳',text:'Bowling night out'},{emoji:'🍦',text:'Ice cream outing'},null],entries:{grace:5,lauren:3},history:[]},
+    weeklyVote:{options:[{emoji:'🎬',text:'Family Movie Night'},{emoji:'🍕',text:'Pizza Friday'},{emoji:'🎲',text:'Family Board Game Night'}],votes:{},active:true},
+    currentWeek:'', weeklyStars:{grace:18,lauren:14,christian:9,constance:5},
+    history:[
+      {name:'Lauren',chore:'Put away laundry',time:'8:42 AM',kidId:'lauren',date:''},
+      {name:'Grace',chore:'Reading practice',time:'8:30 AM',kidId:'grace',date:''},
+    ],
+    personalRewards:[],streaks:{},badges:{},
+    cumulativeStars:{grace:248,lauren:196,christian:84,constance:28},
+    completedCount:{grace:165,lauren:131,christian:56,constance:19},
+    dailyHistory:{},holidayMode:{active:false,endsOn:null,tripName:'',categories:[],questsPerDay:3},
+    pendingChests:{},chestsOpened:{},holidayQuests:[],holidayQuestDate:'',
+    customChores:[],rewardLibrary:[],lastResetDay:'',monthlyStarTarget:480,
+    selectedVoiceName:null
+  };
+  localStorage.setItem('fdv10', JSON.stringify(demo));
+});
+
 // Dismiss any/all overlays: chest → open art → collect; level-up/badge → Continue
 async function dismissAllModals() {
   for (let attempts = 0; attempts < 10; attempts++) {
