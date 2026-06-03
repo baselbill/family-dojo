@@ -1047,6 +1047,8 @@ function defaultState(){
     holidayMode:{active:false,endsOn:null},
     pendingChests:{},
     chestsOpened:{},
+    completionTimestamps:{},
+    pendingReviews:{},
   };
 }
 
@@ -1092,6 +1094,8 @@ function ensureFields(){
   }
   ST.dailyHistory=ST.dailyHistory||{};
   ST.holidayMode=ST.holidayMode||{active:false,endsOn:null};
+  ST.completionTimestamps=ST.completionTimestamps||{};
+  ST.pendingReviews=ST.pendingReviews||{};
   if(!ST.holidayMode.tripName)ST.holidayMode.tripName='';
   if(!ST.holidayMode.categories)ST.holidayMode.categories=HOLIDAY_CATS.map(c=>c.id);
   if(!ST.holidayMode.questsPerDay)ST.holidayMode.questsPerDay=3;
@@ -1718,11 +1722,36 @@ function renderQuestView(){
   `;
 }
 
+function getStarsEarnedInLastHour(kidId){
+  const now=Date.now();
+  const oneHourAgo=now-3600000;
+  if(!ST.completionTimestamps[kidId])return 0;
+  let stars=0;
+  for(const ts of ST.completionTimestamps[kidId]){
+    if(ts.time>=oneHourAgo){stars+=ts.stars;}
+  }
+  return stars;
+}
 function togQ(cid,e){
   const c=ST.chores.find(x=>x.id===cid)||(ST.holidayQuests||[]).find(x=>x.id===cid);if(!c)return;
   const m=ST.members.find(x=>x.id===curKid);if(!m)return;
   if(!c.done){
+    const RATE_LIMIT_PER_HOUR=5;
+    const starsInLastHour=getStarsEarnedInLastHour(curKid);
+    const willExceedLimit=starsInLastHour+c.points>RATE_LIMIT_PER_HOUR;
+    if(willExceedLimit){
+      c.done=true;
+      c.chestRolled=true;
+      if(!ST.pendingReviews[curKid])ST.pendingReviews[curKid]=[];
+      ST.pendingReviews[curKid].push({choreId:cid,choreName:c.name,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),stars:c.points,date:dateStr()});
+      save();
+      toast('⚠️ '+c.name+' queued for parent review (rate limit)');
+      renderQuestView();
+      return;
+    }
     c.done=true;
+    if(!ST.completionTimestamps[curKid])ST.completionTimestamps[curKid]=[];
+    ST.completionTimestamps[curKid].push({time:Date.now(),stars:c.points,choreName:c.name});
     const oldLevel=levelFromXp(m.xp||0);
     const oldRank=rankFor(m.classId,oldLevel).name;
     m.xp=(m.xp||0)+c.points;
@@ -1732,21 +1761,17 @@ function togQ(cid,e){
     if(!ST.weeklyStars[curKid])ST.weeklyStars[curKid]=0;
     ST.weeklyStars[curKid]+=c.points;
     ST.monthlyStarsAccum=(ST.monthlyStarsAccum||0)+c.points;
-    // Track per-day history for Starfield and streaks
     const tod=dateStr();
     if(!ST.dailyHistory[curKid])ST.dailyHistory[curKid]={};
     ST.dailyHistory[curKid][tod]=(ST.dailyHistory[curKid][tod]||0)+1;
-    // Cumulative stars (never resets)
     if(!ST.cumulativeStars[curKid])ST.cumulativeStars[curKid]=0;
     ST.cumulativeStars[curKid]+=c.points;
-    // Total quests completed counter (never resets)
     if(!ST.completedCount[curKid])ST.completedCount[curKid]=0;
     ST.completedCount[curKid]++;
     ST.history.unshift({name:m.name,chore:c.name,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),kidId:curKid,date:tod});
     if(ST.history.length>100)ST.history.pop();
     playChime();
     if(e&&e.clientX)confettiBurst(e.clientX,e.clientY);
-    // Chest drop roll — only once per chore per day (chestRolled flag prevents re-roll exploit)
     let droppedChest=null;
     if(!c.chestRolled&&Math.random()<CHEST_DROP_CHANCE){
       droppedChest=rollChest();
@@ -1754,7 +1779,6 @@ function togQ(cid,e){
       ST.pendingChests[curKid].push(droppedChest);
     }
     c.chestRolled=true;
-    // Check badges (reads updated state; saves happen below)
     checkBadges(curKid);
     save();
     if(newLevel>oldLevel){showLevelUp(m,newLevel,oldRank!==newRank?newRank:null);return;}
@@ -1763,10 +1787,15 @@ function togQ(cid,e){
     return;
   } else {
     c.done=false;
-    m.xp=Math.max(0,(m.xp||0)-c.points);
-    m.starBalance=Math.max(0,(m.starBalance||0)-c.points);
-    if(ST.weeklyStars[curKid])ST.weeklyStars[curKid]=Math.max(0,ST.weeklyStars[curKid]-c.points);
-    ST.monthlyStarsAccum=Math.max(0,(ST.monthlyStarsAccum||0)-c.points);
+    const review=ST.pendingReviews[curKid]?.find(r=>r.choreId===cid);
+    if(review){
+      ST.pendingReviews[curKid]=ST.pendingReviews[curKid].filter(r=>r.choreId!==cid);
+    } else {
+      m.xp=Math.max(0,(m.xp||0)-c.points);
+      m.starBalance=Math.max(0,(m.starBalance||0)-c.points);
+      if(ST.weeklyStars[curKid])ST.weeklyStars[curKid]=Math.max(0,ST.weeklyStars[curKid]-c.points);
+      ST.monthlyStarsAccum=Math.max(0,(ST.monthlyStarsAccum||0)-c.points);
+    }
     save();
   }
   renderQuestView();
@@ -2419,6 +2448,42 @@ function renderPin(){
   updPD();
 }
 
+function approveCompletion(kidId,choreId){
+  const review=ST.pendingReviews[kidId]?.find(r=>r.choreId===choreId);
+  if(!review){toast('Review not found');return;}
+  const kid=ST.members.find(m=>m.id===kidId);if(!kid)return;
+  const c=ST.chores.find(x=>x.id===choreId);
+  if(!c)return;
+  if(!ST.completionTimestamps[kidId])ST.completionTimestamps[kidId]=[];
+  ST.completionTimestamps[kidId].push({time:Date.now(),stars:review.stars,choreName:review.choreName});
+  kid.xp=(kid.xp||0)+review.stars;
+  kid.starBalance=(kid.starBalance||0)+review.stars;
+  if(!ST.weeklyStars[kidId])ST.weeklyStars[kidId]=0;
+  ST.weeklyStars[kidId]+=review.stars;
+  ST.monthlyStarsAccum=(ST.monthlyStarsAccum||0)+review.stars;
+  if(!ST.cumulativeStars[kidId])ST.cumulativeStars[kidId]=0;
+  ST.cumulativeStars[kidId]+=review.stars;
+  const tod=dateStr();
+  if(!ST.dailyHistory[kidId])ST.dailyHistory[kidId]={};
+  ST.dailyHistory[kidId][tod]=(ST.dailyHistory[kidId][tod]||0)+1;
+  ST.history.unshift({name:kid.name,chore:review.choreName,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),kidId:kidId,date:tod});
+  if(ST.history.length>100)ST.history.pop();
+  ST.pendingReviews[kidId]=ST.pendingReviews[kidId].filter(r=>r.choreId!==choreId);
+  save();
+  renderParent();
+  toast('✓ '+review.choreName+' approved! '+kid.name+' earned ★'+review.stars);
+}
+function denyCompletion(kidId,choreId){
+  const review=ST.pendingReviews[kidId]?.find(r=>r.choreId===choreId);
+  if(!review){toast('Review not found');return;}
+  const c=ST.chores.find(x=>x.id===choreId);
+  if(c)c.done=false;
+  ST.pendingReviews[kidId]=ST.pendingReviews[kidId].filter(r=>r.choreId!==choreId);
+  save();
+  renderParent();
+  const kid=ST.members.find(m=>m.id===kidId);
+  toast('✕ '+review.choreName+' denied');
+}
 function setParentTab(tab){window.parentTabState=tab;renderParent();}
 function renderParent(){
   const tabState=window.parentTabState||'week';
@@ -2530,7 +2595,42 @@ function renderParentWeek(kids,total,done,pct){
       <div class="af-title">📝 Today's Activity</div>
       ${actHTML}
     </div>
+
+    ${renderCompletionTimeline(kids)}
+    ${renderPendingReviews(kids)}
   </div>`;
+}
+
+function renderCompletionTimeline(kids){
+  let timelineHTML='';
+  for(const kid of kids){
+    const timestamps=ST.completionTimestamps[kid.id]||[];
+    if(!timestamps.length)continue;
+    const now=Date.now();
+    const oneHourAgo=now-3600000;
+    const recentTimestamps=timestamps.filter(t=>t.time>=oneHourAgo).sort((a,b)=>b.time-a.time);
+    if(!recentTimestamps.length)continue;
+    const cls=CLASSES[kid.classId]||CLASSES.scout;
+    const totalStars=recentTimestamps.reduce((s,t)=>s+t.stars,0);
+    timelineHTML+=`<div class="li" style="border-left:3px solid ${cls.accent}30;margin-bottom:6px;"><span style="color:${cls.accent};font-weight:700;font-size:13px;">${escHtml(kid.name)}</span> — ${recentTimestamps.map(t=>`<span style="font-size:11px;color:var(--text2);">${new Date(t.time).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})} ${t.choreName} ★${t.stars}</span>`).join(' | ')} <span style="font-weight:700;color:var(--gold);">= ★${totalStars} in 1h</span></div>`;
+  }
+  return timelineHTML?`<div class="af"><div class="af-title">⏱️ Last Hour Completions</div>${timelineHTML}</div>`:'';
+}
+
+function renderPendingReviews(kids){
+  let pendingHTML='';
+  for(const kid of kids){
+    const pending=ST.pendingReviews[kid.id]||[];
+    if(!pending.length)continue;
+    const cls=CLASSES[kid.classId]||CLASSES.scout;
+    pendingHTML+=pending.map(review=>`<div class="li" style="border-left:3px solid ${cls.accent}80;background:rgba(255,215,0,0.05);">
+      <div style="flex:1;"><div style="font-size:13px;font-weight:700;"><span style="color:${cls.accent};">${escHtml(kid.name)}</span> — ${escHtml(review.choreName)} <span style="color:var(--gold);">★${review.stars}</span></div>
+      <div style="font-size:11px;color:var(--text2);">${escHtml(review.time)} · Queued for review (rate limit reached)</div></div>
+      <button onclick="approveCompletion('${kid.id}','${review.choreId}')" style="padding:6px 12px;border-radius:999px;border:1px solid var(--green);background:rgba(52,211,153,0.08);color:var(--green);font-size:11px;font-weight:600;cursor:pointer;margin-right:4px;">✓ Approve</button>
+      <button onclick="denyCompletion('${kid.id}','${review.choreId}')" style="padding:6px 12px;border-radius:999px;border:1px solid var(--red);background:rgba(240,64,96,0.08);color:var(--red);font-size:11px;font-weight:600;cursor:pointer;">✕ Deny</button>
+    </div>`).join('');
+  }
+  return pendingHTML?`<div class="af"><div class="af-title" style="color:var(--gold);">⚠️ Pending Parent Review</div><div style="font-size:11px;color:var(--text2);margin-bottom:8px;">Child completed tasks too quickly. Verify and approve to award stars.</div>${pendingHTML}</div>`:'';
 }
 
 function renderParentGoals(){
