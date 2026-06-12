@@ -3221,7 +3221,7 @@ const GOOGLE_DRIVE_CLIENT_ID='129569219284-5gvfodn9rhinn1eu8bbsbk5v72ft4fj1.apps
 const GOOGLE_DRIVE_SCOPES=['https://www.googleapis.com/auth/drive.file'];
 
 function openGoogleDriveAuth(){
-  const redirectUri=window.location.origin+window.location.pathname;
+  const redirectUri=window.location.origin+'/';
   const authUrl=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_DRIVE_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${encodeURIComponent(GOOGLE_DRIVE_SCOPES.join(' '))}&prompt=consent`;
 
   const authWindow=window.open(authUrl,'google_auth','width=600,height=600');
