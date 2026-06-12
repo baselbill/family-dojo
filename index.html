@@ -1159,6 +1159,7 @@ function petStage(level){
   return 6; // awakened
 }
 function getPet(member){const list=PETS[member.classId]||PETS.scout;return list.find(p=>p.id===member.petId)||list[0];}
+function copyToClipboard(text){navigator.clipboard.writeText(text).then(()=>toast('Copied! ✓')).catch(e=>alert('Failed to copy'));}
 
 /* ── Streak reminder helpers ────────────────────────────────────────────── */
 function dateStr(){const d=new Date();return d.toISOString().slice(0,10);}
@@ -1739,6 +1740,28 @@ function renderQuestView(){
       return `<div class="vote-panel"><div class="vote-panel-title">🗳️ Vote for Weekly Reward</div>${note}${optBtns}</div>`;
     })()}
     <div class="quest-list ${young?'young':''}">${questsHTML}</div>
+    ${(()=>{
+      const weeklyR=(ST.rewards||[]).filter(r=>r);
+      const grandR=(ST.grandRewards||[]).filter(r=>r);
+      const allRewards=[...(weeklyR.map((r,i)=>({...r,tier:'weekly',idx:i}))||[]),...(grandR.map((r,i)=>({...r,tier:'grand',idx:i}))||[])];
+      if(!allRewards.length)return '';
+      const balance=m.starBalance||0;
+      const rewardHTML=allRewards.map(r=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;">
+          <span style="font-size:24px;">${r.emoji}</span>
+          <div>
+            <div style="font-size:12px;font-weight:600;">${escHtml(r.text)}</div>
+            <div style="font-size:10px;color:var(--text3);">${r.tier==='weekly'?'Weekly':'Grand'} Reward · ★${r.cost||100}</div>
+          </div>
+        </div>
+        <button onclick="redeemReward('${curKid}','${r.tier}',${r.idx})" style="padding:6px 12px;border-radius:6px;border:1px solid ${balance>=(r.cost||100)?'rgba(52,211,153,0.4)':'rgba(200,200,200,0.3)'};background:${balance>=(r.cost||100)?'rgba(52,211,153,0.08)':'rgba(200,200,200,0.04)'};color:${balance>=(r.cost||100)?'var(--green)':'var(--text3)'};font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;${balance<(r.cost||100)?'opacity:0.6;cursor:not-allowed;':''}">${balance>=(r.cost||100)?'Redeem':'Need '+((r.cost||100)-balance)+' more'}</button>
+      </div>`).join('');
+      return `<div style="padding:0 16px 16px;margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">💰 Redeem Rewards</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:12px;">You have <strong>★${balance}</strong> stars available to redeem</div>
+        ${rewardHTML}
+      </div>`;
+    })()}
     ${(()=>{
       const ldPrizes=(ST.luckyDraw?.prizes||[]).filter(p=>p);
       if(!ldPrizes.length)return '';
@@ -2538,6 +2561,7 @@ function renderParent(){
       <div class="pni ${tabState==='week'?'on':''}" onclick="setParentTab('week')">⚡ Daily Chores</div>
       <div class="pni ${tabState==='goals'?'on':''}" onclick="setParentTab('goals')">🎁 Rewards</div>
       <div class="pni ${tabState==='photo'?'on':''}" onclick="setParentTab('photo')">📸 Photo Setup</div>
+      <div class="pni ${tabState==='vouchers'?'on':''}" onclick="setParentTab('vouchers')">💰 Vouchers</div>
       <div class="pni ${tabState==='family'?'on':''}" onclick="setParentTab('family')">👨‍👩‍👧‍👦 Family</div>
       <div class="p-exit"><button onclick="show('home')">← Exit</button></div>
     </div>
@@ -2545,6 +2569,7 @@ function renderParent(){
       ${renderParentWeek(kids,total,done,pct)}
       ${renderParentGoals()}
       ${renderParentPhoto()}
+      ${renderParentVouchers()}
       ${renderParentFamily()}
     </div>
   </div>`;
@@ -2857,6 +2882,92 @@ function renderParentPhoto(){
   </div>`;
 }
 
+function renderParentVouchers(){
+  const allVouchers=ST.rewardVouchers||[];
+  const pending=allVouchers.filter(v=>v.status==='pending');
+  const approved=allVouchers.filter(v=>v.status==='approved');
+  const claimed=allVouchers.filter(v=>v.status==='claimed');
+
+  return `<div class="ps" id="ps-vouchers">
+    <div class="ptitle">💰 Reward Vouchers</div>
+    <div class="psub">Approve reward redemptions and track usage</div>
+
+    ${pending.length>0?`<div class="af" style="border:1px solid rgba(251,191,36,0.3);background:rgba(251,191,36,0.08);border-radius:var(--radius);padding:14px;">
+      <div class="af-title" style="color:#fbbf24;">⏳ Pending Approval (${pending.length})</div>
+      ${pending.map(v=>{
+        const kid=ST.members.find(m=>m.id===v.kidId);
+        const cls=CLASSES[kid?.classId]||CLASSES.scout;
+        return `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;justify-content:space-between;">
+          <div>
+            <div style="color:${cls?.accent||'var(--text)'};font-weight:600;margin-bottom:2px;">${escHtml(kid?.name||'Unknown')}</div>
+            <div style="font-size:13px;color:var(--text);">${v.rewardEmoji} <strong>${escHtml(v.rewardName)}</strong></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">★${v.stars} · Requested ${new Date(v.requestedAt).toLocaleDateString()}</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0;">
+            <button onclick="approveVoucher('${v.id}')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--green);background:rgba(52,211,153,0.08);color:var(--green);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">✓ Approve</button>
+            <button onclick="if(confirm('Deny this voucher? Stars will be refunded to ${escHtml(kid?.name||'the child')}.')){denyVoucher('${v.id}');}" style="padding:6px 12px;border-radius:8px;border:1px solid var(--red);background:rgba(240,64,96,0.08);color:var(--red);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">✕ Deny</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`:''}
+
+    ${approved.length>0?`<div class="af" style="margin-top:12px;">
+      <div class="af-title">✓ Ready to Claim (${approved.length})</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">These vouchers are approved. Child shows the code to claim their reward.</div>
+      ${approved.map(v=>{
+        const kid=ST.members.find(m=>m.id===v.kidId);
+        const cls=CLASSES[kid?.classId]||CLASSES.scout;
+        return `<div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.3);border-radius:var(--radius);padding:12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="color:${cls?.accent||'var(--text)'};font-weight:600;margin-bottom:2px;">${escHtml(kid?.name||'Unknown')}</div>
+            <div style="font-size:13px;color:var(--text);">${v.rewardEmoji} ${escHtml(v.rewardName)}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;">Code: <strong>${v.redeemCode}</strong></div>
+          </div>
+          <button onclick="claimVoucher('${v.id}')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--green);background:rgba(52,211,153,0.15);color:var(--green);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">Mark Claimed</button>
+        </div>`;
+      }).join('')}
+    </div>`:''}
+
+    ${claimed.length>0?`<div class="af" style="margin-top:12px;">
+      <div class="af-title">📜 Claimed History</div>
+      <div style="max-height:400px;overflow-y:auto;">
+        ${claimed.slice(0,50).map(v=>{
+          const kid=ST.members.find(m=>m.id===v.kidId);
+          const cls=CLASSES[kid?.classId]||CLASSES.scout;
+          return `<div style="font-size:12px;padding:8px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;">
+            <span><span style="color:${cls?.accent||'var(--text)'}; font-weight:600;">${escHtml(kid?.name||'Unknown')}</span> — ${v.rewardEmoji} ${escHtml(v.rewardName)}</span>
+            <span style="color:var(--text3);">${new Date(v.redeemedAt).toLocaleDateString()}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`:''}
+
+    ${pending.length===0&&approved.length===0&&claimed.length===0?`<div style="padding:20px;text-align:center;color:var(--text3);font-size:12px;">
+      No voucher activity yet. Children will create vouchers when they redeem rewards.
+    </div>`:''}
+  </div>`;
+}
+
+function approveVoucher(voucherId){
+  const v=ST.rewardVouchers.find(x=>x.id===voucherId);if(!v)return;
+  v.status='approved';v.approvedAt=new Date().toISOString();
+  save();renderParent();
+}
+
+function denyVoucher(voucherId){
+  const v=ST.rewardVouchers.find(x=>x.id===voucherId);if(!v)return;
+  const kid=ST.members.find(m=>m.id===v.kidId);if(!kid)return;
+  kid.starBalance+=v.stars;
+  ST.rewardVouchers=ST.rewardVouchers.filter(x=>x.id!==voucherId);
+  save();renderParent();
+}
+
+function claimVoucher(voucherId){
+  const v=ST.rewardVouchers.find(x=>x.id===voucherId);if(!v)return;
+  v.status='claimed';v.redeemedAt=new Date().toISOString();
+  save();renderParent();
+}
+
 function renderParentFamily(){
   const kids=ST.members.filter(m=>!m.isParent);
   const parents=ST.members.filter(m=>m.isParent);
@@ -3084,6 +3195,25 @@ function moveChore(id,dir){
   const otherIdx=kidIdx[newPos];
   [ST.chores[myIdx],ST.chores[otherIdx]]=[ST.chores[otherIdx],ST.chores[myIdx]];
   save();renderParent();
+}
+
+/* ── Reward Voucher Functions ─────────────────────────────────────────── */
+function redeemReward(kidId,tier,rewardIdx){
+  const kid=ST.members.find(m=>m.id===kidId);if(!kid)return;
+  const {obj,key}=_rpKey(tier);
+  const reward=obj[key]?.[rewardIdx];
+  if(!reward)return;
+  const starCost=reward.cost||100;
+  if(kid.starBalance<starCost){
+    alert(`You need ${starCost} stars. You have ${kid.starBalance}.`);
+    return;
+  }
+  const voucherId='v_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+  ST.rewardVouchers.push({id:voucherId,kidId:kidId,rewardName:reward.text,rewardEmoji:reward.emoji,tier:tier,rewardIdx:rewardIdx,stars:starCost,status:'pending',requestedAt:new Date().toISOString(),approvedAt:null,redeemedAt:null,removedAt:null,removalReason:null,removalComment:'',starRefunded:false,redeemCode:voucherId.slice(2,8).toUpperCase()});
+  kid.starBalance-=starCost;
+  save();
+  renderQuestView();
+  toast(`✓ Voucher created! Ask a parent to approve it.`);
 }
 
 /* ── Google Drive Photo Upload ──────────────────────────────────────── */
@@ -3954,6 +4084,56 @@ function renderHeroProfile(kidId){
         <div class="profile-section-sub">Your most-completed missions</div>
         ${topQuestHTML}
       </div>
+
+      <!-- Vouchers -->
+      ${(()=>{
+        const myVouchers=ST.rewardVouchers.filter(v=>v.kidId===kidId);
+        const pending=myVouchers.filter(v=>v.status==='pending');
+        const approved=myVouchers.filter(v=>v.status==='approved');
+        const claimed=myVouchers.filter(v=>v.status==='claimed');
+        if(myVouchers.length===0)return '';
+        return `<div class="profile-section">
+          <div class="profile-section-title">💰 Your Vouchers</div>
+          ${pending.length>0?`
+            <div style="margin-bottom:12px;">
+              <div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">⏳ Pending Approval</div>
+              ${pending.map(v=>`<div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.3);border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+                <span style="font-size:20px;">${v.rewardEmoji}</span>
+                <div style="flex:1;">
+                  <div style="font-size:12px;font-weight:600;color:var(--text);">${escHtml(v.rewardName)}</div>
+                  <div style="font-size:10px;color:var(--text3);">★${v.stars} · Waiting for parent approval</div>
+                </div>
+              </div>`).join('')}
+            </div>
+          `:''}
+          ${approved.length>0?`
+            <div style="margin-bottom:12px;">
+              <div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">✓ Ready to Claim</div>
+              ${approved.map(v=>`<div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.3);border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:8px;flex:1;">
+                  <span style="font-size:20px;">${v.rewardEmoji}</span>
+                  <div>
+                    <div style="font-size:12px;font-weight:600;color:var(--text);">${escHtml(v.rewardName)}</div>
+                    <div style="font-size:10px;color:var(--text3);">Code: #${v.id.slice(2,8).toUpperCase()}</div>
+                  </div>
+                </div>
+                <button onclick="copyToClipboard('#${v.id.slice(2,8).toUpperCase()}')" style="padding:4px 8px;border-radius:6px;border:1px solid rgba(52,211,153,0.4);background:rgba(52,211,153,0.08);color:var(--green);font-size:10px;cursor:pointer;font-family:inherit;font-weight:600;">Copy Code</button>
+              </div>`).join('')}
+            </div>
+          `:''}
+          ${claimed.length>0?`
+            <div style="margin-bottom:12px;">
+              <div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">📜 Claimed</div>
+              <div style="max-height:150px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">
+                ${claimed.slice(0,5).map(v=>`<div style="font-size:11px;padding:6px;background:rgba(255,255,255,0.04);border-radius:6px;display:flex;justify-content:space-between;">
+                  <span><span style="font-size:14px;margin-right:4px;">${v.rewardEmoji}</span>${escHtml(v.rewardName)}</span>
+                  <span style="color:var(--text3);">${new Date(v.claimedAt).toLocaleDateString()}</span>
+                </div>`).join('')}
+              </div>
+            </div>
+          `:''}
+        </div>`;
+      })()}
 
       <!-- Badges -->
       <div class="profile-section" style="margin-bottom:32px;">
