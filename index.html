@@ -2895,7 +2895,7 @@ function renderParentVouchers(){
             <div style="font-size:11px;color:var(--text3);margin-top:2px;">★${v.stars} · Requested ${new Date(v.requestedAt).toLocaleDateString()}</div>
           </div>
           <div style="display:flex;gap:6px;flex-shrink:0;">
-            <button onclick="approveVoucher('${v.id}')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--green);background:rgba(52,211,153,0.08);color:var(--green);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">✓ Approve</button>
+            <button onclick="if(confirm('Approve this voucher? The child can then claim their reward.')){approveVoucher('${v.id}');}" style="padding:6px 12px;border-radius:8px;border:1px solid var(--green);background:rgba(52,211,153,0.08);color:var(--green);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">✓ Approve</button>
             <button onclick="if(confirm('Deny this voucher? Stars will be refunded to ${escHtml(kid?.name||'the child')}.')){denyVoucher('${v.id}');}" style="padding:6px 12px;border-radius:8px;border:1px solid var(--red);background:rgba(240,64,96,0.08);color:var(--red);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">✕ Deny</button>
           </div>
         </div>`;
@@ -2941,8 +2941,10 @@ function renderParentVouchers(){
 
 function approveVoucher(voucherId){
   const v=ST.rewardVouchers.find(x=>x.id===voucherId);if(!v)return;
+  const kid=ST.members.find(m=>m.id===v.kidId);
   v.status='approved';v.approvedAt=new Date().toISOString();
   save();renderParent();
+  toast(`✓ Approved ${v.rewardEmoji} for ${kid?.name||'child'}`);
 }
 
 function denyVoucher(voucherId){
