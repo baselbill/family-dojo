@@ -159,6 +159,11 @@
   .shop-buy-btn{margin-top:auto;padding:8px 10px;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;border:1px solid var(--green);background:rgba(52,211,153,0.12);color:var(--green);transition:opacity 0.15s,box-shadow 0.15s;}
   .shop-buy-btn:hover{box-shadow:0 0 12px rgba(52,211,153,0.4);}
   .shop-buy-btn:disabled{border-color:rgba(160,168,200,0.25);background:rgba(160,168,200,0.06);color:var(--text3);cursor:not-allowed;box-shadow:none;}
+  .shop-open-btn{width:100%;display:flex;flex-direction:column;align-items:center;gap:2px;padding:14px;margin:0 0 14px;border-radius:12px;cursor:pointer;font-family:inherit;border:1px solid rgba(52,211,153,0.4);background:linear-gradient(100deg,rgba(52,211,153,0.16),rgba(0,229,255,0.08));color:var(--text);font-size:15px;font-weight:800;transition:transform 0.15s,box-shadow 0.15s;}
+  .shop-open-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(52,211,153,0.22);}
+  .shop-open-btn:active{transform:scale(0.99);}
+  .shop-open-sub{font-size:11px;font-weight:600;color:var(--green);}
+  .shop-modal-head{position:sticky;top:0;z-index:3;padding:18px 16px 12px;background:linear-gradient(180deg,#14193a 75%,rgba(20,25,58,0.85));border-bottom:1px solid var(--border);margin-bottom:8px;}
   .shop-raffle{padding:16px;border-radius:14px;background:radial-gradient(120% 120% at 0% 0%,rgba(255,107,53,0.14),rgba(255,107,53,0.04));border:1px solid rgba(255,107,53,0.3);margin-bottom:18px;}
   .shop-raffle-title{font-size:15px;font-weight:800;color:#ff9966;margin-bottom:4px;}
   /* Dramatic lucky draw reveal */
@@ -3201,7 +3206,8 @@ function buyShopItem(kidId,itemId){
   ST.rewardVouchers.push({id:voucherId,kidId:kidId,itemId:item.id,rewardName:item.n,rewardEmoji:item.e,category:item.cat,stars:cost,status:'approved',requestedAt:new Date().toISOString(),approvedAt:new Date().toISOString(),redeemedAt:null,redeemCode:code});
   kid.starBalance=(kid.starBalance||0)-cost;
   save();
-  renderHeroProfile(kidId);
+  if(document.getElementById('rewards-shop-modal'))openRewardsShop(kidId);
+  else renderHeroProfile(kidId);
   toast(`🛒 Bought ${item.e} ${item.n}! Code #${code} — show a parent to claim.`);
   const cx=window.innerWidth/2,cy=window.innerHeight/2;confettiBurst(cx,cy);
 }
@@ -3833,12 +3839,11 @@ function buildStarfield(kidId,clsAccent,weeks){
 }
 
 // The child's reward hub: shop catalog (age-filtered) + raffle ticket buying.
-function renderShopSection(kidId){
+// Builds the age-filtered catalog markup (used inside the dedicated shop modal).
+function buildShopCatalogHTML(kidId){
   const kid=ST.members.find(m=>m.id===kidId);if(!kid)return '';
   const balance=kid.starBalance||0;
   const items=shopItemsForKid(kid);
-
-  // Shop grouped by category
   let catsHTML='';
   for(const cat of SHOP_CATS){
     const catItems=items.filter(it=>it.cat===cat.id).sort((a,b)=>a.cost-b.cost);
@@ -3860,9 +3865,35 @@ function renderShopSection(kidId){
       <div class="shop-grid">${itemsHTML}</div>
     </div>`;
   }
-  if(!catsHTML)catsHTML='<div style="font-size:12px;color:var(--text3);padding:6px 0;">No shop items available yet — a parent can set them up in Parent Zone → Shop.</div>';
+  return catsHTML||'<div style="font-size:12px;color:var(--text3);padding:6px 0;">No shop items available yet — a parent can set them up in Parent Zone → Rewards.</div>';
+}
+// Full-screen shop modal (opened from the profile so the profile stays short).
+function openRewardsShop(kidId){
+  const kid=ST.members.find(m=>m.id===kidId);if(!kid)return;
+  curKid=kidId;
+  const balance=kid.starBalance||0;
+  const host=document.getElementById('modal-host');
+  host.innerHTML=`<div class="profile-bg" id="rewards-shop-modal" onclick="if(event.target.id==='rewards-shop-modal')closeRewardsShop('${kidId}');">
+    <div class="profile-modal">
+      <button class="profile-close-btn" onclick="closeRewardsShop('${kidId}')">✕</button>
+      <div class="shop-modal-head">
+        <div class="profile-section-title" style="margin:0;">🛒 Rewards Shop</div>
+        <div class="shop-balance" style="margin:8px 0 0;"><span style="font-size:18px;">⭐</span><span class="shop-balance-val">★ ${balance}</span><span style="font-size:12px;color:var(--text2);">to spend</span></div>
+      </div>
+      <div style="padding:0 16px 28px;">${buildShopCatalogHTML(kidId)}</div>
+    </div>
+  </div>`;
+  const mod=document.querySelector('#rewards-shop-modal .profile-modal');if(mod)mod.scrollTop=0;
+}
+function closeRewardsShop(kidId){renderHeroProfile(kidId);}
 
-  // Raffle / lucky draw
+// Compact profile card: star balance, a button into the shop, and the raffle.
+function renderShopSection(kidId){
+  const kid=ST.members.find(m=>m.id===kidId);if(!kid)return '';
+  const balance=kid.starBalance||0;
+  const affordable=shopItemsForKid(kid).filter(it=>balance>=it.cost).length;
+
+  // Raffle / lucky draw (kept compact and actionable in the profile)
   const ldPrizes=(ST.luckyDraw?.prizes||[]).filter(p=>p);
   const ldTickets=(ST.luckyDraw?.entries||{})[kidId]||0;
   const totalTickets=Object.values(ST.luckyDraw?.entries||{}).reduce((s,n)=>s+n,0);
@@ -3877,15 +3908,17 @@ function renderShopSection(kidId){
 
   return `<div class="profile-section">
     <div class="profile-section-title">🛒 Rewards Shop</div>
-    <div class="profile-section-sub">Spend your stars on real rewards — a parent sets them up</div>
     <div class="shop-balance"><span style="font-size:20px;">⭐</span><span class="shop-balance-val">★ ${balance}</span><span style="font-size:12px;color:var(--text2);">to spend</span></div>
+    <button class="shop-open-btn" onclick="openRewardsShop('${kidId}')">
+      <span>🛒 Open the Rewards Shop</span>
+      <span class="shop-open-sub">${affordable>0?affordable+' reward'+(affordable!==1?'s':'')+' you can afford →':'Browse rewards →'}</span>
+    </button>
     <div class="shop-raffle">
       <div class="shop-raffle-title">🎟️ Monthly Lucky Draw</div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">You have <strong style="color:#ff9966;">${ldTickets}</strong> ticket${ldTickets!==1?'s':''} · ${totalTickets} in the whole pool</div>
       <div class="goal-rewards" style="margin-bottom:4px;">${prizeChips}</div>
       ${slider}
     </div>
-    ${catsHTML}
   </div>`;
 }
 
