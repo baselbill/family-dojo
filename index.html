@@ -73,6 +73,15 @@
 
   /* Goals */
   .goals-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 28px 0;}
+  /* Home top: verse + lucky draw feature */
+  .home-top{display:grid;grid-template-columns:1.3fr 1fr;gap:14px;margin:14px 28px 0;align-items:stretch;}
+  .home-top .home-verse{margin:0;}
+  .draw-feature{position:relative;overflow:hidden;border-radius:var(--radius);padding:16px 18px;background:radial-gradient(120% 120% at 100% 0%,rgba(255,107,53,0.16),rgba(255,107,53,0.04));border:1px solid rgba(255,107,53,0.35);}
+  .draw-feature-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+  .draw-feature-title{font-size:15px;font-weight:800;color:#ff9966;}
+  .draw-feature-pool{font-size:11px;font-weight:700;color:#ff9966;background:rgba(255,107,53,0.14);border:1px solid rgba(255,107,53,0.35);border-radius:999px;padding:3px 10px;white-space:nowrap;}
+  .draw-feature-foot{font-size:11px;color:var(--text2);margin-top:10px;font-style:italic;}
+  @media(max-width:760px){.home-top{grid-template-columns:1fr;margin-left:18px;margin-right:18px;}}
   .goal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;backdrop-filter:blur(10px);position:relative;overflow:hidden;}
   .goal.weekly{border-color:rgba(124,111,247,0.3);}
   .goal.monthly{border-color:rgba(106,138,255,0.3);}
@@ -127,6 +136,45 @@
   .vote-opt-emoji{font-size:22px;flex-shrink:0;}
   .vote-opt-text{font-size:14px;font-weight:600;color:var(--text);flex:1;}
   .vote-opt-check{font-size:13px;font-weight:700;color:#a89bff;background:rgba(168,155,255,0.2);border:1px solid rgba(168,155,255,0.4);border-radius:999px;padding:2px 8px;white-space:nowrap;}
+  /* Quest view → shop call-to-action */
+  .shop-cta{margin:14px 32px 24px;padding:16px 18px;border-radius:14px;cursor:pointer;display:flex;align-items:center;gap:14px;background:linear-gradient(100deg,rgba(52,211,153,0.12),rgba(0,229,255,0.08));border:1px solid rgba(52,211,153,0.3);transition:transform 0.15s,box-shadow 0.15s;}
+  .shop-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(52,211,153,0.2);}
+  .shop-cta:active{transform:scale(0.99);}
+  .shop-cta-icon{font-size:34px;flex-shrink:0;}
+  .shop-cta-title{font-size:15px;font-weight:800;color:var(--text);}
+  .shop-cta-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+  .shop-cta-go{font-size:13px;font-weight:700;color:var(--green);white-space:nowrap;}
+  /* Rewards shop (profile portal) */
+  .shop-balance{display:flex;align-items:center;gap:8px;padding:12px 16px;border-radius:12px;background:linear-gradient(100deg,rgba(255,215,0,0.12),transparent);border:1px solid rgba(255,215,0,0.3);margin-bottom:14px;}
+  .shop-balance-val{font-size:22px;font-weight:800;color:var(--gold);}
+  .shop-cat{margin-bottom:18px;}
+  .shop-cat-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;margin-bottom:10px;letter-spacing:0.3px;}
+  .shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:560px){.shop-grid{grid-template-columns:1fr;}}
+  .shop-item{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:12px;background:rgba(20,25,58,0.55);border:1px solid var(--border);transition:border-color 0.15s,transform 0.15s;}
+  .shop-item.afford{border-color:rgba(52,211,153,0.35);}
+  .shop-item-top{display:flex;align-items:center;gap:10px;}
+  .shop-item-emoji{font-size:26px;flex-shrink:0;}
+  .shop-item-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.25;}
+  .shop-buy-btn{margin-top:auto;padding:8px 10px;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;border:1px solid var(--green);background:rgba(52,211,153,0.12);color:var(--green);transition:opacity 0.15s,box-shadow 0.15s;}
+  .shop-buy-btn:hover{box-shadow:0 0 12px rgba(52,211,153,0.4);}
+  .shop-buy-btn:disabled{border-color:rgba(160,168,200,0.25);background:rgba(160,168,200,0.06);color:var(--text3);cursor:not-allowed;box-shadow:none;}
+  .shop-raffle{padding:16px;border-radius:14px;background:radial-gradient(120% 120% at 0% 0%,rgba(255,107,53,0.14),rgba(255,107,53,0.04));border:1px solid rgba(255,107,53,0.3);margin-bottom:18px;}
+  .shop-raffle-title{font-size:15px;font-weight:800;color:#ff9966;margin-bottom:4px;}
+  /* Dramatic lucky draw reveal */
+  .draw-stage-bg{position:fixed;inset:0;background:rgba(4,6,16,0.92);z-index:9000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;}
+  .draw-stage-title{font-size:22px;font-weight:800;color:#ff9966;letter-spacing:1px;text-transform:uppercase;animation:drawPulse 0.8s ease-in-out infinite;}
+  @keyframes drawPulse{0%,100%{opacity:0.6;transform:scale(0.97);}50%{opacity:1;transform:scale(1.03);}}
+  .draw-reel{width:min(86vw,420px);height:120px;overflow:hidden;border-radius:18px;border:2px solid rgba(255,107,53,0.5);background:rgba(20,25,58,0.85);box-shadow:0 0 40px rgba(255,107,53,0.3),inset 0 0 30px rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;position:relative;}
+  .draw-reel::before,.draw-reel::after{content:'';position:absolute;left:0;right:0;height:36px;z-index:2;pointer-events:none;}
+  .draw-reel::before{top:0;background:linear-gradient(180deg,rgba(20,25,58,0.95),transparent);}
+  .draw-reel::after{bottom:0;background:linear-gradient(0deg,rgba(20,25,58,0.95),transparent);}
+  .draw-reel-name{font-size:34px;font-weight:800;color:#fff;text-shadow:0 0 18px rgba(255,153,102,0.6);}
+  .draw-countdown{font-size:60px;font-weight:900;color:#ffd700;text-shadow:0 0 30px rgba(255,215,0,0.6);animation:drawPulse 0.5s ease-in-out;}
+  .draw-skip{padding:8px 18px;border-radius:999px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.06);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+  /* Parent shop editor rows */
+  .shop-edit-row{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.05);}
+  .shop-edit-row.off{opacity:0.75;}
 
   /* Section labels */
   .sec-lbl{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin:18px 28px 10px;display:flex;align-items:center;gap:8px;}
@@ -1012,6 +1060,67 @@ const REWARD_SUGS={
   treats:[{e:"🍫",t:"Choose a special dessert"},{e:"📚",t:"New manga volume"},{e:"🧁",t:"Bake a cake together"},{e:"🎁",t:"Small surprise treat bag"},{e:"🌮",t:"Favourite restaurant for dinner"}]
 };
 
+/* ── Rewards Shop ─────────────────────────────────────────────────────────
+   One unified catalog kids buy with their star balance. Categories group the
+   shop; cost reflects perceived value (aspirational scale, 25–1500★); aMin/aMax
+   age-band each item so children only see age-appropriate rewards. Parents can
+   edit cost, toggle items off, or add custom items (stored live in ST.shopItems). */
+const SHOP_CATS=[
+  {id:'treats', label:'Treats & Snacks',      emoji:'🍬', color:'#f59e0b'},
+  {id:'screen', label:'Screen & Game Time',   emoji:'📺', color:'#38bdf8'},
+  {id:'privs',  label:'Privileges',           emoji:'👑', color:'#a78bfa'},
+  {id:'toys',   label:'Toys & Things',        emoji:'🎁', color:'#f472b6'},
+  {id:'outings',label:'Outings & Adventures', emoji:'🎢', color:'#34d399'},
+  {id:'giving', label:'Giving & Kindness',    emoji:'❤️', color:'#fb7185'},
+];
+const SHOP_CATALOG=[
+  // Treats & Snacks
+  {id:'t1', e:'🍨', n:"Choose tonight's dessert",    cat:'treats',  cost:25,  aMin:3, aMax:16},
+  {id:'t2', e:'🍫', n:'Candy or chocolate bar',      cat:'treats',  cost:35,  aMin:3, aMax:16},
+  {id:'t3', e:'🥞', n:'Pick a special breakfast',    cat:'treats',  cost:60,  aMin:3, aMax:16},
+  {id:'t4', e:'🍪', n:'Bake cookies together',       cat:'treats',  cost:90,  aMin:3, aMax:16},
+  {id:'t5', e:'🍕', n:'Favourite takeaway dinner',   cat:'treats',  cost:250, aMin:3, aMax:16},
+  // Screen & Game Time
+  {id:'s1', e:'📺', n:'Watch 1 hour of TV / anime',  cat:'screen',  cost:50,  aMin:3, aMax:16},
+  {id:'s2', e:'🎮', n:'30 minutes of gaming',        cat:'screen',  cost:50,  aMin:4, aMax:16},
+  {id:'s3', e:'🎮', n:'60 minutes of gaming',        cat:'screen',  cost:90,  aMin:4, aMax:16},
+  {id:'s4', e:'🎬', n:"Choose Friday's movie",       cat:'screen',  cost:80,  aMin:3, aMax:16},
+  {id:'s5', e:'📱', n:'30 min extra device time',    cat:'screen',  cost:60,  aMin:5, aMax:16},
+  {id:'s6', e:'🕹️', n:'Family game tournament night',cat:'screen',  cost:200, aMin:5, aMax:16},
+  // Privileges
+  {id:'p1', e:'🌙', n:'Stay up 30 minutes late',     cat:'privs',   cost:50,  aMin:3, aMax:16},
+  {id:'p2', e:'🛏️', n:'Sleep in on Saturday',        cat:'privs',   cost:60,  aMin:3, aMax:16},
+  {id:'p3', e:'🍽️', n:"Choose what's for dinner",    cat:'privs',   cost:70,  aMin:3, aMax:16},
+  {id:'p4', e:'🚫', n:'Skip one chore',              cat:'privs',   cost:120, aMin:5, aMax:16},
+  {id:'p5', e:'📺', n:'Control the remote for a night',cat:'privs',  cost:55,  aMin:3, aMax:16},
+  {id:'p6', e:'👑', n:'Be in charge for an hour',     cat:'privs',   cost:100, aMin:4, aMax:12},
+  {id:'p7', e:'🎵', n:'Pick the car music',          cat:'privs',   cost:30,  aMin:3, aMax:16},
+  // Toys & Things
+  {id:'y1', e:'🎨', n:'Art & craft supplies',        cat:'toys',    cost:250, aMin:3, aMax:16},
+  {id:'y2', e:'📚', n:'A new book',                  cat:'toys',    cost:220, aMin:4, aMax:16},
+  {id:'y3', e:'📖', n:'A new manga volume',          cat:'toys',    cost:280, aMin:8, aMax:16},
+  {id:'y4', e:'🧸', n:'A small surprise toy',        cat:'toys',    cost:200, aMin:3, aMax:10},
+  {id:'y5', e:'🧱', n:'A LEGO set',                  cat:'toys',    cost:600, aMin:4, aMax:16},
+  {id:'y6', e:'🎮', n:'A new video game',            cat:'toys',    cost:1200,aMin:8, aMax:16},
+  {id:'y7', e:'🎧', n:'Headphones or accessory',     cat:'toys',    cost:900, aMin:10,aMax:16},
+  {id:'y8', e:'⚽', n:'Sports gear or a new ball',    cat:'toys',    cost:400, aMin:5, aMax:16},
+  // Outings & Adventures
+  {id:'o1', e:'🍦', n:'Ice cream outing',            cat:'outings', cost:150, aMin:3, aMax:16},
+  {id:'o2', e:'🌳', n:'Trip to the park or forest',  cat:'outings', cost:120, aMin:3, aMax:16},
+  {id:'o3', e:'🎳', n:'Bowling night out',           cat:'outings', cost:400, aMin:4, aMax:16},
+  {id:'o4', e:'🏊', n:'Swimming pool day',           cat:'outings', cost:350, aMin:3, aMax:16},
+  {id:'o5', e:'⛳', n:'Mini golf adventure',          cat:'outings', cost:350, aMin:4, aMax:16},
+  {id:'o6', e:'🎬', n:'Movie theatre trip',          cat:'outings', cost:450, aMin:4, aMax:16},
+  {id:'o7', e:'🦁', n:'Zoo or aquarium day',         cat:'outings', cost:800, aMin:3, aMax:16},
+  {id:'o8', e:'🎢', n:'Theme park day',              cat:'outings', cost:1500,aMin:5, aMax:16},
+  // Giving & Kindness
+  {id:'g1', e:'🎁', n:'Buy a treat for a sibling',   cat:'giving',  cost:60,  aMin:3, aMax:16},
+  {id:'g2', e:'❤️', n:'Donate stars to a cause (parent matches)',cat:'giving',cost:120,aMin:5,aMax:16},
+  {id:'g3', e:'🤝', n:'A small gift for a friend',   cat:'giving',  cost:180, aMin:5, aMax:16},
+  {id:'g4', e:'⛪', n:'Give to church or a family in need',cat:'giving',cost:250,aMin:6,aMax:16},
+];
+function seedShopItems(){return SHOP_CATALOG.map(it=>({...it, enabled:true, custom:false}));}
+
 /* ---------- 2. STATE ---------- */
 let ST={};
 let pinBuf="",curKid=null,qlFlt='All',rsugCtx={tier:'weekly',slot:0},expandedQL=null;
@@ -1050,6 +1159,7 @@ function defaultState(){
     completionTimestamps:{},
     pendingReviews:{},
     rewardVouchers:[],
+    shopItems:seedShopItems(),
   };
 }
 
@@ -1121,6 +1231,7 @@ function ensureFields(){
     ST.onboardingDone=(ST.members||[]).filter(m=>!m.isParent).length>0;
   if(ST.pin===undefined)ST.pin='';
   if(!ST.rewardVouchers)ST.rewardVouchers=[];
+  if(!Array.isArray(ST.shopItems)||!ST.shopItems.length)ST.shopItems=seedShopItems();
 }
 
 /* ---------- 3. HELPERS ---------- */
@@ -1395,8 +1506,6 @@ function renderHome(){
   const total=ST.chores.length;
   const done=ST.chores.filter(c=>c.done).length;
   const pct=total>0?Math.round((done/total)*100):0;
-  const dow=today.getDay();
-  const grandStars=totalStars();
   const drawEntries=ST.luckyDraw?.entries||{};
   const totalTickets=Object.values(drawEntries).reduce((s,n)=>s+n,0);
 
@@ -1419,32 +1528,11 @@ function renderHome(){
   // Verse of the day
   const v=V[(dayOfYear()-1)%V.length];
 
-  // Days row (Mon-Fri)
-  let daysHTML='';
-  ['Mon','Tue','Wed','Thu','Fri'].forEach((dn,i)=>{
-    const dayNum=i+1;
-    const filled=dow>dayNum||dow===dayNum;
-    const isToday=dow===dayNum;
-    daysHTML+=`<div class="day-dot ${filled?'filled':''} ${isToday?'today':''}"><div class="dl">${dn}</div><div class="dc">${filled?'✓':''}</div></div>`;
-  });
-
-  // Weekly rewards display
-  const weeklyR=(ST.rewards||[]).filter(r=>r);
-  const weeklyRHTML=weeklyR.length?weeklyR.map(r=>`<span class="reward-chip">${r.emoji} ${escHtml(r.text)}</span>`).join(''):'<span style="font-size:11px;color:var(--text3);">No reward set</span>';
-  const weeklyUnlocked=pct>=ST.threshold&&total>0;
-  const votingActive=ST.weeklyVote?.active&&(ST.weeklyVote?.options||[]).some(o=>o);
-
-  // Lucky draw card
+  // Lucky draw showcase (home top feature)
   const drawPrizes=(ST.luckyDraw?.prizes||[]).filter(p=>p);
   const drawPrizesHTML=drawPrizes.length?drawPrizes.map(p=>`<span class="reward-chip" style="border-color:rgba(255,107,53,0.4);">${p.emoji} ${escHtml(p.text)}</span>`).join(''):'<span style="font-size:11px;color:var(--text2);font-style:italic;">No prizes set yet — add in Parent Zone</span>';
   const kidsForDraw=ST.members.filter(m=>!m.isParent);
   const drawPoolHTML=kidsForDraw.map(k=>`<div class="draw-pool-row"><span class="draw-pool-name">${escHtml(k.name)}</span><span class="draw-pool-tickets">🎟 ${drawEntries[k.id]||0} · ★ ${k.starBalance||0}</span></div>`).join('');
-
-  // Grand rewards
-  const grandR=(ST.grandRewards||[]).filter(r=>r);
-  const grandRHTML=grandR.length?grandR.map(r=>`<span class="reward-chip" style="border-color:rgba(255,215,0,0.4);">${r.emoji} ${escHtml(r.text)}</span>`).join(''):'<span style="font-size:11px;color:var(--text3);">No grand reward</span>';
-  const grandPct=ST.grandStarTarget>0?Math.min(100,Math.round((grandStars/ST.grandStarTarget)*100)):0;
-  const grandUnlocked=ST.grandStarTarget>0&&grandStars>=ST.grandStarTarget;
 
   // Hero cards (4 kids)
   const kids=ST.members.filter(m=>!m.isParent);
@@ -1542,34 +1630,21 @@ function renderHome(){
       </div>
     </div>
     ${bdayHTML}
-    <div class="verse">
-      <div class="verse-tag">✝ Verse of the Day</div>
-      <div class="verse-text">"${escHtml(v.t)}"</div>
-      <div class="verse-ref">${escHtml(v.r)}</div>
-      <button class="verse-aud" onclick="speakVerse()">🔊 Listen</button>
-    </div>
-    <div class="goals-row">
-      <div class="goal weekly">
-        <div class="goal-tag">⚡ Weekly · Mon–Fri</div>
-        <div class="goal-rewards">${weeklyRHTML}</div>
-        <div class="days-row">${daysHTML}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;"></div></div>
-        <div class="goal-meta"><span>${done} of ${total} done</span><span>${pct}% · need ${ST.threshold}%</span></div>
-        ${weeklyUnlocked?'<div class="goal-unlocked">🎉 Weekly goal reached!</div>':''}
-        ${votingActive?'<div class="vote-banner">🗳️ Vote open — tap your hero to vote!</div>':''}
+    <div class="home-top">
+      <div class="verse home-verse">
+        <div class="verse-tag">✝ Verse of the Day</div>
+        <div class="verse-text">"${escHtml(v.t)}"</div>
+        <div class="verse-ref">${escHtml(v.r)}</div>
+        <button class="verse-aud" onclick="speakVerse()">🔊 Listen</button>
       </div>
-      <div class="goal draw">
-        <div class="goal-tag">🎟️ Monthly Lucky Draw</div>
-        <div class="goal-rewards">${drawPrizesHTML}</div>
+      <div class="draw-feature">
+        <div class="draw-feature-head">
+          <div class="draw-feature-title">🎟️ Monthly Lucky Draw</div>
+          <div class="draw-feature-pool">${totalTickets} ticket${totalTickets!==1?'s':''} in pool</div>
+        </div>
+        <div class="goal-rewards" style="margin:4px 0 10px;">${drawPrizesHTML}</div>
         <div class="draw-pool">${drawPoolHTML}</div>
-        <div class="goal-meta"><span>${totalTickets} ticket${totalTickets!==1?'s':''} in pool</span><span>Earn ★ → buy tickets</span></div>
-      </div>
-      <div class="goal grand">
-        <div class="goal-tag">👑 Grand Saga</div>
-        <div class="goal-rewards">${grandRHTML}</div>
-        <div style="margin:10px 0 6px;"><div class="bar-track"><div class="bar-fill" style="width:${grandPct}%;"></div></div></div>
-        <div class="goal-meta"><span>${grandStars} stars total</span><span>${ST.grandStarTarget>0?grandPct+'% of '+ST.grandStarTarget:'Set target'}</span></div>
-        ${grandUnlocked?'<div class="goal-unlocked">👑 Grand goal reached!</div>':''}
+        <div class="draw-feature-foot">Earn ★ from quests → buy tickets in your profile</div>
       </div>
     </div>
     <div class="sec-lbl">Tap your hero to start</div>
@@ -1690,62 +1765,22 @@ function renderQuestView(){
       </div>
       <div class="bar-track" style="height:4px;"><div class="bar-fill" style="width:${pctDone}%;background:linear-gradient(90deg,${cls.accent2},${cls.accent});"></div></div>
     </div>
-    ${(()=>{
-      const vActive=ST.weeklyVote?.active;
-      const vOpts=ST.weeklyVote?.options||[];
-      const myVote=(ST.weeklyVote?.votes||{})[curKid];
-      const hasOpts=vOpts.some(o=>o);
-      if(!vActive||!hasOpts)return '';
-      const optBtns=vOpts.map((o,i)=>o?`<button class="vote-opt-btn ${myVote===i?'voted':''}" onclick="castVote(${i})">
-        <span class="vote-opt-emoji">${o.emoji}</span><span class="vote-opt-text">${escHtml(o.text)}</span>
-        ${myVote===i?'<span class="vote-opt-check">✓ voted</span>':''}
-      </button>`:'').join('');
-      const note=myVote!==undefined?'<div style="font-size:11px;color:var(--text2);margin-top:4px;">Your vote is recorded ✓</div>':'<div style="font-size:11px;color:var(--text2);">Pick the reward you want this week!</div>';
-      return `<div class="vote-panel"><div class="vote-panel-title">🗳️ Vote for Weekly Reward</div>${note}${optBtns}</div>`;
-    })()}
     <div class="quest-list ${young?'young':''}">${questsHTML}</div>
     ${(()=>{
-      const weeklyR=(ST.rewards||[]).filter(r=>r);
-      const grandR=(ST.grandRewards||[]).filter(r=>r);
-      const allRewards=[...(weeklyR.map((r,i)=>({...r,tier:'weekly',idx:i}))||[]),...(grandR.map((r,i)=>({...r,tier:'grand',idx:i}))||[])];
-      if(!allRewards.length)return '';
       const balance=m.starBalance||0;
-      const rewardHTML=allRewards.map(r=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <div style="display:flex;align-items:center;gap:10px;flex:1;">
-          <span style="font-size:24px;">${r.emoji}</span>
-          <div>
-            <div style="font-size:12px;font-weight:600;">${escHtml(r.text)}</div>
-            <div style="font-size:10px;color:var(--text3);">${r.tier==='weekly'?'Weekly':'Grand'} Reward · ★${r.cost||100}</div>
-          </div>
-        </div>
-        <button onclick="redeemReward('${curKid}','${r.tier}',${r.idx})" style="padding:6px 12px;border-radius:6px;border:1px solid ${balance>=(r.cost||100)?'rgba(52,211,153,0.4)':'rgba(200,200,200,0.3)'};background:${balance>=(r.cost||100)?'rgba(52,211,153,0.08)':'rgba(200,200,200,0.04)'};color:${balance>=(r.cost||100)?'var(--green)':'var(--text3)'};font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;${balance<(r.cost||100)?'opacity:0.6;cursor:not-allowed;':''}">${balance>=(r.cost||100)?'Redeem':'Need '+((r.cost||100)-balance)+' more'}</button>
-      </div>`).join('');
-      return `<div style="padding:0 16px 16px;margin-top:12px;">
-        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">💰 Redeem Rewards</div>
-        <div style="font-size:11px;color:var(--text2);margin-bottom:12px;">You have <strong>★${balance}</strong> stars available to redeem</div>
-        ${rewardHTML}
-      </div>`;
-    })()}
-    ${(()=>{
-      const ldPrizes=(ST.luckyDraw?.prizes||[]).filter(p=>p);
-      if(!ldPrizes.length)return '';
-      const ldBalance=m.starBalance||0;
       const ldTickets=(ST.luckyDraw?.entries||{})[curKid]||0;
-      const sliderPart=ldBalance>0?`<div style="font-size:11px;color:var(--text2);margin-bottom:8px;">Move the slider to choose how many stars to spend:</div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
-          <input type="range" id="ld-amount" min="1" max="${ldBalance}" value="1" style="flex:1;" aria-label="Stars to spend on draw tickets" oninput="document.getElementById('ld-val').textContent=this.value">
-          <span id="ld-val" style="color:#ff9966;font-weight:700;min-width:28px;">1</span><span style="font-size:11px;color:var(--text2);">★</span>
+      return `<div class="shop-cta" onclick="closeQuestToProfile('${curKid}')">
+        <div class="shop-cta-icon">🛒</div>
+        <div style="flex:1;">
+          <div class="shop-cta-title">Rewards Shop &amp; Lucky Draw</div>
+          <div class="shop-cta-sub">★${balance} to spend · 🎟 ${ldTickets} ticket${ldTickets!==1?'s':''} in the draw</div>
         </div>
-        <button class="ld-submit" onclick="enterLuckyDraw(document.getElementById('ld-amount').value)">🎟️ Spend Stars → Enter Draw</button>`
-        :'<div style="font-size:12px;color:var(--text2);font-style:italic;">Complete quests to earn stars — then spend them here as tickets!</div>';
-      return `<div class="ld-panel">
-        <div class="ld-panel-title">🎟️ Monthly Lucky Draw</div>
-        <div class="ld-panel-meta">★ ${ldBalance} available · 🎟 ${ldTickets} ticket${ldTickets!==1?'s':''} entered</div>
-        ${sliderPart}
+        <div class="shop-cta-go">Open →</div>
       </div>`;
     })()}
   `;
 }
+function closeQuestToProfile(kidId){show('home');openHeroProfile(kidId);}
 
 function getStarsEarnedInLastHour(kidId){
   const now=Date.now();
@@ -1827,15 +1862,17 @@ function togQ(cid,e){
 }
 
 /* ---------- LUCKY DRAW ---------- */
-function enterLuckyDraw(amount){
-  const m=ST.members.find(x=>x.id===curKid);if(!m)return;
+function enterLuckyDraw(amount){buyDrawTickets(curKid,amount,'quests');}
+// Buy raffle tickets for a specific kid. 1 star = 1 ticket. ctx controls re-render.
+function buyDrawTickets(kidId,amount,ctx){
+  const m=ST.members.find(x=>x.id===kidId);if(!m)return;
   amount=parseInt(amount)||0;
   if(amount<=0||amount>(m.starBalance||0)){toast('Not enough stars!');return;}
   m.starBalance=Math.max(0,(m.starBalance||0)-amount);
   if(!ST.luckyDraw.entries)ST.luckyDraw.entries={};
-  ST.luckyDraw.entries[curKid]=(ST.luckyDraw.entries[curKid]||0)+amount;
+  ST.luckyDraw.entries[kidId]=(ST.luckyDraw.entries[kidId]||0)+amount;
   save();
-  renderQuestView();
+  if(ctx==='profile')renderHeroProfile(kidId);else renderQuestView();
   toast('🎟️ '+(amount===1?'1 ticket':''+amount+' tickets')+' entered!');
 }
 function runLuckyDraw(){
@@ -1855,9 +1892,57 @@ function runLuckyDraw(){
   if(ST.luckyDraw.history.length>10)ST.luckyDraw.history.pop();
   ST.luckyDraw.entries={};
   save();
-  showDrawWinner(winner,prize);
+  // Build the spinning reel from distinct entrant names for the suspense reveal
+  const reelNames=entrantNames.length?entrantNames:[winner?.name||'?'];
+  showDrawSuspense(reelNames,winner,prize);
   // renderParent() is called by closeDrawWinner() after the modal is dismissed
 }
+// Dramatic slot-machine reveal: cycle names fast → slow → 3·2·1 → winner.
+let _drawTimers=[];
+function _clearDrawTimers(){_drawTimers.forEach(t=>clearTimeout(t));_drawTimers=[];}
+function showDrawSuspense(names,winner,prize){
+  const host=document.getElementById('modal-host');
+  _clearDrawTimers();
+  host.innerHTML=`<div class="draw-stage-bg">
+    <div class="draw-stage-title">🎰 Drawing the winner…</div>
+    <div class="draw-reel"><div class="draw-reel-name" id="draw-reel-name">${escHtml(names[0])}</div></div>
+    <button class="draw-skip" onclick="skipDrawSuspense()">Skip ⏭</button>
+  </div>`;
+  const nameEl=()=>document.getElementById('draw-reel-name');
+  window._drawReveal=()=>{_clearDrawTimers();showDrawWinner(winner,prize);};
+  // Phase 1: fast cycle, gradually slowing
+  let elapsed=0,i=0;
+  const step=(delay)=>{
+    const t=setTimeout(()=>{
+      const el=nameEl();if(!el){return;}
+      i=(i+1)%names.length;
+      el.textContent=names[i];
+      try{playChime();}catch(e){}
+      elapsed+=delay;
+      if(elapsed<2600){step(Math.min(delay+18,170));}
+      else{startCountdown();}
+    },delay);
+    _drawTimers.push(t);
+  };
+  const startCountdown=()=>{
+    const stage=document.querySelector('.draw-stage-bg');if(!stage)return;
+    let n=3;
+    const tick=()=>{
+      const s=document.querySelector('.draw-stage-bg');if(!s){return;}
+      if(n>0){
+        s.innerHTML=`<div class="draw-countdown">${n}</div>`;
+        try{playChime();}catch(e){}
+        n--;
+        _drawTimers.push(setTimeout(tick,750));
+      }else{
+        window._drawReveal();
+      }
+    };
+    tick();
+  };
+  step(70);
+}
+function skipDrawSuspense(){if(window._drawReveal)window._drawReveal();}
 function showDrawWinner(member,prize){
   const host=document.getElementById('modal-host');
   host.innerHTML=`<div class="level-up-bg" onclick="closeDrawWinner()">
@@ -2524,7 +2609,7 @@ function renderParent(){
       <div class="p-nav-title">Parent Zone</div>
       <div class="pni ${tabState==='week'?'on':''}" onclick="setParentTab('week')">⚡ Daily Chores</div>
       <div class="pni ${tabState==='goals'?'on':''}" onclick="setParentTab('goals')">🎁 Rewards</div>
-      <div class="pni ${tabState==='vouchers'?'on':''}" onclick="setParentTab('vouchers')">💰 Vouchers</div>
+      <div class="pni ${tabState==='vouchers'?'on':''}" onclick="setParentTab('vouchers')">🛒 Purchases</div>
       <div class="pni ${tabState==='family'?'on':''}" onclick="setParentTab('family')">👨‍👩‍👧‍👦 Family</div>
       <div class="p-exit"><button onclick="show('home')">← Exit</button></div>
     </div>
@@ -2661,24 +2746,33 @@ function renderPendingReviews(kids){
 }
 
 function renderParentGoals(){
-  const grandStars=totalStars();
-  const grandPct=ST.grandStarTarget>0?Math.min(100,Math.round((grandStars/ST.grandStarTarget)*100)):0;
   const kids=ST.members.filter(m=>!m.isParent);
 
-  // Weekly rewards
-  let weeklyRewardHTML='';
-  for(let i=0;i<3;i++){
-    const r=ST.rewards[i];
-    weeklyRewardHTML+=`<div class="reward-slot ${r?'filled':''}">
-      <div class="rs-num" style="background:rgba(124,111,247,0.2);color:#a89bff;">${i+1}</div>
+  // ── Rewards Shop editor (grouped by category) ──
+  let shopHTML='';
+  for(const cat of SHOP_CATS){
+    const catItems=(ST.shopItems||[]).filter(it=>it.cat===cat.id);
+    const rows=catItems.map(it=>`<div class="shop-edit-row ${it.enabled===false?'off':''}">
+      <span style="font-size:20px;flex-shrink:0;">${it.e}</span>
       <div style="flex:1;min-width:0;">
-        ${r?`<div style="font-weight:600;font-size:13px;">${r.emoji} ${escHtml(r.text)}</div>`:'<div style="color:var(--text3);font-size:12px;">Empty slot</div>'}
+        <div style="font-size:13px;font-weight:600;${it.enabled===false?'opacity:0.5;':''}">${escHtml(it.n)}</div>
+        <div style="font-size:10px;color:var(--text3);">ages ${it.aMin}–${it.aMax}${it.custom?' · custom':''}</div>
       </div>
-      ${r?`<button class="rs-clear" onclick="delReward('weekly',${i})">Clear</button>`:''}
+      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        <span style="font-size:11px;color:var(--gold);">★</span>
+        <input type="number" value="${it.cost}" min="1" onchange="setShopCost('${it.id}',this.value)" style="width:62px;padding:5px 6px;border:1px solid var(--border);border-radius:6px;background:rgba(20,25,58,0.6);color:var(--text);font-size:12px;text-align:right;">
+        <button class="rs-clear" style="padding:4px 8px;" onclick="toggleShopItem('${it.id}')">${it.enabled===false?'On':'Off'}</button>
+        ${it.custom?`<button class="rs-clear" style="padding:4px 8px;" onclick="removeShopItem('${it.id}')">✕</button>`:''}
+      </div>
+    </div>`).join('');
+    shopHTML+=`<div style="margin-bottom:14px;">
+      <div style="font-size:12px;font-weight:800;color:${cat.color};margin-bottom:6px;">${cat.emoji} ${cat.label}</div>
+      ${rows||'<div style="font-size:11px;color:var(--text3);padding:4px 0;">No items.</div>'}
     </div>`;
   }
+  const catOpts=SHOP_CATS.map(c=>`<option value="${c.id}">${c.emoji} ${c.label}</option>`).join('');
 
-  // Lucky draw prizes
+  // ── Lucky draw ──
   let drawPrizeHTML='';
   for(let i=0;i<3;i++){
     const r=(ST.luckyDraw.prizes||[])[i];
@@ -2701,74 +2795,34 @@ function renderParentGoals(){
     <div style="flex:1;"><div style="font-size:13px;font-weight:600;">🏆 ${escHtml(h.winnerName)} — ${h.prize.emoji} ${escHtml(h.prize.text)}</div>
     <div style="font-size:11px;color:var(--text2);">${h.date} · ${h.totalEntries} total tickets</div></div></div>`).join(''):'';
 
-  // Weekly vote
-  const vOpts=ST.weeklyVote?.options||[null,null,null];
-  const vVotes=ST.weeklyVote?.votes||{};
-  const vTally=[0,0,0];
-  for(const v of Object.values(vVotes)){if(v>=0&&v<3)vTally[v]++;}
-  let voteOptionsHTML='';
-  for(let i=0;i<3;i++){
-    const o=vOpts[i];
-    voteOptionsHTML+=`<div class="reward-slot ${o?'filled':''}">
-      <div class="rs-num" style="background:rgba(168,155,255,0.2);color:#a89bff;">${i+1}</div>
-      <div style="flex:1;min-width:0;">
-        ${o?`<div style="font-weight:600;font-size:13px;">${o.emoji} ${escHtml(o.text)}</div>`:'<div style="color:var(--text3);font-size:12px;">Empty slot</div>'}
-      </div>
-      ${o?`<span style="font-size:13px;font-weight:700;color:#a89bff;min-width:40px;text-align:right;">${vTally[i]} vote${vTally[i]!==1?'s':''}</span><button class="rs-clear" style="margin-left:6px;" onclick="delReward('vote',${i})">Clear</button>`:''}
-    </div>`;
-  }
-  const vWhoVoted=kids.filter(k=>vVotes[k.id]!==undefined);
-  const vPending=kids.filter(k=>vVotes[k.id]===undefined);
-
-  // Grand rewards
-  let grandRewardHTML='';
-  for(let i=0;i<3;i++){
-    const r=ST.grandRewards[i];
-    grandRewardHTML+=`<div class="reward-slot ${r?'filled':''}">
-      <div class="rs-num" style="background:rgba(255,215,0,0.2);color:var(--gold);">${i+1}</div>
-      <div style="flex:1;min-width:0;">
-        ${r?`<div style="font-weight:600;font-size:13px;">${r.emoji} ${escHtml(r.text)}</div>`:'<div style="color:var(--text3);font-size:12px;">Empty slot</div>'}
-      </div>
-      ${r?`<button class="rs-clear" onclick="delReward('grand',${i})">Clear</button>`:''}
-    </div>`;
-  }
-
   return `<div class="ps" id="ps-goals">
-    <div class="ptitle">🎁 Goals & Rewards</div>
-    <div class="psub">Configure rewards, the lucky draw, and weekly voting</div>
-
-    <div style="margin-bottom:20px;">
-      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Weekly Completion Target</div>
-      <div style="font-size:13px;display:flex;align-items:center;gap:8px;"><input type="number" value="${ST.threshold}" onchange="ST.threshold=parseInt(this.value);save();" style="width:60px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;"> % complete to unlock weekly reward</div>
-    </div>
+    <div class="ptitle">🎁 Rewards Shop & Draw</div>
+    <div class="psub">Edit prices, toggle items on/off, add your own, and run the lucky draw</div>
 
     <div class="af">
-      <div class="af-title" style="color:#a89bff;">⚡ Weekly Rewards (at ${ST.threshold}%)</div>
-      ${weeklyRewardHTML}
-      <button class="bp" style="width:100%;margin-top:10px;" onclick="openRewardPicker('weekly')">+ Add Reward</button>
-    </div>
-
-    <div class="af">
-      <div class="af-title" style="color:#a89bff;">🗳️ Weekly Vote</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Set up to 3 options for kids to vote on from their quest screen. When votes are in, apply the winner as the weekly reward.</div>
-      ${voteOptionsHTML}
-      <button class="bp" style="width:100%;margin-top:10px;" onclick="openRewardPicker('vote')">+ Add Vote Option</button>
-      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:14px 0 6px;">Status</div>
-      ${vWhoVoted.length?`<div style="font-size:12px;color:var(--green);margin-bottom:4px;">✓ Voted: ${vWhoVoted.map(k=>escHtml(k.name)).join(', ')}</div>`:''}
-      ${vPending.length?`<div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Waiting: ${vPending.map(k=>escHtml(k.name)).join(', ')}</div>`:''}
-      <div style="display:flex;gap:8px;margin-top:8px;">
-        <button onclick="toggleVoting()" style="flex:1;padding:9px;border-radius:8px;border:1px solid rgba(168,155,255,0.4);background:${ST.weeklyVote?.active?'rgba(168,155,255,0.15)':'rgba(168,155,255,0.05)'};color:#a89bff;font-weight:600;cursor:pointer;font-family:inherit;font-size:13px;">
-          ${ST.weeklyVote?.active?'⏹ Close Voting':'▶ Open Voting'}
-        </button>
-        <button onclick="applyVoteWinner()" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--green);background:rgba(52,211,153,0.08);color:var(--green);font-weight:600;cursor:pointer;font-family:inherit;font-size:13px;">
-          ✓ Apply Winner as Reward
-        </button>
+      <div class="af-title" style="color:#34d399;">🛒 Rewards Shop</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">Kids buy these with stars. Set the star cost, switch items off, or add family-specific rewards. Children only see items for their age.</div>
+      ${shopHTML}
+      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 8px;">Add a custom reward</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input id="shop-emoji" type="text" placeholder="🎁" maxlength="2" style="width:48px;padding:8px;text-align:center;font-size:18px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);">
+        <input id="shop-name" type="text" placeholder="Reward name…" style="flex:1;min-width:140px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;">
+        <select id="shop-cat" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:12px;">${catOpts}</select>
       </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap;">
+        <span style="font-size:12px;color:var(--text2);">Cost ★</span><input id="shop-cost" type="number" value="100" min="1" style="width:80px;padding:7px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:12px;">
+        <span style="font-size:12px;color:var(--text2);">Ages</span>
+        <input id="shop-amin" type="number" value="3" min="2" max="18" style="width:54px;padding:7px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:12px;">
+        <span style="font-size:12px;color:var(--text2);">to</span>
+        <input id="shop-amax" type="number" value="16" min="2" max="18" style="width:54px;padding:7px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:12px;">
+        <button onclick="addCustomShopItem()" style="padding:8px 14px;border-radius:8px;border:1px solid var(--green);background:rgba(52,211,153,0.12);color:var(--green);font-weight:700;font-size:12px;cursor:pointer;">+ Add</button>
+      </div>
+      <button class="bp" style="width:100%;margin-top:14px;" onclick="if(confirm('Reset the shop to the default catalog? Custom items and price changes will be lost.')){ST.shopItems=seedShopItems();save();renderParent();}">↺ Reset shop to defaults</button>
     </div>
 
     <div class="af">
       <div class="af-title" style="color:#ff9966;">🎟️ Monthly Lucky Draw</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Kids spend their earned star balance on tickets. More tickets = higher chance of winning. Stars are consumed when entering.</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Kids turn stars into tickets from their profile. More tickets = higher chance of winning.</div>
       <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Prizes (winner draws one at random)</div>
       ${drawPrizeHTML}
       <button class="bp" style="width:100%;margin-top:10px;" onclick="openRewardPicker('draw')">+ Add Prize</button>
@@ -2777,30 +2831,35 @@ function renderParentGoals(){
       <button onclick="runLuckyDraw()" style="width:100%;padding:10px;border-radius:8px;border:none;background:linear-gradient(135deg,#ff6b35,#ff9966);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:14px;box-shadow:0 0 16px rgba(255,107,53,0.4);">🎰 Run the Draw!</button>
       ${drawHistHTML}
     </div>
-
-    <div class="af">
-      <div class="af-title" style="color:var(--gold);">👑 Grand Rewards (${grandPct}% • ${grandStars}/${ST.grandStarTarget}★)</div>
-      ${grandRewardHTML}
-      <button class="bp" style="width:100%;margin-top:10px;" onclick="openRewardPicker('grand')">+ Add Reward</button>
-      <div style="font-size:11px;color:var(--text2);margin-top:8px;display:flex;align-items:center;gap:8px;">Grand target: <input type="number" value="${ST.grandStarTarget}" onchange="ST.grandStarTarget=parseInt(this.value);save();" style="width:80px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:rgba(20,25,58,0.6);color:var(--text);font-size:12px;"> cumulative XP</div>
-    </div>
-
-    <div class="af">
-      <div class="af-title">📖 Reward Library</div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:10px;">Your saved custom rewards — pick from these when assigning rewards to tiers.</div>
-      ${(ST.rewardLibrary||[]).length===0?'<div style="color:var(--text3);font-size:12px;padding:4px 0;">No saved rewards yet. Add a custom reward using any "+ Add" button above.</div>':''}
-      ${(ST.rewardLibrary||[]).map((r,i)=>`<div class="reward-slot filled" style="margin-bottom:6px;">
-        <div style="font-size:20px;flex-shrink:0;">${r.emoji}</div>
-        <div style="flex:1;font-size:13px;font-weight:600;">${escHtml(r.text)}</div>
-        <button class="rs-clear" onclick="deleteRewardLib(${i})">Remove</button>
-      </div>`).join('')}
-      <div style="display:flex;gap:8px;align-items:center;margin-top:10px;">
-        <input id="rl-emoji" type="text" placeholder="🎁" style="width:52px;padding:8px;text-align:center;font-size:20px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);">
-        <input id="rl-text" type="text" placeholder="Add to reward library…" style="flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:rgba(20,25,58,0.6);color:var(--text);font-size:13px;" onkeydown="if(event.key==='Enter')addToRewardLibDirect();">
-        <button onclick="addToRewardLibDirect()" style="padding:8px 14px;border-radius:8px;border:none;background:rgba(0,229,255,0.15);border:1px solid var(--accent);color:var(--accent);font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;">Save</button>
-      </div>
-    </div>
   </div>`;
+}
+
+/* ── Shop editor actions ──────────────────────────────────────────────── */
+function setShopCost(itemId,val){
+  const it=(ST.shopItems||[]).find(x=>x.id===itemId);if(!it)return;
+  const c=parseInt(val);if(isNaN(c)||c<1)return;
+  it.cost=c;save();
+}
+function toggleShopItem(itemId){
+  const it=(ST.shopItems||[]).find(x=>x.id===itemId);if(!it)return;
+  it.enabled=it.enabled===false;save();renderParent();
+}
+function removeShopItem(itemId){
+  if(!confirm('Remove this custom reward?'))return;
+  ST.shopItems=(ST.shopItems||[]).filter(x=>x.id!==itemId);save();renderParent();
+}
+function addCustomShopItem(){
+  const e=(document.getElementById('shop-emoji').value||'🎁').trim()||'🎁';
+  const n=(document.getElementById('shop-name').value||'').trim();
+  const cat=document.getElementById('shop-cat').value;
+  const cost=parseInt(document.getElementById('shop-cost').value)||100;
+  let aMin=parseInt(document.getElementById('shop-amin').value)||3;
+  let aMax=parseInt(document.getElementById('shop-amax').value)||16;
+  if(!n){toast('Give the reward a name');return;}
+  if(aMin>aMax){const t=aMin;aMin=aMax;aMax=t;}
+  ST.shopItems.push({id:'c_'+Date.now()+'_'+Math.random().toString(36).slice(2,5),e,n,cat,cost,aMin,aMax,enabled:true,custom:true});
+  save();renderParent();
+  toast('🛒 Reward added to the shop!');
 }
 
 function renderParentVouchers(){
@@ -2810,8 +2869,8 @@ function renderParentVouchers(){
   const claimed=allVouchers.filter(v=>v.status==='claimed');
 
   return `<div class="ps" id="ps-vouchers">
-    <div class="ptitle">💰 Reward Vouchers</div>
-    <div class="psub">Approve reward redemptions and track usage</div>
+    <div class="ptitle">💰 Reward Purchases</div>
+    <div class="psub">Kids buy rewards with stars — set them up and mark them claimed</div>
 
     ${pending.length>0?`<div class="af" style="border:1px solid rgba(251,191,36,0.3);background:rgba(251,191,36,0.08);border-radius:var(--radius);padding:14px;">
       <div class="af-title" style="color:#fbbf24;">⏳ Pending Approval (${pending.length})</div>
@@ -2833,8 +2892,8 @@ function renderParentVouchers(){
     </div>`:''}
 
     ${approved.length>0?`<div class="af" style="margin-top:12px;">
-      <div class="af-title">✓ Ready to Claim (${approved.length})</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">These vouchers are approved. Child shows the code to claim their reward.</div>
+      <div class="af-title">🛒 Purchased — To Fulfil (${approved.length})</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">The child bought these with stars. Set up the real reward, then mark it claimed.</div>
       ${approved.map(v=>{
         const kid=ST.members.find(m=>m.id===v.kidId);
         const cls=CLASSES[kid?.classId]||CLASSES.scout;
@@ -2885,7 +2944,8 @@ function denyVoucher(voucherId){
 
 function claimVoucher(voucherId){
   const v=ST.rewardVouchers.find(x=>x.id===voucherId);if(!v)return;
-  v.status='claimed';v.redeemedAt=new Date().toISOString();
+  const now=new Date().toISOString();
+  v.status='claimed';v.redeemedAt=now;v.claimedAt=now;
   save();renderParent();
 }
 
@@ -3118,23 +3178,32 @@ function moveChore(id,dir){
   save();renderParent();
 }
 
-/* ── Reward Voucher Functions ─────────────────────────────────────────── */
-function redeemReward(kidId,tier,rewardIdx){
+/* ── Rewards Shop ─────────────────────────────────────────────────────── */
+function shopItemsForKid(kid){
+  const age=kid?.dob?calcAge(kid.dob):10;
+  return (ST.shopItems||[]).filter(it=>it.enabled!==false&&age>=(it.aMin||0)&&age<=(it.aMax||99));
+}
+// Instant purchase: stars are spent immediately and a voucher (with a code) is
+// created in 'approved' state so a parent fulfils the real reward and marks it
+// claimed. No approval gate blocks the purchase itself.
+function buyShopItem(kidId,itemId){
   const kid=ST.members.find(m=>m.id===kidId);if(!kid)return;
-  const {obj,key}=_rpKey(tier);
-  const reward=obj[key]?.[rewardIdx];
-  if(!reward)return;
-  const starCost=reward.cost||100;
-  if(kid.starBalance<starCost){
-    alert(`You need ${starCost} stars. You have ${kid.starBalance}.`);
+  const item=(ST.shopItems||[]).find(it=>it.id===itemId);
+  if(!item||item.enabled===false)return;
+  const cost=item.cost||0;
+  if((kid.starBalance||0)<cost){
+    toast(`Need ★${cost} — you have ★${kid.starBalance||0}`);
     return;
   }
+  if(!confirm(`Buy "${item.n}" for ★${cost}?\n\nYour stars will be spent and a parent will set up your reward.`))return;
   const voucherId='v_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
-  ST.rewardVouchers.push({id:voucherId,kidId:kidId,rewardName:reward.text,rewardEmoji:reward.emoji,tier:tier,rewardIdx:rewardIdx,stars:starCost,status:'pending',requestedAt:new Date().toISOString(),approvedAt:null,redeemedAt:null,removedAt:null,removalReason:null,removalComment:'',starRefunded:false,redeemCode:voucherId.slice(2,8).toUpperCase()});
-  kid.starBalance-=starCost;
+  const code=voucherId.slice(2,8).toUpperCase();
+  ST.rewardVouchers.push({id:voucherId,kidId:kidId,itemId:item.id,rewardName:item.n,rewardEmoji:item.e,category:item.cat,stars:cost,status:'approved',requestedAt:new Date().toISOString(),approvedAt:new Date().toISOString(),redeemedAt:null,redeemCode:code});
+  kid.starBalance=(kid.starBalance||0)-cost;
   save();
-  renderQuestView();
-  toast(`✓ Voucher created! Ask a parent to approve it.`);
+  renderHeroProfile(kidId);
+  toast(`🛒 Bought ${item.e} ${item.n}! Code #${code} — show a parent to claim.`);
+  const cx=window.innerWidth/2,cy=window.innerHeight/2;confettiBurst(cx,cy);
 }
 
 /* ── Reward Picker Modal ─────────────────────────────────────────────── */
@@ -3763,6 +3832,63 @@ function buildStarfield(kidId,clsAccent,weeks){
   return html;
 }
 
+// The child's reward hub: shop catalog (age-filtered) + raffle ticket buying.
+function renderShopSection(kidId){
+  const kid=ST.members.find(m=>m.id===kidId);if(!kid)return '';
+  const balance=kid.starBalance||0;
+  const items=shopItemsForKid(kid);
+
+  // Shop grouped by category
+  let catsHTML='';
+  for(const cat of SHOP_CATS){
+    const catItems=items.filter(it=>it.cat===cat.id).sort((a,b)=>a.cost-b.cost);
+    if(!catItems.length)continue;
+    const itemsHTML=catItems.map(it=>{
+      const afford=balance>=it.cost;
+      return `<div class="shop-item ${afford?'afford':''}">
+        <div class="shop-item-top">
+          <span class="shop-item-emoji">${it.e}</span>
+          <span class="shop-item-name">${escHtml(it.n)}</span>
+        </div>
+        <button class="shop-buy-btn" ${afford?'':'disabled'} onclick="buyShopItem('${kidId}','${it.id}')">
+          ${afford?'Buy · ★'+it.cost:'★'+it.cost+' · need '+(it.cost-balance)+' more'}
+        </button>
+      </div>`;
+    }).join('');
+    catsHTML+=`<div class="shop-cat">
+      <div class="shop-cat-head" style="color:${cat.color};"><span>${cat.emoji}</span><span>${cat.label}</span></div>
+      <div class="shop-grid">${itemsHTML}</div>
+    </div>`;
+  }
+  if(!catsHTML)catsHTML='<div style="font-size:12px;color:var(--text3);padding:6px 0;">No shop items available yet — a parent can set them up in Parent Zone → Shop.</div>';
+
+  // Raffle / lucky draw
+  const ldPrizes=(ST.luckyDraw?.prizes||[]).filter(p=>p);
+  const ldTickets=(ST.luckyDraw?.entries||{})[kidId]||0;
+  const totalTickets=Object.values(ST.luckyDraw?.entries||{}).reduce((s,n)=>s+n,0);
+  const prizeChips=ldPrizes.length?ldPrizes.map(p=>`<span class="reward-chip" style="border-color:rgba(255,107,53,0.4);">${p.emoji} ${escHtml(p.text)}</span>`).join(''):'<span style="font-size:11px;color:var(--text2);font-style:italic;">Prizes coming soon — ask a parent.</span>';
+  const slider=balance>0?`<div style="font-size:11px;color:var(--text2);margin:10px 0 6px;">Slide to choose how many stars to turn into tickets:</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <input type="range" id="ld-amount-p" min="1" max="${balance}" value="1" style="flex:1;" oninput="document.getElementById('ld-val-p').textContent=this.value">
+      <span id="ld-val-p" style="color:#ff9966;font-weight:800;min-width:30px;text-align:right;">1</span><span style="font-size:11px;color:var(--text2);">★</span>
+    </div>
+    <button class="ld-submit" onclick="buyDrawTickets('${kidId}',document.getElementById('ld-amount-p').value,'profile')">🎟️ Buy Tickets</button>`
+    :'<div style="font-size:12px;color:var(--text2);font-style:italic;margin-top:8px;">Earn stars from quests, then turn them into tickets here!</div>';
+
+  return `<div class="profile-section">
+    <div class="profile-section-title">🛒 Rewards Shop</div>
+    <div class="profile-section-sub">Spend your stars on real rewards — a parent sets them up</div>
+    <div class="shop-balance"><span style="font-size:20px;">⭐</span><span class="shop-balance-val">★ ${balance}</span><span style="font-size:12px;color:var(--text2);">to spend</span></div>
+    <div class="shop-raffle">
+      <div class="shop-raffle-title">🎟️ Monthly Lucky Draw</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">You have <strong style="color:#ff9966;">${ldTickets}</strong> ticket${ldTickets!==1?'s':''} · ${totalTickets} in the whole pool</div>
+      <div class="goal-rewards" style="margin-bottom:4px;">${prizeChips}</div>
+      ${slider}
+    </div>
+    ${catsHTML}
+  </div>`;
+}
+
 function renderHeroProfile(kidId){
   const kid=ST.members.find(m=>m.id===kidId);if(!kid)return;
   const cls=CLASSES[kid.classId]||CLASSES.scout;
@@ -3860,6 +3986,9 @@ function renderHeroProfile(kidId){
           <div class="psp-lbl">Done</div>
         </div>
       </div>
+
+      <!-- Rewards Shop + Lucky Draw (the actionable hub) -->
+      ${renderShopSection(kidId)}
 
       <!-- Scripture of the Day -->
       <div class="profile-section">
