@@ -2571,10 +2571,10 @@ function renderPin(){
 
 function approveCompletion(kidId,choreId){
   const review=ST.pendingReviews[kidId]?.find(r=>r.choreId===choreId);
-  if(!review){toast('Review not found');return;}
-  const kid=ST.members.find(m=>m.id===kidId);if(!kid)return;
+  if(!review){toast('⚠️ Review not found');return;}
+  const kid=ST.members.find(m=>m.id===kidId);if(!kid){toast('⚠️ Child not found');return;}
   const c=ST.chores.find(x=>x.id===choreId);
-  if(!c)return;
+  if(!c){toast('⚠️ Task not found');return;}
   if(!ST.completionTimestamps[kidId])ST.completionTimestamps[kidId]=[];
   ST.completionTimestamps[kidId].push({time:Date.now(),stars:review.stars,choreName:review.choreName});
   kid.xp=(kid.xp||0)+review.stars;
@@ -2589,17 +2589,17 @@ function approveCompletion(kidId,choreId){
   ST.dailyHistory[kidId][tod]=(ST.dailyHistory[kidId][tod]||0)+1;
   ST.history.unshift({name:kid.name,chore:review.choreName,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}),kidId:kidId,date:tod});
   if(ST.history.length>100)ST.history.pop();
-  ST.pendingReviews[kidId]=ST.pendingReviews[kidId].filter(r=>r.choreId!==choreId);
+  if(ST.pendingReviews[kidId]&&Array.isArray(ST.pendingReviews[kidId]))ST.pendingReviews[kidId]=ST.pendingReviews[kidId].filter(r=>r.choreId!==choreId);
   save();
   renderParent();
   toast('✓ '+review.choreName+' approved! '+kid.name+' earned ★'+review.stars);
 }
 function denyCompletion(kidId,choreId){
   const review=ST.pendingReviews[kidId]?.find(r=>r.choreId===choreId);
-  if(!review){toast('Review not found');return;}
+  if(!review){toast('⚠️ Review not found');return;}
   const c=ST.chores.find(x=>x.id===choreId);
   if(c)c.done=false;
-  ST.pendingReviews[kidId]=ST.pendingReviews[kidId].filter(r=>r.choreId!==choreId);
+  if(ST.pendingReviews[kidId]&&Array.isArray(ST.pendingReviews[kidId]))ST.pendingReviews[kidId]=ST.pendingReviews[kidId].filter(r=>r.choreId!==choreId);
   save();
   renderParent();
   const kid=ST.members.find(m=>m.id===kidId);
